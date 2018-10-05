@@ -1,7 +1,5 @@
 package com.aplusstory.fixme;
 
-import android.accessibilityservice.*;
-
-public class UserRecognizer {
+public interface UserRecognizer extends Recognizer{
 
 }
