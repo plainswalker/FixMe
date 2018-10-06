@@ -18,6 +18,7 @@ public class MyService extends Service {
     NotificationChannel ntch;
     MyServiceThread thd = null;
     Notification nt;
+    String msgdata = "";
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -40,6 +41,10 @@ public class MyService extends Service {
         if(this.thd == null || !this.thd.isAlive()) {
             this.thd = new MyServiceThread(hd);
             thd.start();
+        }
+        WinDetectService wds =WinDetectService.getInstance();
+        if(wds != null){
+            wds.setHandler(hd);
         }
 //        Toast t = Toast.makeText(this,"aaaaa",Toast.LENGTH_SHORT);
 //        t.setGravity(3,0,0);
@@ -69,10 +74,12 @@ public class MyService extends Service {
             public void handleMessage(android.os.Message msg) {
             Intent intent = new Intent(MyService.this, MainActivity.class);
             PendingIntent pendingIntent = PendingIntent.getActivity(MyService.this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
+            if(msg.what == 1){
+                MyService.this.msgdata = msg.obj.toString();
+            }
             MyService.this.nt = new NotificationCompat.Builder(MyService.this)
                                 .setContentTitle("title")
-                                .setContentText("text")
+                                .setContentText(MyService.this.msgdata)
                                 .setSmallIcon(R.drawable.example_picture)
                                 .setTicker("tick")
                                 .setContentIntent(pendingIntent)
