@@ -7,5 +7,5 @@ public interface MapUIManager extends ApplicationUIManager{
     int setDataManager(FootprintDataManager m);
     int setDataManager(SettingsDataManager m);
 
-    int setLocationManger(LocationManager l);
+    int setLocationManger(LocationDataManager l);
 }
