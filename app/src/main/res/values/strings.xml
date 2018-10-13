@@ -1,3 +1,29 @@
 <resources>
     <string name="app_name">FixMe</string>
+    <string name="notification_channel_name">FixMe_notification</string>
+    <string name="notification_channel_description"></string>
+    <string name="notification_msg_enable">Notification enabled...</string>
+    <string name="notification_msg_disable">Notification disabled...</string>
+    <string name="notification_msg_elapsed_time_prefix">Elapsed time : </string>
+    <string name="notification_msg_elapsed_time_second_postfix">seconds</string>
+    <string name="notification_msg_elapsed_time_minute_postfix">minutes</string>
+    <string name="notification_msg_elapsed_time_hour_postfix">hours</string>
+    <string name="notification_msg_elapsed_time_day_postfix">days</string>
+    <string name="notification_mag_elapsed_time_under_minute">less then 1 minute</string>
+    <string name="notification_action_enable">enable</string>
+    <string name="notification_action_disable">disable</string>
+    <string name="notification_action_settings">settings</string>
+    <string name="notification_action_cancel">quit</string>
+    <string-array name="advice_msg_posture_list">
+        <item>back</item>
+        <item>neck</item>
+        <item>head</item>
+        <item>hand</item>
+        <item>arm</item>
+    </string-array>
+    <string-array name="advice_msg_light_list">
+        <item>default</item>
+        <item>shortterm</item>
+        <item>longterm</item>
+    </string-array>
 </resources>
