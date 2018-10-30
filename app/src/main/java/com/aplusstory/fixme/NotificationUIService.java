@@ -9,11 +9,13 @@ import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.util.Date;
@@ -29,17 +31,18 @@ public class NotificationUIService extends Service implements NotificationUIMana
     private boolean isEnabled = false;
 
 //    private Context context;
-    private NotificationManager notificationManager;
-    private NotificationChannel notificationChannel;
+    private NotificationManager notificationManager = null;
+    private NotificationChannel notificationChannel = null;
     private Notification.Builder notificationBuilder = null;
 
-    private Thread thd;
-    private Handler hd;
+    private Thread thd = null;
+    private Handler hd = null;
 
 //    private Notification notification;
 //    private Toast ltmi;`
 
     public NotificationUIService(){
+        super();
         this.dataManager = new NotificationDataManager() {
             Thread thd;
             Recognizer r;
@@ -95,24 +98,33 @@ public class NotificationUIService extends Service implements NotificationUIMana
     }
 
     public NotificationUIService(NotificationDataManager nm){
+        super();
     }
 
     private void initialize(NotificationDataManager nm){
         this.setDataManager(nm);
-        this.notificationManager = (NotificationManager) this.getSystemService(NotificationManager.class);
-
+        if(this.notificationManager == null) {
+            this.notificationManager = (NotificationManager) this.getSystemService(NotificationManager.class);
+        }
         CharSequence nchName = this.getString(R.string.notification_channel_name);
         String nchDescription = this.getString(R.string.notification_channel_description);
 
         String nchID = NotificationUIService.NOTIFICATION_CHANNEL_ID;
         int nchImportance = NotificationManager.IMPORTANCE_DEFAULT;
-
-        this.notificationChannel = new NotificationChannel(nchID, nchName, nchImportance);
+        if(this.notificationChannel == null
+                || this.notificationManager.getNotificationChannel(NotificationUIService.NOTIFICATION_CHANNEL_ID) != this.notificationChannel) {
+            this.notificationChannel = new NotificationChannel(nchID, nchName, nchImportance);
+        }
         this.notificationChannel.setDescription(nchDescription);
-        this.notificationChannel.setImportance(NotificationManager.IMPORTANCE_MIN);
+        this.notificationChannel.setImportance(NotificationManager.IMPORTANCE_LOW);
         this.notificationManager.createNotificationChannel(this.notificationChannel);
 
-        this.thd = new NotificationUIService.ServiceThread(this.hd = new NotificationUIService.ServiceHandler());
+        this.hd = new NotificationUIService.ServiceHandler();
+
+        if(this.thd == null || !this.thd.isAlive()) {
+            this.thd = new NotificationUIService.ServiceThread(this.hd);
+//            hd.post(this.thd);
+        }
     }
 
     @Nullable
@@ -125,9 +137,13 @@ public class NotificationUIService extends Service implements NotificationUIMana
     public int onStartCommand(Intent intent, int flags, int startId) {
         this.initialize(this.dataManager);
         this.enable();
-        this.thd.run();
+        if(this.thd != null && !this.thd.isAlive()) {
+            this.thd.start();
+        }
         this.dataManager.run();
         this.notificationManager = (NotificationManager) this.getSystemService(NotificationManager.class);
+
+//        Toast.makeText(this, "Notification start", Toast.LENGTH_SHORT).show();
 
         return START_NOT_STICKY;
     }
@@ -176,11 +192,14 @@ public class NotificationUIService extends Service implements NotificationUIMana
                         NotificationUIService.this.dataManager.getElapsedTime()
                 );
                 if(NotificationUIService.this.isEnabled && NotificationUIService.this.dataManager.checkCondition()){
-                    if((NotificationUIService.this.dataManager.getConditionCode() == NotificationDataManager.COND_TIME_OVERUSE)) {
+                    int cond = NotificationUIService.this.dataManager.getConditionCode();
+                    Log.d("NotiUIService", "Thread CheckCond, cond : " + new Integer(cond).toString());
+                    this.hd.sendEmptyMessage(0);
+                    if(cond == NotificationDataManager.COND_TIME_OVERUSE){
                         NotificationUIService.this.advise(NotificationUIService.this.getString(R.string.advice_msg_posture));
                     }
 
-                    if((NotificationUIService.this.dataManager.getConditionCode() == NotificationDataManager.COND_ENVIRON_LIGHT)) {
+                    if(cond == NotificationDataManager.COND_ENVIRON_LIGHT){
                         NotificationUIService.this.advise(NotificationUIService.this.getString(R.string.advise_msg_light));
                     }
                 }
@@ -188,10 +207,24 @@ public class NotificationUIService extends Service implements NotificationUIMana
         }
     }
     public class ServiceHandler extends Handler{
+//        Context context;
+//
+//        public ServiceHandler(Context context){
+//            super(NotificationUIService.this.getMainLooper());
+//
+//            this.context = context;
+//            Log.d("NotiUIService","CreateHandler");
+//            Toast.makeText(NotificationUIService.this.getApplicationContext(), "create handler", Toast.LENGTH_SHORT).show();
+//        }
 
         @Override
         public void handleMessage(Message msg) {
-
+            Log.d("NotiUIService", "HandleMsg");
+            Bundle bd = msg.getData();
+            String sntMsg = (String)bd.getCharSequence("msg");
+            if(sntMsg != null){
+                Toast.makeText(NotificationUIService.this, sntMsg, Toast.LENGTH_SHORT).show();
+            }
         }
     }
     private Notification buildNotification(CharSequence contentText){
@@ -300,10 +333,13 @@ public class NotificationUIService extends Service implements NotificationUIMana
     }
     @Override
     public void advise(String msg) {
-        if(this.isEnabled) {
-            Toast tMsg = Toast.makeText(this.getBaseContext(), msg, Toast.LENGTH_LONG);
-
-            tMsg.show();
+        if(this.isEnabled && this.hd != null) {
+            Log.d("NotiUIService", "advise, msg : " + msg);
+            Message hdMsg = new Message();
+            Bundle bd = new Bundle();
+            bd.putString("msg",msg);
+            hdMsg.setData(bd);
+            this.hd.sendMessage(hdMsg);
         }
     }
 
