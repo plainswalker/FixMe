@@ -7,7 +7,10 @@ public interface NotificationDataManager extends Runnable{
 
     void setRecognizer(Recognizer r);
     //these methods must be thread safe
+    boolean isEnabled();
     boolean checkCondition();
+    void enable();
+    void disable();
     int getConditionCode();
     long getDelay();
     long getElapsedTime();

@@ -13,7 +13,7 @@
     <string name="notification_action_enable">enable</string>
     <string name="notification_action_disable">disable</string>
     <string name="notification_action_settings">settings</string>
-    <string name="notification_action_cancel">quit</string>
+    <string name="notification_action_quit">quit</string>
     <string name="advice_msg_posture">SIT UP STRAIGHT</string>
     <string name="advise_msg_light">TOO DARK HERE</string>
     <!--<string-array name="advice_msg_posture_list">-->
