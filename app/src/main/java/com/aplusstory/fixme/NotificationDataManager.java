@@ -1,5 +1,7 @@
 package com.aplusstory.fixme;
 
+import android.content.Context;
+
 public interface NotificationDataManager{
     public static final int COND_NONE = 0;
     public static final int COND_TIME_OVERUSE = 1;
