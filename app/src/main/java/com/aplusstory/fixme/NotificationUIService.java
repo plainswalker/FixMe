@@ -10,6 +10,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Binder;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -19,8 +20,9 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Date;
-
+import java.util.List;
 
 public class NotificationUIService extends Service implements NotificationUIManager{
     private static String NOTIFICATION_CHANNEL_ID = "FixMe_Noti";
@@ -28,113 +30,24 @@ public class NotificationUIService extends Service implements NotificationUIMana
 
     public static final int UPDATE_DELAY = 5000;
 
-    protected NotificationDataManager dataManager;
+    private NotificationDataManager dataManager;
     private boolean isEnabled = false;
 
-//    private Context context;
     private NotificationManager notificationManager = null;
     private NotificationChannel notificationChannel = null;
     private Notification.Builder notificationBuilder = null;
 
     private Thread thd = null;
     private Handler hd = null;
+    private Binder bd = null;
     private IntentFilter intfl = null;
     private BroadcastReceiver br = null;
 
-//    private Notification notification;
-//    private Toast ltmi;`
-
     public NotificationUIService(){
         super();
-        this.dataManager = new NotificationDataManager() {
-            Thread thd;
-            Recognizer r;
-            int timer_d = 0;
-            int timer_t = 0;
-            private boolean isEnabled = true;
-
-            @Override
-            public void setRecognizer(Recognizer r) {
-                this.r = r;
-            }
-
-            @Override
-            public boolean isEnabled() {
-                return this.isEnabled;
-            }
-
-            @Override
-            public synchronized void enable() {
-                if(!this.isEnabled){
-                    this.isEnabled = true;
-                }
-            }
-
-            @Override
-            public synchronized void disable() {
-                if(this.isEnabled){
-                    this.isEnabled = false;
-                }
-            }
-
-            @Override
-            public boolean checkCondition() {
-                return true;
-            }
-
-            @Override
-            public long getDelay() {
-                synchronized (this) {
-                    return this.timer_d += 1000;
-                }
-            }
-
-            @Override
-            public long getElapsedTime() {
-                synchronized (this) {
-                    return this.timer_t += 1000;
-                }
-            }
-
-            @Override
-            public int getConditionCode() {
-                return NotificationDataManager.COND_TIME_OVERUSE;
-            }
-
-            @Override
-            public void run() {
-                this.thd = new Thread(){
-                    @Override
-                    public void run() {
-//                        int i = 0;
-//                        while(true){
-//                            try {
-//                                Thread.sleep(1000);
-//                            } catch (Exception e){
-//
-//                            }
-//                        }
-                    }
-                };
-                this.thd.start();
-                try {
-                    this.thd.join();
-                } catch(Exception e){
-
-                }
-            }
-
-
-        };
     }
 
-    public NotificationUIService(NotificationDataManager nm){
-        super();
-        this.dataManager = nm;
-    }
-
-    private void initialize(NotificationDataManager nm){
-        this.setDataManager(nm);
+    private void initialize(){
         if(this.notificationManager == null) {
             this.notificationManager = (NotificationManager) this.getSystemService(NotificationManager.class);
         }
@@ -150,6 +63,64 @@ public class NotificationUIService extends Service implements NotificationUIMana
         this.notificationChannel.setDescription(nchDescription);
         this.notificationChannel.setImportance(NotificationManager.IMPORTANCE_LOW);
         this.notificationManager.createNotificationChannel(this.notificationChannel);
+
+        if(this.dataManager == null){
+            //test code
+            this.dataManager = new NotificationDataManager(){
+                Recognizer r;
+                int timer_d = 0;
+                int timer_t = 0;
+                private boolean isEnabled = true;
+
+                @Override
+                public void addRecognizer(Recognizer r) {
+                    this.r = r;
+                }
+
+                @Override
+                public boolean isEnabled() {
+                    return this.isEnabled;
+                }
+
+                @Override
+                public synchronized void enable() {
+                    if(!this.isEnabled){
+                        this.isEnabled = true;
+                    }
+                }
+
+                @Override
+                public synchronized void disable() {
+                    if(this.isEnabled){
+                        this.isEnabled = false;
+                    }
+                }
+
+                @Override
+                public boolean checkCondition() {
+                    return true;
+                }
+
+                @Override
+                public long getDelay() {
+                    synchronized (this) {
+                        return this.timer_d += 1000;
+                    }
+                }
+
+                @Override
+                public long getElapsedTime() {
+                    synchronized (this) {
+                        return this.timer_t += 1000;
+                    }
+                }
+
+                @Override
+                public int getConditionCode() {
+                    return NotificationDataManager.COND_TIME_OVERUSE;
+                }
+            };
+        }
 
         if(this.intfl == null){
             this.intfl = new IntentFilter();
@@ -169,28 +140,29 @@ public class NotificationUIService extends Service implements NotificationUIMana
         }
         if(this.thd == null || !this.thd.isAlive()) {
             this.thd = new NotificationUIService.ServiceThread(this.hd);
-//            hd.post(this.thd);
+        }
+        if(this.bd == null){
+            this.bd = new ServiceBinder();
         }
     }
 
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+        return this.bd;
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        this.initialize(this.dataManager);
+        this.initialize();
         this.enable();
-        this.dataManager.enable();
+        if(this.dataManager != null) {
+            this.dataManager.enable();
+        }
         if(this.thd != null && !this.thd.isAlive()) {
             this.thd.start();
         }
-        this.dataManager.run();
         this.notificationManager = (NotificationManager) this.getSystemService(NotificationManager.class);
-
-//        Toast.makeText(this, "Notification start", Toast.LENGTH_SHORT).show();
 
         return START_NOT_STICKY;
     }
@@ -201,19 +173,9 @@ public class NotificationUIService extends Service implements NotificationUIMana
     }
 
     @Override
-    public void setDataManager(NotificationDataManager dataManager) {
+    public synchronized void setDataManager(NotificationDataManager dataManager) {
         this.dataManager = dataManager;
     }
-    //    public int setDataManager(NotificationDataManager m){
-//        try {
-//            this.dataManager = m;
-//        }
-//        catch(Exception e){
-//            return 1;
-//        }
-//
-//        return 0;
-//    }
 
     public class ServiceThread extends Thread{
         Handler hd;
@@ -228,8 +190,8 @@ public class NotificationUIService extends Service implements NotificationUIMana
             while(true){
                 try {
                     Thread.sleep(NotificationUIService.UPDATE_DELAY);
-                } catch (Exception e){
-
+                } catch (InterruptedException e){
+                    return;
                 }
                 NotificationUIService.this.updateNotification(
                         ((NotificationUIService.this.isEnabled) ?
@@ -241,26 +203,29 @@ public class NotificationUIService extends Service implements NotificationUIMana
                     int cond = NotificationUIService.this.dataManager.getConditionCode();
                     Log.d("NotiUIService", "Thread CheckCond, cond : " + Integer.toString(cond));
                     this.hd.sendEmptyMessage(0);
+                    StringBuilder msg =new StringBuilder("");
                     if(cond == NotificationDataManager.COND_TIME_OVERUSE){
-                        NotificationUIService.this.advise(NotificationUIService.this.getString(R.string.advice_msg_posture));
+                        msg.append(NotificationUIService.this.getString(R.string.advice_msg_posture));
                     }
 
                     if(cond == NotificationDataManager.COND_ENVIRON_LIGHT){
-                        NotificationUIService.this.advise(NotificationUIService.this.getString(R.string.advise_msg_light));
+                        if(msg.length() > 1){
+                            msg.append("\n");
+                        }
+                        msg.append(NotificationUIService.this.getString(R.string.advise_msg_light));
                     }
+                    NotificationUIService.this.advise(msg.toString());
                 }
             }
         }
     }
-    public static class ServiceHandler extends Handler{
+    public class ServiceHandler extends Handler{
         Context context;
 
         public ServiceHandler(Context context){
             super();
-
             this.context = context;
             Log.d("NotiUIService","CreateHandler");
-//            Toast.makeText(NotificationUIService.this.getApplicationContext(), "create handler", Toast.LENGTH_SHORT).show();
         }
 
         @Override
@@ -331,6 +296,12 @@ public class NotificationUIService extends Service implements NotificationUIMana
         }
     }
 
+    public class ServiceBinder extends Binder{
+        public NotificationUIService getInstance(){
+            return NotificationUIService.this;
+        }
+    }
+
     private Notification buildNotification(CharSequence contentText){
         if(this.notificationBuilder == null) {
             CharSequence title = this.getString(R.string.app_name);
@@ -392,61 +363,77 @@ public class NotificationUIService extends Service implements NotificationUIMana
     }
 
     public void updateNotification(String msg, long elapsedTimeInMilliSeconds){
-        if(this.dataManager.isEnabled()) {
+        if(this.dataManager != null && this.dataManager.isEnabled()) {
             StringBuilder sb = new StringBuilder(msg);
 
-            sb.append("   ").append(this.getString(R.string.notification_msg_elapsed_time_prefix));
-
+            sb.append("   ").append(this.getString(R.string.notification_msg_elapsed_time_prefix)).append(" ");
+            if(elapsedTimeInMilliSeconds > 0) {
 //        final long d = 24 * 60 * 60 * 1000;
-            final long h = 60 * 60 * 1000;
-            final long m = 60 * 1000;
-            final long s = 1000;
+                final long h = 60 * 60 * 1000;
+                final long m = 60 * 1000;
+                final long s = 1000;
 
 //        if(elapsedTimeInMilliSeconds / d > 0){
 //            sb.append(elapsedTimeInMilliSeconds/d).append(this.getString(R.string.notification_msg_elapsed_time_second_postfix));
 //        }
 
-            if (elapsedTimeInMilliSeconds / h > 0) {
-                sb.append(elapsedTimeInMilliSeconds / h).append(this.getString(R.string.notification_msg_elapsed_time_hour_postfix));
-            }
+                if (elapsedTimeInMilliSeconds / h > 0) {
+                    sb.append(elapsedTimeInMilliSeconds / h).append(this.getString(R.string.notification_msg_elapsed_time_hour_postfix));
+                }
 
-            if (elapsedTimeInMilliSeconds / m > 0) {
-                sb.append(elapsedTimeInMilliSeconds / m).append(this.getString(R.string.notification_msg_elapsed_time_minute_postfix));
-            }
+                if (elapsedTimeInMilliSeconds / m > 0) {
+                    sb.append(elapsedTimeInMilliSeconds / m).append(this.getString(R.string.notification_msg_elapsed_time_minute_postfix));
+                }
 
-            if (elapsedTimeInMilliSeconds / s > 0) {
-                sb.append(elapsedTimeInMilliSeconds / s).append(this.getString(R.string.notification_msg_elapsed_time_second_postfix));
-            }
+//            if (elapsedTimeInMilliSeconds / s > 0) {
+//                sb.append(elapsedTimeInMilliSeconds / s).append(this.getString(R.string.notification_msg_elapsed_time_second_postfix));
+//            }
 
-            if (elapsedTimeInMilliSeconds < s) {//m){
-                sb.append(this.getString(R.string.notification_msg_elapsed_time_under_minute));
+                if (elapsedTimeInMilliSeconds < m){
+                    sb.append(this.getString(R.string.notification_msg_elapsed_time_under_minute));
+                }
             }
-//        sb.insert(0,msg);
-
             CharSequence contentText = (CharSequence) sb.toString();
-//            this.notificationManager.cancelAll();
             Notification nt = this.buildNotification(contentText);
             this.startForeground(NotificationUIService.NOTIFICATION_ID, nt);
             this.notificationManager.notify(NotificationUIService.NOTIFICATION_ID, nt);
         }
     }
+
     @Override
     public synchronized void enable(){
         if(!this.isEnabled) {
             this.isEnabled = true;
         }
-        String msg = this.getString(R.string.notification_msg_enable);
-
-        this.updateNotification(msg, this.dataManager.getElapsedTime());
+        String msg;
+        long elapsed;
+        if(this.dataManager != null){
+            elapsed = this.dataManager.getElapsedTime();
+            msg = this.getString(R.string.notification_msg_enable);
+        }
+        else {
+            elapsed = -1;
+            msg = this.getString(R.string.notification_msg_disable);
+        }
+        this.updateNotification(msg, elapsed);
     }
+
     @Override
     public synchronized void disable(){
         if(this.isEnabled) {
             this.isEnabled = false;
         }
         String msg = this.getString(R.string.notification_msg_disable);
-        this.updateNotification(msg, this.dataManager.getElapsedTime());
+        long elapsed;
+        if(this.dataManager != null){
+            elapsed = this.dataManager.getElapsedTime();
+        }
+        else {
+            elapsed = -1;
+        }
+        this.updateNotification(msg, elapsed);
     }
+
     @Override
     public void advise(String msg) {
         if(this.isEnabled && this.hd != null) {
@@ -459,24 +446,28 @@ public class NotificationUIService extends Service implements NotificationUIMana
         }
     }
 
-    public boolean isEnabled() {
+    public synchronized boolean isEnabled() {
         return isEnabled;
     }
 
     public synchronized void quit(){
         this.disable();
-        this.dataManager.disable();
+        if(this.dataManager != null) {
+            this.dataManager.disable();
+        }
         this.notificationManager.cancel(NotificationUIService.NOTIFICATION_ID);
+        this.thd.interrupt();
         this.unregisterReceiver(this.br);
         this.stopSelf();
     }
-//    public Notification getNotification() {
-//        return this.notification;
-//    }
+
     public NotificationManager getNotificationManager() {
         return this.notificationManager;
     }
     public NotificationChannel getNotificationChannel() {
         return this.notificationChannel;
+    }
+    public NotificationDataManager getDataManager() {
+        return dataManager;
     }
 }
