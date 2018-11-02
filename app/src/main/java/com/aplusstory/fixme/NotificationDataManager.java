@@ -1,5 +1,5 @@
 package com.aplusstory.fixme;
 
-public interface Notifier {
+public interface NotificationDataManager {
     int setRecognizer(Recognizer r);
 }
