@@ -7,14 +7,27 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.util.Log;
 
+import java.util.ArrayList;
+import java.util.List;
+
 class EnvironmentRecognizer implements Recognizer{
+    public static final long DELAY_FEWSEC = 3000;
+    public static final long DELAY_SOMESEC = 10000;
+    public static final long DELAY_AMIN = 60000;
+    public static final long DELAY_FEWMIN = 180000;
+
+    public static final float LIGHT_DARK = 100.0f; //threshold of illumination; should be obtained by experiment
+
     private SensorManager sm = null;
     private SensorEventListener sel = null;
     private Context context;
     private boolean cond = false;
     private boolean isEnabled;
-    private Object extra;
-
+    private float sensorValue = 0.0f;
+    private Thread thd = null;
+    private long updl = EnvironmentRecognizer.DELAY_FEWSEC;
+    private long tInDark = -1;
+    private long dInDark = -1;
 
     public EnvironmentRecognizer(Context context){
         this.initialize(context);
@@ -22,8 +35,15 @@ class EnvironmentRecognizer implements Recognizer{
 
     private void initialize(Context context){
         this.context = context;
+        this.dInDark = EnvironmentRecognizer.DELAY_SOMESEC;
+        this.isEnabled = true;
         if(!this.getSensorManager()){
-
+            Log.d("EnvRcg", "getting sensor value failed.");
+            //error handle
+        }
+        if(this.thd == null || !this.thd.isAlive()){
+            this.thd = new EnvironmentRecognizingThread();
+            thd.start();
         }
     }
 
@@ -41,7 +61,9 @@ class EnvironmentRecognizer implements Recognizer{
                         switch (event.sensor.getType()) {
                             case Sensor.TYPE_LIGHT:
                                 Log.d("EnvRcg", "light sensor value changed. value : " + Float.toString(sv[0]));
-                                that.extra = (Object) sv[0];
+                                synchronized (that){
+                                    that.sensorValue = sv[0];
+                                }
                                 break;
                         }
                     }
@@ -62,19 +84,57 @@ class EnvironmentRecognizer implements Recognizer{
         return this.sm != null;
     }
 
+    public class EnvironmentRecognizingThread extends Thread{
+        @Override
+        public void run() {
+            EnvironmentRecognizer that = EnvironmentRecognizer.this;
+            while(that.isEnabled()){
+                long now = System.currentTimeMillis();
+                if(that.sm != null){
+                    synchronized (that) {
+                        if(that.sensorValue < EnvironmentRecognizer.LIGHT_DARK) {
+                            Log.d("EnvRcg", "dark outside, sensor value = " + Float.toString(that.sensorValue));
+                            if (that.tInDark > 0 && now - that.tInDark > that.dInDark) {
+                                that.cond = true;
+                            } else {
+                                that.tInDark = now;
+                            }
+                        }
+
+                    }
+
+                } else{
+                    that.getSensorManager();
+                }
+
+                try {
+                    Thread.sleep(that.updl);
+                } catch(InterruptedException e){
+                    return;
+                }
+            }
+        }
+    }
+
     @Override
     public boolean checkCondition() {
-        return this.cond;
+        synchronized (this) {
+            return this.cond;
+        }
     }
 
     @Override
     public boolean isEnabled() {
-        return this.isEnabled;
+        synchronized (this) {
+            return this.isEnabled;
+        }
     }
 
     @Override
     public Object getExtraData() {
-        return this.extra;
+        synchronized (this) {
+            return (Object)this.sensorValue;
+        }
     }
 
     @Override

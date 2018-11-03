@@ -94,11 +94,6 @@ public class UserRecognizer implements Recognizer{
             UserRecognizer that = UserRecognizer.this;
             while(that.isEnabled()){
                 long now = System.currentTimeMillis();
-                try {
-                    Thread.sleep(that.updl);
-                } catch(InterruptedException e){
-                    return;
-                }
                 if(that.wdsInstance != null) {
                     synchronized (that) {
                         if (that.tUserRecog > 0 && that.tScreenOn > 0 && that.dUserRecog > now - that.tUserRecog) {
@@ -113,6 +108,11 @@ public class UserRecognizer implements Recognizer{
                     if(that.wdsInstance != null){
                         that.wdsInstance.setHandler(hd);
                     }
+                }
+                try {
+                    Thread.sleep(that.updl);
+                } catch(InterruptedException e){
+                    return;
                 }
             }
         }

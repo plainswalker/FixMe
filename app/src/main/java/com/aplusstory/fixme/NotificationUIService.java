@@ -102,7 +102,7 @@ public class NotificationUIService extends Service implements NotificationUIMana
                 @Override
                 public boolean checkCondition() {
                     for(Recognizer r : this.r){
-                        if(r.getClass() == UserRecognizer.class && r.checkCondition()){
+                        if(r.checkCondition() && r.getClass() == UserRecognizer.class){
                            return true;
                         }
                     }
@@ -129,10 +129,10 @@ public class NotificationUIService extends Service implements NotificationUIMana
                     for(Recognizer r : this.r){
                         if(r.checkCondition()){
                             if(r.getClass() == UserRecognizer.class){
-                                rt &= NotificationDataManager.COND_TIME_OVERUSE;
+                                rt |= NotificationDataManager.COND_TIME_OVERUSE;
                             }
                             else if(r.getClass() == EnvironmentRecognizer.class){
-                                rt &= NotificationDataManager.COND_ENVIRON_LIGHT;
+                                rt |= NotificationDataManager.COND_ENVIRON_LIGHT;
                             }
                         }
                     }
