@@ -67,14 +67,17 @@ public class NotificationUIService extends Service implements NotificationUIMana
         if(this.dataManager == null){
             //test code
             this.dataManager = new NotificationDataManager(){
-                Recognizer r;
+                List<Recognizer> r = null;
                 int timer_d = 0;
                 int timer_t = 0;
                 private boolean isEnabled = true;
 
                 @Override
                 public void addRecognizer(Recognizer r) {
-                    this.r = r;
+                    if(this.r == null) {
+                        this.r = new ArrayList<>();
+                    }
+                    this.r.add(r);
                 }
 
                 @Override
@@ -98,29 +101,55 @@ public class NotificationUIService extends Service implements NotificationUIMana
 
                 @Override
                 public boolean checkCondition() {
-                    return true;
+                    for(Recognizer r : this.r){
+                        if(r.getClass() == UserRecognizer.class && r.checkCondition()){
+                           return true;
+                        }
+                    }
+                    return false;
                 }
 
                 @Override
                 public long getDelay() {
                     synchronized (this) {
-                        return this.timer_d += 1000;
+                        return this.timer_d;
                     }
                 }
 
                 @Override
                 public long getElapsedTime() {
                     synchronized (this) {
-                        return this.timer_t += 1000;
+                        return this.timer_t += 60000;
                     }
                 }
 
                 @Override
                 public int getConditionCode() {
-                    return NotificationDataManager.COND_TIME_OVERUSE;
+                    int rt = 0;
+                    for(Recognizer r : this.r){
+                        if(r.checkCondition()){
+                            if(r.getClass() == UserRecognizer.class){
+                                rt &= NotificationDataManager.COND_TIME_OVERUSE;
+                            }
+                            else if(r.getClass() == EnvironmentRecognizer.class){
+                                rt &= NotificationDataManager.COND_ENVIRON_LIGHT;
+                            }
+                        }
+                    }
+
+                    return rt;
+                }
+
+                @Override
+                public void destroy() {
+                    for(Recognizer r : this.r){
+                        r.destroy();
+                    }
                 }
             };
         }
+        this.dataManager.addRecognizer(new UserRecognizer(this));
+        this.dataManager.addRecognizer(new EnvironmentRecognizer(this));
 
         if(this.intfl == null){
             this.intfl = new IntentFilter();
@@ -204,11 +233,11 @@ public class NotificationUIService extends Service implements NotificationUIMana
                     Log.d("NotiUIService", "Thread CheckCond, cond : " + Integer.toString(cond));
                     this.hd.sendEmptyMessage(0);
                     StringBuilder msg =new StringBuilder("");
-                    if(cond == NotificationDataManager.COND_TIME_OVERUSE){
+                    if((cond & NotificationDataManager.COND_TIME_OVERUSE) != 0){
                         msg.append(NotificationUIService.this.getString(R.string.advice_msg_posture));
                     }
 
-                    if(cond == NotificationDataManager.COND_ENVIRON_LIGHT){
+                    if((cond & NotificationDataManager.COND_ENVIRON_LIGHT) != 0){
                         if(msg.length() > 1){
                             msg.append("\n");
                         }
@@ -454,6 +483,7 @@ public class NotificationUIService extends Service implements NotificationUIMana
         this.disable();
         if(this.dataManager != null) {
             this.dataManager.disable();
+            this.dataManager.destroy();
         }
         this.notificationManager.cancel(NotificationUIService.NOTIFICATION_ID);
         this.thd.interrupt();

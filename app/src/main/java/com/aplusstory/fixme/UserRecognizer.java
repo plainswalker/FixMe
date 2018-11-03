@@ -6,9 +6,9 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Handler;
 import android.os.Message;
-import android.os.PowerManager;
+import android.util.Log;
 
-import java.util.Timer;
+import org.jetbrains.annotations.Nullable;
 
 public class UserRecognizer implements Recognizer{
     public static final long DELAY_FEWSEC = 3000;
@@ -18,12 +18,18 @@ public class UserRecognizer implements Recognizer{
     public static final long DELAY_HALFHOUR = 1800000;
     public static final long DELAY_ANHOUR = 3600000;
 
+    private long updl = UserRecognizer.DELAY_FEWSEC;
+
     private Context context;
     private Handler hd = null;
     private Thread thd = null;
     private IntentFilter intfl = null;
     private BroadcastReceiver br = null;
+    private WinDetectService wdsInstance = null;
     private boolean isEnabled = true;
+    private Object extra = null;
+
+    private boolean cond;
 
     private long tScreenOn;
     private long dScreenOn;
@@ -36,11 +42,13 @@ public class UserRecognizer implements Recognizer{
     }
 
     private void initialize(Context context){
+        Log.d("UsrRcg", "initialize");
+        long now = System.currentTimeMillis();
         this.context = context;
-        this.tScreenOn = -1;
-        this.tUserRecog = -1;
+        this.tScreenOn = now;
+        this.tUserRecog = now;
         this.dScreenOn = UserRecognizer.DELAY_FEWSEC;
-        this.dUserRecog = UserRecognizer.DELAY_SOMESEC;
+        this.dUserRecog = UserRecognizer.DELAY_ANHOUR;
 
         if(this.hd == null) {
             this.hd = new UserRecognizingHandler();
@@ -54,15 +62,20 @@ public class UserRecognizer implements Recognizer{
 
         if(this.br == null){
             this.br = new ScreenEventReceiver();
-            this.context.registerReceiver(this.br,this.intfl);
         }
+
+        this.context.registerReceiver(this.br,this.intfl);
 
         if(this.thd == null || !this.thd.isAlive()){
             this.thd = new UserRecognizingThread();
             ((UserRecognizingThread)this.thd).setHandler(this.hd);
             this.thd.start();
         }
-
+        WinDetectService wds = WinDetectService.getInstance();
+        if(wds != null) {
+            this.wdsInstance = wds;
+            this.wdsInstance.setHandler(hd);
+        }
     }
 
     public class UserRecognizingThread extends Thread{
@@ -80,16 +93,27 @@ public class UserRecognizer implements Recognizer{
         public void run() {
             UserRecognizer that = UserRecognizer.this;
             while(that.isEnabled()){
-
-                long dS = dScreenOn;
-                long dU = dUserRecog;
-                long delay = (dS > dU) ? dS : dU;
+                long now = System.currentTimeMillis();
                 try {
-                    Thread.sleep(delay);
+                    Thread.sleep(that.updl);
                 } catch(InterruptedException e){
                     return;
                 }
-
+                if(that.wdsInstance != null) {
+                    synchronized (that) {
+                        if (that.tUserRecog > 0 && that.tScreenOn > 0 && that.dUserRecog > now - that.tUserRecog) {
+                            that.cond = true;
+                        } else {
+                            that.cond = false;
+                        }
+                    }
+                }
+                else{
+                    that.wdsInstance = WinDetectService.getInstance();
+                    if(that.wdsInstance != null){
+                        that.wdsInstance.setHandler(hd);
+                    }
+                }
             }
         }
     }
@@ -98,10 +122,14 @@ public class UserRecognizer implements Recognizer{
         @Override
         public void handleMessage(Message msg) {
             UserRecognizer that = UserRecognizer.this;
-            if(msg.what != 0){
-                synchronized (that){
-                    that.tUserRecog = System.currentTimeMillis();
-                }
+            int what = msg.what;
+            if(what != 0){
+                String actname = msg.getData().getString("ActivityName");
+                Log.d("UsrRcg", "Handler Message Received, data : "  + actname);
+                that.extra = (Object)actname;
+            }
+            synchronized (that){
+                that.tUserRecog = System.currentTimeMillis();
             }
         }
     }
@@ -121,7 +149,10 @@ public class UserRecognizer implements Recognizer{
                 }
             } else if(action.equals(Intent.ACTION_SCREEN_OFF)){
                 synchronized (that){
-                    that.tScreenOn = -1;
+                    long now = System.currentTimeMillis();
+                    if(that.tScreenOn + that.dScreenOn < now) {
+                        that.tScreenOn = -1;
+                    }
                 }
             }
         }
@@ -129,7 +160,9 @@ public class UserRecognizer implements Recognizer{
 
     @Override
     public boolean checkCondition() {
-        return false;
+        synchronized (this) {
+            return this.cond;
+        }
     }
 
     @Override
@@ -137,30 +170,49 @@ public class UserRecognizer implements Recognizer{
         return this.isEnabled;
     }
 
+    @Nullable
     @Override
-    public synchronized void enable() {
-        if(!this.isEnabled){
-            this.isEnabled = true;
-        }
-        if(this.thd == null || !this.thd.isAlive() ){
-            this.thd = new UserRecognizingThread();
-            this.thd.start();
+    public Object getExtraData() {
+        return this.extra;
+    }
+
+    @Override
+    public Class getExtraDataType() {
+        return String.class;
+    }
+
+    @Override
+    public void enable() {
+        synchronized (this) {
+            if (!this.isEnabled) {
+                this.isEnabled = true;
+            }
+            if (this.thd == null || !this.thd.isAlive()) {
+                this.thd = new UserRecognizingThread();
+                this.thd.start();
+            }
         }
     }
 
     @Override
     public void disable() {
-        if(this.isEnabled){
-            this.isEnabled = false;
+        synchronized (this) {
+            if (this.isEnabled) {
+                this.isEnabled = false;
+            }
         }
     }
 
-    public synchronized void setDelayScreenOn(int delay){
-        this.dScreenOn = delay;
+    public void setDelayScreenOn(int delay){
+        synchronized (this) {
+            this.dScreenOn = delay;
+        }
     }
 
-    public synchronized void setDelayUserRecog(int delay){
-        this.dUserRecog = delay;
+    public void setDelayUserRecog(int delay){
+        synchronized (this) {
+            this.dUserRecog = delay;
+        }
     }
 
     public void destroy(){

@@ -11,7 +11,12 @@
         android:theme="@style/AppTheme">
 
         <service android:name=".NotificationUIService" />
-
+        <service android:name=".WinDetectService"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService"></action>
+            </intent-filter>
+        </service>
         <activity android:name=".MainActivity"
             android:label="FixMe">
             <intent-filter>
@@ -20,5 +25,4 @@
             </intent-filter>
         </activity>
     </application>
-
 </manifest>

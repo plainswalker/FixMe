@@ -15,4 +15,5 @@ public interface NotificationDataManager{
     int getConditionCode();
     long getDelay();
     long getElapsedTime();
+    void destroy();
 }
