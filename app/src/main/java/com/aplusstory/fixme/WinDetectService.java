@@ -16,7 +16,7 @@ import android.view.accessibility.AccessibilityEvent;
 import org.jetbrains.annotations.Nullable;
 
 public class WinDetectService extends AccessibilityService{
-    private static WinDetectService wdsInstance;
+    private static WinDetectService wdsInstance  =null;
     private Handler hd = null;
     private int eventcnt = 0;
 

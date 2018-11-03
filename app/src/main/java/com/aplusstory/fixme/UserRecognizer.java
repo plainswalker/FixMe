@@ -160,14 +160,20 @@ public class UserRecognizer implements Recognizer{
 
     @Override
     public boolean checkCondition() {
+
         synchronized (this) {
+            if(this.cond){
+                Log.d("UsrRcg", "Check condition");
+            }
             return this.cond;
         }
     }
 
     @Override
-    public synchronized boolean isEnabled() {
-        return this.isEnabled;
+    public boolean isEnabled() {
+        synchronized (this) {
+            return this.isEnabled;
+        }
     }
 
     @Nullable

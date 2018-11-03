@@ -66,90 +66,11 @@ public class NotificationUIService extends Service implements NotificationUIMana
 
         if(this.dataManager == null){
             //test code
-            this.dataManager = new NotificationDataManager(){
-                List<Recognizer> r = null;
-                int timer_d = 0;
-                int timer_t = 0;
-                private boolean isEnabled = true;
-
-                @Override
-                public void addRecognizer(Recognizer r) {
-                    if(this.r == null) {
-                        this.r = new ArrayList<>();
-                    }
-                    this.r.add(r);
-                }
-
-                @Override
-                public boolean isEnabled() {
-                    return this.isEnabled;
-                }
-
-                @Override
-                public synchronized void enable() {
-                    if(!this.isEnabled){
-                        this.isEnabled = true;
-                    }
-                }
-
-                @Override
-                public synchronized void disable() {
-                    if(this.isEnabled){
-                        this.isEnabled = false;
-                    }
-                }
-
-                @Override
-                public boolean checkCondition() {
-                    for(Recognizer r : this.r){
-                        if(r.checkCondition() && r.getClass() == UserRecognizer.class){
-                           return true;
-                        }
-                    }
-                    return false;
-                }
-
-                @Override
-                public long getDelay() {
-                    synchronized (this) {
-                        return this.timer_d;
-                    }
-                }
-
-                @Override
-                public long getElapsedTime() {
-                    synchronized (this) {
-                        return this.timer_t += 60000;
-                    }
-                }
-
-                @Override
-                public int getConditionCode() {
-                    int rt = 0;
-                    for(Recognizer r : this.r){
-                        if(r.checkCondition()){
-                            if(r.getClass() == UserRecognizer.class){
-                                rt |= NotificationDataManager.COND_TIME_OVERUSE;
-                            }
-                            else if(r.getClass() == EnvironmentRecognizer.class){
-                                rt |= NotificationDataManager.COND_ENVIRON_LIGHT;
-                            }
-                        }
-                    }
-
-                    return rt;
-                }
-
-                @Override
-                public void destroy() {
-                    for(Recognizer r : this.r){
-                        r.destroy();
-                    }
-                }
-            };
+            this.dataManager = new RecognizerManager(this);
         }
         this.dataManager.addRecognizer(new UserRecognizer(this));
         this.dataManager.addRecognizer(new EnvironmentRecognizer(this));
+        this.dataManager.enable();
 
         if(this.intfl == null){
             this.intfl = new IntentFilter();
@@ -216,34 +137,40 @@ public class NotificationUIService extends Service implements NotificationUIMana
 
         @Override
         public void run() {
+            NotificationUIService that = NotificationUIService.this;
             while(true){
+                that.updateNotification(
+                        ((that.isEnabled) ?
+                                that.getString(R.string.notification_msg_enable)
+                                : that.getString(R.string.notification_msg_disable)),
+                        that.dataManager.getElapsedTime()
+                );
+                synchronized (that.dataManager) {
+                    if (that.isEnabled && that.dataManager.checkCondition()) {
+                        int cond = that.dataManager.getConditionCode();
+                        Log.d("NotiUIService", "Thread CheckCond, cond : " + Integer.toString(cond));
+                        this.hd.sendEmptyMessage(0);
+                        StringBuilder msg = new StringBuilder("");
+                        if ((cond & NotificationDataManager.COND_TIME_OVERUSE) != 0) {
+                            msg.append(that.getString(R.string.advice_msg_posture));
+                        }
+
+                        if ((cond & NotificationDataManager.COND_ENVIRON_LIGHT) != 0) {
+                            if (msg.length() > 1) {
+                                msg.append("\n");
+                            }
+                            msg.append(that.getString(R.string.advise_msg_light));
+                        }
+                        if (msg.length() > 0) {
+                            that.advise(msg.toString());
+                        }
+                    }
+                }
+
                 try {
                     Thread.sleep(NotificationUIService.UPDATE_DELAY);
                 } catch (InterruptedException e){
                     return;
-                }
-                NotificationUIService.this.updateNotification(
-                        ((NotificationUIService.this.isEnabled) ?
-                                NotificationUIService.this.getString(R.string.notification_msg_enable)
-                                :NotificationUIService.this.getString(R.string.notification_msg_disable)),
-                        NotificationUIService.this.dataManager.getElapsedTime()
-                );
-                if(NotificationUIService.this.isEnabled && NotificationUIService.this.dataManager.checkCondition()){
-                    int cond = NotificationUIService.this.dataManager.getConditionCode();
-                    Log.d("NotiUIService", "Thread CheckCond, cond : " + Integer.toString(cond));
-                    this.hd.sendEmptyMessage(0);
-                    StringBuilder msg =new StringBuilder("");
-                    if((cond & NotificationDataManager.COND_TIME_OVERUSE) != 0){
-                        msg.append(NotificationUIService.this.getString(R.string.advice_msg_posture));
-                    }
-
-                    if((cond & NotificationDataManager.COND_ENVIRON_LIGHT) != 0){
-                        if(msg.length() > 1){
-                            msg.append("\n");
-                        }
-                        msg.append(NotificationUIService.this.getString(R.string.advise_msg_light));
-                    }
-                    NotificationUIService.this.advise(msg.toString());
                 }
             }
         }

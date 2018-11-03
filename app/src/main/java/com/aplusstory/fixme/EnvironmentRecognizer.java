@@ -27,7 +27,7 @@ class EnvironmentRecognizer implements Recognizer{
     private Thread thd = null;
     private long updl = EnvironmentRecognizer.DELAY_FEWSEC;
     private long tInDark = -1;
-    private long dInDark = -1;
+    private long dInDark;
 
     public EnvironmentRecognizer(Context context){
         this.initialize(context);
@@ -93,14 +93,20 @@ class EnvironmentRecognizer implements Recognizer{
                 if(that.sm != null){
                     synchronized (that) {
                         if(that.sensorValue < EnvironmentRecognizer.LIGHT_DARK) {
-                            Log.d("EnvRcg", "dark outside, sensor value = " + Float.toString(that.sensorValue));
-                            if (that.tInDark > 0 && now - that.tInDark > that.dInDark) {
-                                that.cond = true;
+                            Log.d("EnvRcg", "dark here, sensor value = " + Float.toString(that.sensorValue));
+                            if (that.tInDark > 0){
+                               if((now - that.tInDark) >= that.dInDark){
+                                    that.cond = true;
+                                }
                             } else {
+                                Log.d("EnvRcg", "entering dark place");
                                 that.tInDark = now;
                             }
                         }
-
+                        else {
+                            that.cond = false;
+                            that.tInDark = -1;
+                        }
                     }
 
                 } else{
@@ -119,6 +125,9 @@ class EnvironmentRecognizer implements Recognizer{
     @Override
     public boolean checkCondition() {
         synchronized (this) {
+            if(this.cond){
+                Log.d("EnvRcg", "Check condition");
+            }
             return this.cond;
         }
     }
