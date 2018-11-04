@@ -3,26 +3,29 @@ package com.aplusstory.fixme;
 import android.content.Context;
 import android.util.Log;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class RecognizerManager implements NotificationDataManager {
     private List<Recognizer> recognizers = null;
-    private long delay = 0;
+    private long dAdvDelay = 0;
     private long tElpsedBegin;
     private long tCondBegin;
     private boolean isEnabled = true;
     private int condCode = 0;
     private Context context;
-
-
+    private NotificationUserSettingManager sm = null;
 
     public RecognizerManager(Context context){
         this.context = context;
         this.tElpsedBegin = System.currentTimeMillis();
         this.tCondBegin = -1;
 //        this.delay = 30 * 60 * 1000; //TODO : load settings
-        this.delay = 10000;
+        this.dAdvDelay = 10000;
+        this.sm = new NotificationUserSettingManager();
+        this.sm.setFileManager(null);
     }
 
     @Override
@@ -74,7 +77,7 @@ public class RecognizerManager implements NotificationDataManager {
             if(r.checkCondition()){
                 if(r.getClass() == UserRecognizer.class) {
                     if(this.tCondBegin > 0) {
-                        boolean usageCond = (now - this.tCondBegin) < this.delay;
+                        boolean usageCond = (now - this.tCondBegin) < this.dAdvDelay;
                         if(usageCond){
                             Log.d("RcgMan", "Usage Timer : " + Long.toString((now - this.tCondBegin) / 1000) + "sec");
 
@@ -105,13 +108,6 @@ public class RecognizerManager implements NotificationDataManager {
     }
 
     @Override
-    public long getDelay() {
-        synchronized (this) {
-            return this.delay;
-        }
-    }
-
-    @Override
     public long getElapsedTime() {
         long now = System.currentTimeMillis();
         synchronized (this) {
@@ -121,6 +117,18 @@ public class RecognizerManager implements NotificationDataManager {
                 this.tElpsedBegin = now;
                 return 0;
             }
+        }
+    }
+
+    @Nullable
+    @Override
+    public String getUISetting(String key) {
+        if(key.equals(NotificationUIManager.VIBERATE_SETTING_KEY)){
+            return Boolean.toString(this.sm.getViberation());
+        } else if(key.equals(NotificationUIManager.TRANSPARENCY_SETTING_KEY)){
+            return Integer.toString(this.sm.getTransparency());
+        } else{
+            return null;
         }
     }
 

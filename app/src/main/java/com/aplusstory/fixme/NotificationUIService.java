@@ -16,6 +16,8 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.Toast;
@@ -33,6 +35,9 @@ public class NotificationUIService extends Service implements NotificationUIMana
     private NotificationDataManager dataManager;
     private boolean isEnabled = false;
 
+    private boolean isViberates = false;
+    private int advTstTrsp = (byte)0xFF;
+
     private NotificationManager notificationManager = null;
     private NotificationChannel notificationChannel = null;
     private Notification.Builder notificationBuilder = null;
@@ -42,6 +47,7 @@ public class NotificationUIService extends Service implements NotificationUIMana
     private Binder bd = null;
     private IntentFilter intfl = null;
     private BroadcastReceiver br = null;
+    private Vibrator vtor = null;
 
     public NotificationUIService(){
         super();
@@ -71,6 +77,13 @@ public class NotificationUIService extends Service implements NotificationUIMana
         this.dataManager.addRecognizer(new UserRecognizer(this));
         this.dataManager.addRecognizer(new EnvironmentRecognizer(this));
         this.dataManager.enable();
+        String setting;
+        if((setting = this.dataManager.getUISetting(NotificationUIManager.VIBERATE_SETTING_KEY)) != null){
+            this.isViberates = Boolean.parseBoolean(setting);
+        }
+        if((setting = this.dataManager.getUISetting(NotificationUIManager.TRANSPARENCY_SETTING_KEY)) != null){
+            this.advTstTrsp = Integer.parseInt(setting);
+        }
 
         if(this.intfl == null){
             this.intfl = new IntentFilter();
@@ -93,6 +106,9 @@ public class NotificationUIService extends Service implements NotificationUIMana
         }
         if(this.bd == null){
             this.bd = new ServiceBinder();
+        }
+        if(this.vtor == null){
+            this.vtor = (Vibrator) this.getSystemService(Context.VIBRATOR_SERVICE);
         }
     }
 
@@ -186,11 +202,17 @@ public class NotificationUIService extends Service implements NotificationUIMana
 
         @Override
         public void handleMessage(Message msg) {
+            NotificationUIService that = NotificationUIService.this;
             Log.d("NotiUIService", "HandleMsg");
             Bundle bd = msg.getData();
             String sntMsg = (String)bd.getCharSequence("msg");
             if(sntMsg != null){
-                Toast.makeText(context, sntMsg, Toast.LENGTH_SHORT).show();
+                Toast tst = Toast.makeText(context, sntMsg, Toast.LENGTH_SHORT);
+                tst.getView().getBackground().setAlpha(that.advTstTrsp);
+                tst.show();
+                if(that.isViberates) {
+                    that.vtor.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
+                }
             }
         }
     }

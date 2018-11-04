@@ -1,5 +1,5 @@
 package com.aplusstory.fixme;
 
 public interface UserDataManager {
-    int setFileManager(FileManager f);
+    void setFileManager(FileManager f);
 }

@@ -8,12 +8,16 @@ public interface NotificationDataManager{
     public static final int COND_ENVIRON_LIGHT = 2;
 
     void addRecognizer(Recognizer r);
+
     boolean isEnabled();
-    boolean checkCondition();
     void enable();
     void disable();
+
+    boolean checkCondition();
     int getConditionCode();
-    long getDelay();
     long getElapsedTime();
+
+    String getUISetting(String key);
+
     void destroy();
 }
