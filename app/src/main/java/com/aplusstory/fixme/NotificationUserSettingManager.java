@@ -2,6 +2,11 @@ package com.aplusstory.fixme;
 
 public class NotificationUserSettingManager implements SettingsDataManager {
     private FileManager fm = null;
+
+    public NotificationUserSettingManager(){
+        this.fm = new SettingsFileManager();
+    }
+
     @Override
     public void setFileManager(FileManager f) {
         this.fm = f;
