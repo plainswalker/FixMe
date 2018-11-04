@@ -1,32 +1,12 @@
 package com.aplusstory.fixme;
 
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.widget.Toast;
+public interface NotificationUIManager {
+    public static final String VIBRATE_SETTING_KEY = "vibration";
+    public static final String TRANSPARENCY_SETTING_KEY = "transparency";
 
-
-public abstract class NotificationUIManager {
-    private NotificationDataManager fmnm;
-    private NotificationManager nm;
-    private NotificationChannel nch;
-    private Notification ni;
-    private Toast ltmi;
-
-    public int setDataManager(NotificationDataManager m){
-        try {
-            this.fmnm = m;
-        }
-        catch(Exception e){
-            return 1;
-        }
-
-        return 0;
-    }
-
-    abstract public int setNotification(Notification nt);
-
-    abstract public int updateNotification(String msg, long elt);
-
-
+    public void setDataManager(NotificationDataManager nm);
+    boolean isEnabled();
+    public void enable();
+    public void disable();
+    public void advise(String msg);
 }
