@@ -1,5 +1,8 @@
 package com.aplusstory.fixme;
 
-public interface FileManager {
+import org.jetbrains.annotations.Nullable;
 
+public interface FileManager {
+    @Nullable
+    String getData(String key);
 }

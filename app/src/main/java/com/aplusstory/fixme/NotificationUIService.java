@@ -14,7 +14,6 @@ import android.os.Binder;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.os.Looper;
 import android.os.Message;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
@@ -22,9 +21,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.Toast;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 public class NotificationUIService extends Service implements NotificationUIManager{
     private static String NOTIFICATION_CHANNEL_ID = "FixMe_Noti";
@@ -78,7 +75,7 @@ public class NotificationUIService extends Service implements NotificationUIMana
         this.dataManager.addRecognizer(new EnvironmentRecognizer(this));
         this.dataManager.enable();
         String setting;
-        if((setting = this.dataManager.getUISetting(NotificationUIManager.VIBERATE_SETTING_KEY)) != null){
+        if((setting = this.dataManager.getUISetting(NotificationUIManager.VIBRATE_SETTING_KEY)) != null){
             this.isViberates = Boolean.parseBoolean(setting);
         }
         if((setting = this.dataManager.getUISetting(NotificationUIManager.TRANSPARENCY_SETTING_KEY)) != null){

@@ -28,6 +28,7 @@ class EnvironmentRecognizer implements Recognizer{
     private long updl = EnvironmentRecognizer.DELAY_FEWSEC;
     private long tInDark = -1;
     private long dInDark;
+    private float threshold = EnvironmentRecognizer.LIGHT_DARK;
 
     public EnvironmentRecognizer(Context context){
         this.initialize(context);
@@ -92,7 +93,7 @@ class EnvironmentRecognizer implements Recognizer{
                 long now = System.currentTimeMillis();
                 if(that.sm != null){
                     synchronized (that) {
-                        if(that.sensorValue < EnvironmentRecognizer.LIGHT_DARK) {
+                        if(that.sensorValue < that.threshold) {
                             Log.d("EnvRcg", "dark here, sensor value = " + Float.toString(that.sensorValue));
                             if (that.tInDark > 0){
                                if((now - that.tInDark) >= that.dInDark){
@@ -120,6 +121,10 @@ class EnvironmentRecognizer implements Recognizer{
                 }
             }
         }
+    }
+
+    public void setThreshold(float threshold){
+        this.threshold = threshold;
     }
 
     @Override

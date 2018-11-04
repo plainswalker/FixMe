@@ -22,10 +22,10 @@ public class RecognizerManager implements NotificationDataManager {
         this.context = context;
         this.tElpsedBegin = System.currentTimeMillis();
         this.tCondBegin = -1;
-//        this.delay = 30 * 60 * 1000; //TODO : load settings
-        this.dAdvDelay = 10000;
+
         this.sm = new NotificationUserSettingManager();
-        this.sm.setFileManager(null);
+//        this.sm.setFileManager(new SettingsFileManager());
+        this.dAdvDelay = this.sm.getAdvisePeroiod();
     }
 
     @Override
@@ -37,6 +37,9 @@ public class RecognizerManager implements NotificationDataManager {
 
         for(Recognizer r : this.recognizers){
             Log.d("RcgMan", "recognizer : " + r.getClass().toString());
+            if(r.getClass() == EnvironmentRecognizer.class){
+                ((EnvironmentRecognizer)r).setThreshold(this.sm.getEnvironmentCondition());
+            }
         }
     }
 
@@ -123,7 +126,7 @@ public class RecognizerManager implements NotificationDataManager {
     @Nullable
     @Override
     public String getUISetting(String key) {
-        if(key.equals(NotificationUIManager.VIBERATE_SETTING_KEY)){
+        if(key.equals(NotificationUIManager.VIBRATE_SETTING_KEY)){
             return Boolean.toString(this.sm.getViberation());
         } else if(key.equals(NotificationUIManager.TRANSPARENCY_SETTING_KEY)){
             return Integer.toString(this.sm.getTransparency());
