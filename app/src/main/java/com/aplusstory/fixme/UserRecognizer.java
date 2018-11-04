@@ -11,6 +11,7 @@ import android.util.Log;
 import org.jetbrains.annotations.Nullable;
 
 public class UserRecognizer implements Recognizer{
+    public static final long DELAY_ASEC = 1000;
     public static final long DELAY_FEWSEC = 3000;
     public static final long DELAY_SOMESEC = 10000;
     public static final long DELAY_FEWMIN = 180000;
@@ -18,7 +19,7 @@ public class UserRecognizer implements Recognizer{
     public static final long DELAY_HALFHOUR = 1800000;
     public static final long DELAY_ANHOUR = 3600000;
 
-    private long updl = UserRecognizer.DELAY_FEWSEC;
+    private long updl = UserRecognizer.DELAY_ASEC;
 
     private Context context;
     private Handler hd = null;
@@ -26,7 +27,7 @@ public class UserRecognizer implements Recognizer{
     private IntentFilter intfl = null;
     private BroadcastReceiver br = null;
     private WinDetectService wdsInstance = null;
-    private boolean isEnabled = true;
+    private boolean isEnabled = false;
     private Object extra = null;
 
     private boolean cond;
@@ -93,6 +94,11 @@ public class UserRecognizer implements Recognizer{
         public void run() {
             UserRecognizer that = UserRecognizer.this;
             while(that.isEnabled()){
+                try {
+                    Thread.sleep(that.updl);
+                } catch(InterruptedException e){
+                    return;
+                }
                 long now = System.currentTimeMillis();
                 if(that.wdsInstance != null) {
                     synchronized (that) {
@@ -108,11 +114,6 @@ public class UserRecognizer implements Recognizer{
                     if(that.wdsInstance != null){
                         that.wdsInstance.setHandler(hd);
                     }
-                }
-                try {
-                    Thread.sleep(that.updl);
-                } catch(InterruptedException e){
-                    return;
                 }
             }
         }
@@ -160,11 +161,8 @@ public class UserRecognizer implements Recognizer{
 
     @Override
     public boolean checkCondition() {
-
         synchronized (this) {
-            if(this.cond){
-                Log.d("UsrRcg", "Check condition");
-            }
+            Log.d("UsrRcg", "Check condition : " + Boolean.toString(this.cond));
             return this.cond;
         }
     }
@@ -191,11 +189,15 @@ public class UserRecognizer implements Recognizer{
     public void enable() {
         synchronized (this) {
             if (!this.isEnabled) {
+                long now = System.currentTimeMillis();
                 this.isEnabled = true;
-            }
-            if (this.thd == null || !this.thd.isAlive()) {
-                this.thd = new UserRecognizingThread();
-                this.thd.start();
+                this.tScreenOn = now;
+                this.tUserRecog = now;
+                if (this.thd == null || !this.thd.isAlive()) {
+                    this.thd = new UserRecognizingThread();
+                    ((UserRecognizingThread)this.thd).setHandler(this.hd);
+                    this.thd.start();
+                }
             }
         }
     }
@@ -205,6 +207,8 @@ public class UserRecognizer implements Recognizer{
         synchronized (this) {
             if (this.isEnabled) {
                 this.isEnabled = false;
+                this.tUserRecog = -1;
+                this.tScreenOn = -1;
             }
         }
     }

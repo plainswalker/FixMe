@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.util.Log;
 
 import java.io.Serializable;
 
@@ -31,8 +32,9 @@ public class MainActivity extends Activity {
                 if (WinDetectService.getInstance() != null) {
                     MainActivity.this.startService(this.serviceIntent);
                     return;
+                } else{
+                    Log.d("MainActivity", "waiting for accessibility service...");
                 }
-
                 try {
                     Thread.sleep(1250);
                 } catch (InterruptedException e) {
