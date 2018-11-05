@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_gps_schedule"
+            android:title="GPS 스케줄 매니저" />
+        <item
+            android:id="@+id/nav_today_footprint"
+            android:title="오늘의 발자취" />
+        <item
+            android:id="@+id/nav_settings"
+            android:title="설정" />
+    </group>
+
+</menu>
+
+<!--
+                android:icon="@drawable/ic_menu_send"
+-->
