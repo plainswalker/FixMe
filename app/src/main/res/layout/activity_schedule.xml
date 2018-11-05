@@ -24,13 +24,19 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <fragment
-            android:id="@+id/fragment"
-            android:name="com.aplusstory.fixme.BlankFragment"
+        <!--<fragment-->
+            <!--android:id="@+id/fragment"-->
+            <!--android:name="com.aplusstory.fixme.BlankFragment"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="456dp"-->
+            <!--android:layout_alignParentBottom="true"-->
+            <!--android:layout_alignParentStart="true" />-->
+        <FrameLayout
+            android:id="@+id/fragment_blank"
             android:layout_width="match_parent"
-            android:layout_height="456dp"
+            android:layout_height="228dp"
             android:layout_alignParentBottom="true"
-            android:layout_alignParentStart="true" />
+            android:layout_alignParentStart="true"></FrameLayout>
     </RelativeLayout>
 
 </LinearLayout>
