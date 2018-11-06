@@ -37,8 +37,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity android:name=".ScheduleActivity" />
         <activity android:name=".SettingsActivity" />
+        <activity android:name=".AlarmOpacityActivity"/>
+        <activity android:name=".AlarmPeriodActivity"/>
+        <activity android:name=".FavoritesActivity"/>
+        <activity android:name=".FootDataSettingsActivity"/>
+        <activity android:name=".LightSensActivity"/>
     </application>
 </manifest>
