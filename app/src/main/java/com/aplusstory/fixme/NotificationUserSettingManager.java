@@ -1,10 +1,14 @@
 package com.aplusstory.fixme;
 
+import android.content.Context;
+
 public class NotificationUserSettingManager implements SettingsDataManager {
+    private Context context;
     private FileManager fm = null;
 
-    public NotificationUserSettingManager(){
-        this.fm = new SettingsFileManager();
+    public NotificationUserSettingManager(Context context){
+        this.context = context;
+        this.fm = new SettingsFileManager(this.context);
     }
 
     @Override

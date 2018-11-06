@@ -23,7 +23,7 @@ public class RecognizerManager implements NotificationDataManager {
         this.tElpsedBegin = System.currentTimeMillis();
         this.tCondBegin = -1;
 
-        this.sm = new NotificationUserSettingManager();
+        this.sm = new NotificationUserSettingManager(this.context);
 //        this.sm.setFileManager(new SettingsFileManager());
         this.dAdvDelay = this.sm.getAdvisePeroiod();
     }
