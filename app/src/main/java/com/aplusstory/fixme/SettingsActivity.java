@@ -20,10 +20,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class SettingsActivity extends AppCompatActivity implements SettingsUIManager{
+public class SettingsActivity extends AppCompatActivity{
 
     Toolbar toolbar2;
-    private SettingsDataManager sm = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -65,6 +64,7 @@ public class SettingsActivity extends AppCompatActivity implements SettingsUIMan
                     switch(position) {
                         case 0:
                             Intent intent = new Intent(getApplicationContext(), AlarmOpacityActivity.class);
+
                             startActivity(intent);
                             break;
                         case 1:
@@ -92,9 +92,6 @@ public class SettingsActivity extends AppCompatActivity implements SettingsUIMan
             }
         );
 
-
-
-
         ArrayAdapter<String> arrayAdapter2 = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, setlist2);
         list2.setAdapter(arrayAdapter2);
 
@@ -115,21 +112,5 @@ public class SettingsActivity extends AppCompatActivity implements SettingsUIMan
                 }
             }
         );
-
-        if(this.sm != null){
-            this.sm = new UserSettingsManager(this);
-        }
-    }
-
-    @Override
-    public void setDataManager(UserDataManager m) {
-        if(m instanceof SettingsUIManager){
-            this.setDataManager((SettingsDataManager)m);
-        }
-    }
-
-    @Override
-    public void setDataManager(SettingsDataManager sm) {
-        this.sm = sm;
     }
 }

@@ -24,7 +24,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="10dp"
-        android:text="알림창 투명도"
+        android:text="@string/setting_item_alert_transperancy"
         android:textColor="#FFFFFF"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="@+id/toolbar2"

@@ -27,7 +27,7 @@
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="12dp"
-            android:text="데이터 유지 기간"
+            android:text="@string/setting_item_footprint_data_duration"
             android:textColor="#FFFFFF"
             android:textSize="24sp"
             app:layout_constraintEnd_toEndOf="@+id/toolbar2"

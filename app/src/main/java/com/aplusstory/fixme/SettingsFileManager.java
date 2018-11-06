@@ -2,6 +2,7 @@ package com.aplusstory.fixme;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -31,6 +32,7 @@ public class SettingsFileManager implements FileManager {
     public boolean setData(String key, String value) {
         boolean rt = false;
         if(this.sp != null){
+            Log.d(this.getClass().getName(), "setting data, key : " + key +  ", value : " + value);
             rt = this.sp.edit().putString(key, value).commit();
         }
         return rt;
