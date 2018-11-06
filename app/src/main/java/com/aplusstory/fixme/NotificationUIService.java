@@ -261,7 +261,9 @@ public class NotificationUIService extends Service implements NotificationUIMana
         }
         private void settingsAction(Context context){
             Log.d("NotiActRecev","settings action received");
-            //change window to settings
+            Intent it = new Intent(NotificationUIService.this, SettingsActivity.class);
+            it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            NotificationUIService.this.startActivity(it);
 //            Toast.makeText(context,"setting", Toast.LENGTH_SHORT).show();
         }
         private void quitAction(Context context){
