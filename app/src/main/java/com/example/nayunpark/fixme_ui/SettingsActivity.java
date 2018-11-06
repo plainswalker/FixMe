@@ -1,5 +1,6 @@
 package com.example.nayunpark.fixme_ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -7,6 +8,7 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SimpleAdapter;
@@ -37,59 +39,11 @@ public class SettingsActivity extends AppCompatActivity {
         final String[] setlist1 = {"알림창 투명도", "밝기 민감도", "알림 주기"};
         ListView list1 = (ListView) findViewById(R.id.settingList1);
 
-        final String[] setlistV = {"진동"};
+        final String[] setlistV = {"진동", "알림 활성화"};
         ListView listV = (ListView) findViewById(R.id.settingListV);
 
         final String[] setlist2 = {"데이터 유지 기간", "즐겨찾기 목록"};
         ListView list2 = (ListView) findViewById(R.id.settingList2);
-
-
-
-/*
-        final AdapterView.OnItemClickListener itemClickListener = new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                ListView listView = (ListView) parent;
-
-                SimpleAdapter adapter = (SimpleAdapter) listView.getAdapter();
-
-                HashMap<String, Object> hashMap = (HashMap) adapter.getItem(position);
-
-                RelativeLayout relativeLayout = (RelativeLayout) view;
-
-                Switch switchButton = (Switch) relativeLayout.getChildAt(1);
-
-                String status = "";
-
-                if(switchButton.isChecked()) {
-                    switchButton.setChecked(false);
-                    status = "Off";
-                } else {
-                    switchButton.setChecked(true);
-                    status = "On";
-                }
-                Toast.makeText(getBaseContext(), (String) hashMap.get("txt")+":"+status, Toast.LENGTH_SHORT).show();
-            }
-        };
-
-        list.setOnItemClickListener(itemClickListener);
-
-        List<HashMap<String, Object>> arrayList = new ArrayList<HashMap<String, Object>>();
-
-
-        HashMap<String,Object> hashMap = new HashMap<String, Object>();
-        hashMap.put("txt", setlist[3]);
-        arrayList.add(hashMap);
-
-
-        String[] from = {"txt", "txt"};
-
-        int[] to = {R.id.st_button, R.id.st_button};
-
-        SimpleAdapter adapter = new SimpleAdapter(getBaseContext(), arrayList, R.layout.switchlist_custom, from, to);
-
-        list.setAdapter(adapter);
-*/
 
 
 
@@ -99,7 +53,20 @@ public class SettingsActivity extends AppCompatActivity {
         list1.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(getApplicationContext(), setlist1[position],Toast.LENGTH_SHORT).show();
+                switch(position) {
+                    case 0:
+                        Intent intent = new Intent(getApplicationContext(), AlarmOpacityActivity.class);
+                        startActivity(intent);
+                        break;
+                    case 1:
+                        Intent intent2 = new Intent(getApplicationContext(), LightSensActivity.class);
+                        startActivity(intent2);
+                        break;
+                    case 2:
+                        Intent intent3 = new Intent(getApplicationContext(), AlarmPeriodActivity.class);
+                        startActivity(intent3);
+                        break;
+                }
             }
         });
 
@@ -115,16 +82,28 @@ public class SettingsActivity extends AppCompatActivity {
 
 
 
+
         ArrayAdapter<String> arrayAdapter2 = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, setlist2);
         list2.setAdapter(arrayAdapter2);
 
         list2.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(getApplicationContext(), setlist2[position],Toast.LENGTH_SHORT).show();
+                switch(position) {
+                    case 0:
+                        Intent intent = new Intent(getApplicationContext(), FootDataSettingsActivity.class);
+                        startActivity(intent);
+                        break;
+                    case 1:
+                        Intent intent2 = new Intent(getApplicationContext(), FavoritesActivity.class);
+                        startActivity(intent2);
+                        break;
+                }
             }
         });
 
 
     }
+
+
 }
