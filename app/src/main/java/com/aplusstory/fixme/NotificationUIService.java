@@ -152,6 +152,12 @@ public class NotificationUIService extends Service implements NotificationUIMana
         public void run() {
             NotificationUIService that = NotificationUIService.this;
             while(true){
+                try {
+                    Thread.sleep(NotificationUIService.UPDATE_DELAY);
+                } catch (InterruptedException e){
+                    return;
+                }
+
                 that.updateNotification(
                         ((that.isEnabled) ?
                                 that.getString(R.string.notification_msg_enable)
@@ -162,7 +168,7 @@ public class NotificationUIService extends Service implements NotificationUIMana
                     if (that.isEnabled && that.dataManager.checkCondition()) {
                         int cond = that.dataManager.getConditionCode();
                         Log.d("NotiUIService", "Thread CheckCond, cond : " + Integer.toString(cond));
-                        this.hd.sendEmptyMessage(0);
+//                        this.hd.sendEmptyMessage(0);
                         StringBuilder msg = new StringBuilder("");
                         if ((cond & NotificationDataManager.COND_TIME_OVERUSE) != 0) {
                             msg.append(that.getString(R.string.advice_msg_posture));
@@ -178,12 +184,6 @@ public class NotificationUIService extends Service implements NotificationUIMana
                             that.advise(msg.toString());
                         }
                     }
-                }
-
-                try {
-                    Thread.sleep(NotificationUIService.UPDATE_DELAY);
-                } catch (InterruptedException e){
-                    return;
                 }
             }
         }
@@ -338,7 +338,7 @@ public class NotificationUIService extends Service implements NotificationUIMana
     }
 
     public void updateNotification(String msg, long elapsedTimeInMilliSeconds){
-        if(this.dataManager != null && this.dataManager.isEnabled()) {
+        if(this.dataManager != null) {
             StringBuilder sb = new StringBuilder(msg);
 
             sb.append("   ").append(this.getString(R.string.notification_msg_elapsed_time_prefix)).append(" ");
@@ -376,37 +376,41 @@ public class NotificationUIService extends Service implements NotificationUIMana
     }
 
     @Override
-    public synchronized void enable(){
-        if(!this.isEnabled) {
-            this.isEnabled = true;
+    public void enable(){
+        synchronized (this) {
+            if (!this.isEnabled) {
+                this.isEnabled = true;
+                String msg;
+                long elapsed;
+                if (this.dataManager != null) {
+                    this.dataManager.enable();
+                    elapsed = this.dataManager.getElapsedTime();
+                    msg = this.getString(R.string.notification_msg_enable);
+                } else {
+                    elapsed = -1;
+                    msg = this.getString(R.string.notification_msg_disable);
+                }
+            this.updateNotification(msg, elapsed);
+            }
         }
-        String msg;
-        long elapsed;
-        if(this.dataManager != null){
-            elapsed = this.dataManager.getElapsedTime();
-            msg = this.getString(R.string.notification_msg_enable);
-        }
-        else {
-            elapsed = -1;
-            msg = this.getString(R.string.notification_msg_disable);
-        }
-        this.updateNotification(msg, elapsed);
     }
 
     @Override
-    public synchronized void disable(){
-        if(this.isEnabled) {
-            this.isEnabled = false;
+    public void disable(){
+        synchronized (this) {
+            if (this.isEnabled) {
+                this.isEnabled = false;
+                String msg = this.getString(R.string.notification_msg_disable);
+                long elapsed;
+                if (this.dataManager != null) {
+                    this.dataManager.disable();
+                    elapsed = this.dataManager.getElapsedTime();
+                } else {
+                    elapsed = -1;
+                }
+            this.updateNotification(msg, elapsed);
+            }
         }
-        String msg = this.getString(R.string.notification_msg_disable);
-        long elapsed;
-        if(this.dataManager != null){
-            elapsed = this.dataManager.getElapsedTime();
-        }
-        else {
-            elapsed = -1;
-        }
-        this.updateNotification(msg, elapsed);
     }
 
     @Override
@@ -434,6 +438,9 @@ public class NotificationUIService extends Service implements NotificationUIMana
         this.notificationManager.cancel(NotificationUIService.NOTIFICATION_ID);
         this.thd.interrupt();
         this.unregisterReceiver(this.br);
+        if(WinDetectService.getInstance() != null){
+            WinDetectService.getInstance().stopSelf();
+        }
         this.stopSelf();
     }
 

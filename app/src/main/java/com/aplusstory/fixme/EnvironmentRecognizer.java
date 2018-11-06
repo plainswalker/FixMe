@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 class EnvironmentRecognizer implements Recognizer{
+    public static final long DELAY_ASEC = 1000;
     public static final long DELAY_FEWSEC = 3000;
     public static final long DELAY_SOMESEC = 10000;
     public static final long DELAY_AMIN = 60000;
@@ -22,10 +23,10 @@ class EnvironmentRecognizer implements Recognizer{
     private SensorEventListener sel = null;
     private Context context;
     private boolean cond = false;
-    private boolean isEnabled;
+    private boolean isEnabled = false;
     private float sensorValue = 0.0f;
     private Thread thd = null;
-    private long updl = EnvironmentRecognizer.DELAY_FEWSEC;
+    private long updl = EnvironmentRecognizer.DELAY_ASEC;
     private long tInDark = -1;
     private long dInDark;
     private float threshold = EnvironmentRecognizer.LIGHT_DARK;
@@ -36,15 +37,14 @@ class EnvironmentRecognizer implements Recognizer{
 
     private void initialize(Context context){
         this.context = context;
-        this.dInDark = EnvironmentRecognizer.DELAY_SOMESEC;
-        this.isEnabled = true;
+        this.dInDark = EnvironmentRecognizer.DELAY_FEWSEC;
         if(!this.getSensorManager()){
             Log.d("EnvRcg", "getting sensor value failed.");
             //error handle
         }
         if(this.thd == null || !this.thd.isAlive()){
             this.thd = new EnvironmentRecognizingThread();
-            thd.start();
+//            thd.start();
         }
     }
 
@@ -90,6 +90,13 @@ class EnvironmentRecognizer implements Recognizer{
         public void run() {
             EnvironmentRecognizer that = EnvironmentRecognizer.this;
             while(that.isEnabled()){
+
+                try {
+                    Thread.sleep(that.updl);
+                } catch(InterruptedException e){
+                    return;
+                }
+
                 long now = System.currentTimeMillis();
                 if(that.sm != null){
                     synchronized (that) {
@@ -113,12 +120,6 @@ class EnvironmentRecognizer implements Recognizer{
                 } else{
                     that.getSensorManager();
                 }
-
-                try {
-                    Thread.sleep(that.updl);
-                } catch(InterruptedException e){
-                    return;
-                }
             }
         }
     }
@@ -130,9 +131,7 @@ class EnvironmentRecognizer implements Recognizer{
     @Override
     public boolean checkCondition() {
         synchronized (this) {
-            if(this.cond){
-                Log.d("EnvRcg", "Check condition");
-            }
+            Log.d("EnvRcg", "Check condition : " + Boolean.toString(this.cond));
             return this.cond;
         }
     }
@@ -161,6 +160,10 @@ class EnvironmentRecognizer implements Recognizer{
         synchronized (this){
             if(!this.isEnabled){
                 this.isEnabled = true;
+                if(this.thd == null || !this.thd.isAlive()){
+                    this.thd = new EnvironmentRecognizingThread();
+                    this.thd.start();
+                }
             }
         }
     }
@@ -170,6 +173,7 @@ class EnvironmentRecognizer implements Recognizer{
         synchronized (this){
             if(this.isEnabled){
                 this.isEnabled = false;
+                this.tInDark = -1;
             }
         }
     }

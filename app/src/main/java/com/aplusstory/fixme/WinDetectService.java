@@ -12,6 +12,7 @@ import android.os.Message;
 import android.os.Handler;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
+import android.widget.Toast;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -28,20 +29,19 @@ public class WinDetectService extends AccessibilityService{
     @Override
     protected void onServiceConnected() {
         super.onServiceConnected();
-        Log.d("WinDetectService", "Service ocnnected");
+        Log.d("WinDetectService", "Service connected");
+//        Toast.makeText(this,"accessibility service", Toast.LENGTH_SHORT).show();
         AccessibilityServiceInfo config = new AccessibilityServiceInfo();
-//        config.eventTypes =
-//          AccessibilityEvent.TYPE_WINDOWS_CHANGED
-//        | AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED
-//        | AccessibilityEvent.TYPE_VIEW_FOCUSED
-//        | AccessibilityEvent.TYPE_VIEW_CLICKED
-//        | AccessibilityEvent.TYPE_TOUCH_EXPLORATION_GESTURE_START
-//        | AccessibilityEvent.TYPE_TOUCH_INTERACTION_START
-//        | AccessibilityEvent.TYPE_GESTURE_DETECTION_START
-//        ;
-        config.eventTypes = AccessibilityEvent.TYPES_ALL_MASK
-        ^ 2048
-        ^ 64
+        config.eventTypes =
+          AccessibilityEvent.TYPE_WINDOWS_CHANGED
+        | AccessibilityEvent.TYPE_VIEW_FOCUSED
+        | AccessibilityEvent.TYPE_VIEW_CLICKED
+        | AccessibilityEvent.TYPE_VIEW_LONG_CLICKED
+        | AccessibilityEvent.TYPE_VIEW_CONTEXT_CLICKED
+        | AccessibilityEvent.TYPE_GESTURE_DETECTION_START
+        | AccessibilityEvent.TYPE_GESTURE_DETECTION_END
+        | AccessibilityEvent.TYPE_TOUCH_INTERACTION_START
+        | AccessibilityEvent.TYPE_TOUCH_INTERACTION_END
         ;
         config.feedbackType = AccessibilityServiceInfo.DEFAULT;
         config.notificationTimeout = 100;
@@ -49,7 +49,6 @@ public class WinDetectService extends AccessibilityService{
         this.setServiceInfo(config);
 
         WinDetectService.wdsInstance = this;
-
     }
 
     @Override
