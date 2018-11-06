@@ -17,6 +17,7 @@ import android.widget.Toast;
 import android.support.v7.widget.Toolbar;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -39,7 +40,9 @@ public class SettingsActivity extends AppCompatActivity {
         final String[] setlist1 = {"알림창 투명도", "밝기 민감도", "알림 주기"};
         ListView list1 = (ListView) findViewById(R.id.settingList1);
 
-        final String[] setlistV = {"진동", "알림 활성화"};
+        final ArrayList<String> setlistV = new ArrayList<String>();
+        setlistV.add("진동");
+        setlistV.add("알림 활성화");
         ListView listV = (ListView) findViewById(R.id.settingListV);
 
         final String[] setlist2 = {"데이터 유지 기간", "즐겨찾기 목록"};
@@ -70,15 +73,20 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
-        ArrayAdapter<String> arrayAdapterV = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, setlistV);
-        listV.setAdapter(arrayAdapterV);
+//        ArrayAdapter<String> arrayAdapterV = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, setlistV);
+//        listV.setAdapter(arrayAdapterV);
+//
+//        listV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                Toast.makeText(getApplicationContext(), setlistV[position],Toast.LENGTH_SHORT).show();
+//            }
+//        });
 
-        listV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(getApplicationContext(), setlistV[position],Toast.LENGTH_SHORT).show();
-            }
-        });
+        SwitchListviewAdapter listviewAdapter = new SwitchListviewAdapter(this, android.R.layout.simple_list_item_1, setlistV);
+        listV.setAdapter(listviewAdapter);
+
+
 
 
 
