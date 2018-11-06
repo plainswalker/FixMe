@@ -40,6 +40,7 @@
     <string name="setting_item_alert_light_sensivity">밝기 민감도</string>
     <string name="setting_item_alert_period">알림 주기</string>
     <string name="setting_item_alert_vibration">진동</string>
+    <string name="setting_item_alert_activate">알림 활성화</string>
     <string name="setting_item_footprint_data_duration">데이터 유지 기간</string>
     <string name="setting_item_footprint_location_bookmark">즐겨찾기 목록</string>
 
