@@ -1,8 +1,8 @@
 package com.aplusstory.fixme;
 
 import android.content.Context;
-
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,12 +13,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.aplusstory.fixme.R;
-
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
-import java.util.Set;
 
 public class SwitchListviewAdapter extends ArrayAdapter<String> implements SettingsUIManager{
     private ArrayList<String> items;
@@ -34,7 +29,8 @@ public class SwitchListviewAdapter extends ArrayAdapter<String> implements Setti
         this.dm = new UserSettingsManager(this.context);
     }
 
-    public View getView(final int position, final View convertView, ViewGroup parent) {
+    @Override
+    public View getView(final int position, View convertView, ViewGroup parent) {
         View v = convertView;
         SwitchListviewAdapter that = SwitchListviewAdapter.this;
 
@@ -46,10 +42,20 @@ public class SwitchListviewAdapter extends ArrayAdapter<String> implements Setti
         TextView textView = (TextView) v.findViewById(R.id.switchText);
         textView.setText(items.get(position));
 
-        final String text = items.get(position);
-        final Switch switchButton = (Switch)v.findViewById(R.id.switch1);
-        if(position == 0){
-            switchButton.setChecked(that.dm.getVibation());
+        Switch switchButton = (Switch)v.findViewById(R.id.switch1);
+
+        switch(position){
+            case 0:
+                switchButton.setChecked(that.dm.getVibation());
+                break;
+            case 1:
+                SharedPreferences sp = context.getSharedPreferences(NotificationUIService.NOTIFICATION_SERVICE_RUNNING_FLAG_SP_NAME,0);
+                boolean isRunning = sp.contains(NotificationUIService.NOTIFICATION_SERVICE_RUNNING_FLAG_SP_KEY)
+                    && sp.getBoolean(NotificationUIService.NOTIFICATION_SERVICE_RUNNING_FLAG_SP_KEY, false);
+                switchButton.setChecked(isRunning);
+                break;
+            default:
+                //something wrong
         }
         switchButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
             @Override
@@ -62,10 +68,11 @@ public class SwitchListviewAdapter extends ArrayAdapter<String> implements Setti
                     case 1:
                         Intent it = new Intent(that.context.getApplicationContext(), NotificationUIService.class);
                         if(isChecked){
-                            that.context.startForegroundService(it);
+                            it.setAction(NotificationUIService.NOTIFICATION_SERVICE_ACTION_START);
                         } else {
-                            that.context.stopService(it);
+                            it.setAction(NotificationUIService.NOTIFICATION_SERVICE_ACTION_STOP);
                         }
+                        that.context.startService(it);
                         break;
                 }
             }
