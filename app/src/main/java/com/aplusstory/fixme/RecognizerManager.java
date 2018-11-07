@@ -106,6 +106,7 @@ public class RecognizerManager implements NotificationDataManager {
                 } else if (r.getClass() == UserRecognizer.class) {
                     Log.d("RcgMan", "Not Using");
                     this.tElpsedBegin = -1;
+                    this.tCondBegin = -1;
                     this.condCode = 0;
                     return false;
                 } else if(r.getClass() == EnvironmentRecognizer.class){
