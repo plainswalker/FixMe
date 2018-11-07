@@ -1,6 +1,7 @@
 package com.example.nayunpark.fixme_ui;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -8,6 +9,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 
 /**
@@ -27,6 +33,9 @@ public class ScheduleFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    Date today = new Date();
+    SimpleDateFormat date = new SimpleDateFormat("yyyy.MM.dd");
 
     private OnFragmentInteractionListener mListener;
 
@@ -48,13 +57,29 @@ public class ScheduleFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_schedule, container, false);
+        View returnView = inflater.inflate(R.layout.fragment_schedule, container, false);
+
+        TextView textView = (TextView) returnView.findViewById(R.id.scheduleDate);
+        textView.setText(date.format(today));
+
+        Button button = (Button) returnView.findViewById(R.id.timeButton);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), ScheduleTimeActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        return returnView;
     }
 
     // TODO: Rename method, update argument and hook method into UI event

@@ -1,23 +1,29 @@
 package com.example.nayunpark.fixme_ui;
 
 
-import android.content.ClipData;
+
+
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+//import android.app.FragmentManager;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
+//import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.support.v4.app.FragmentTransaction;
+//import android.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toast;
 
-
 public class ScheduleActivity extends AppCompatActivity implements ScheduleFragment.OnFragmentInteractionListener {
-
     Toolbar toolbar;
+    TextView textView;
+    private FragmentManager fm = null;
+    //ScheduleTimeActivity scheduleTimeActivity = new ScheduleTimeActivity();
 
 
     @Override
@@ -32,6 +38,9 @@ public class ScheduleActivity extends AppCompatActivity implements ScheduleFragm
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_full_menu);
 
+        if(this.fm == null){
+            this.fm = this.getSupportFragmentManager();
+        }
     }
 
 
@@ -45,17 +54,28 @@ public class ScheduleActivity extends AppCompatActivity implements ScheduleFragm
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        boolean rt = super.onOptionsItemSelected(item);
 
         switch (item.getItemId()) {
             case R.id.add_schedule:
-                //Toast.makeText(this, "Add Schedule",Toast.LENGTH_SHORT).show();
-                // TODO : BlankFragment에서 ScheduleFragment로 교체하기
+                if(this.fm != null && !this.fm.isDestroyed()){
+                    Fragment schfrg = (Fragment) new ScheduleFragment();
+                    FragmentTransaction ft = this.fm.beginTransaction();
+                    final FragmentTransaction add = ft.add(R.id.fragment_blank, schfrg);
+//                    ft.addToBackStack(null);
+                    ft.commit();
+                }
+                rt = true;
+                break;
             case android.R.id.home:
                 Toast.makeText(this, "Menu",Toast.LENGTH_SHORT).show();
-                return true;
+                rt =  true;
+                break;
             default:
-                return super.onOptionsItemSelected(item);
+                //error
         }
+
+        return rt;
     }
 
     @Override

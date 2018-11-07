@@ -32,6 +32,7 @@
         <activity android:name=".AlarmPeriodActivity" />
         <activity android:name=".AlarmOpacityActivity" />
         <activity android:name=".LightSensActivity" />
+        <activity android:name=".ScheduleTimeActivity"></activity>
     </application>
 
 </manifest>
