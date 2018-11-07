@@ -38,10 +38,13 @@
         </activity>
         <activity android:name=".ScheduleActivity" />
         <activity android:name=".SettingsActivity" />
-        <activity android:name=".AlarmOpacityActivity"/>
-        <activity android:name=".AlarmPeriodActivity"/>
-        <activity android:name=".FavoritesActivity"/>
-        <activity android:name=".FootDataSettingsActivity"/>
-        <activity android:name=".LightSensActivity"/>
+        <activity android:name=".FootDataSettingsActivity" />
+        <activity android:name=".AlarmPeriodActivity" />
+        <activity android:name=".AlarmOpacityActivity" />
+        <activity android:name=".LightSensActivity" />
+        <activity android:name=".ScheduleTimeActivity" />
+        <activity android:name=".ScheduleRepeationActivity" />
+        <activity android:name=".ScheduleAlarmActivity" />
+        <activity android:name=".ScheduleColorActivity"></activity>
     </application>
 </manifest>

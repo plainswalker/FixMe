@@ -34,7 +34,7 @@
         <FrameLayout
             android:id="@+id/fragment_blank"
             android:layout_width="match_parent"
-            android:layout_height="228dp"
+            android:layout_height="454dp"
             android:layout_alignParentBottom="true"
             android:layout_alignParentStart="true"></FrameLayout>
     </RelativeLayout>
