@@ -138,7 +138,7 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/attributeNoti"
+                android:id="@+id/attributeAlarm"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginRight="5dp"
@@ -149,7 +149,7 @@
                 android:textSize="18sp" />
 
             <TextView
-                android:id="@+id/notiDetail"
+                android:id="@+id/alarmDetail"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
@@ -157,7 +157,7 @@
                 android:textSize="18sp" />
 
             <Button
-                android:id="@+id/notiButton"
+                android:id="@+id/alarmButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"

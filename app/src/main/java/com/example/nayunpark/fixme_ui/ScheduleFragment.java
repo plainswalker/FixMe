@@ -70,11 +70,20 @@ public class ScheduleFragment extends Fragment {
         TextView textView = (TextView) returnView.findViewById(R.id.scheduleDate);
         textView.setText(date.format(today));
 
-        Button button = (Button) returnView.findViewById(R.id.timeButton);
-        button.setOnClickListener(new View.OnClickListener() {
+        Button timeButton = (Button) returnView.findViewById(R.id.timeButton);
+        timeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), ScheduleTimeActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        Button alarmButton = (Button) returnView.findViewById(R.id.alarmButton);
+        alarmButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), ScheduleAlarmActivity.class);
                 startActivity(intent);
             }
         });
