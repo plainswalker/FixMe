@@ -7,8 +7,6 @@ import android.util.Log;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import com.aplusstory.fixme.R;
-
 public class AlarmOpacityActivity extends AppCompatActivity implements SettingsUIManager{
     Toolbar toolbar;
     SeekBar seekBar;
