@@ -90,7 +90,6 @@ class EnvironmentRecognizer implements Recognizer{
         public void run() {
             EnvironmentRecognizer that = EnvironmentRecognizer.this;
             while(that.isEnabled()){
-
                 try {
                     Thread.sleep(that.updl);
                 } catch(InterruptedException e){
