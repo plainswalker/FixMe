@@ -27,7 +27,7 @@
                 android:id="@+id/monthly"
                 android:name="com.aplusstory.fixme.CalendarFragment"
                 android:layout_width="match_parent"
-                android:layout_height="258dp"
+                android:layout_height="wrap_content"
                 tools:layout="@layout/fragment_calendar" />
         </FrameLayout>
 
