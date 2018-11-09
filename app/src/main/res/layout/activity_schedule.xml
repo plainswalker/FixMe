@@ -19,10 +19,22 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <CalendarView
-            android:id="@+id/calendarView4"
+        <FrameLayout
+            android:id="@+id/frame_calendar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="match_parent">
+            <fragment
+                android:id="@+id/monthly"
+                android:name="com.aplusstory.fixme.CalendarFragment"
+                android:layout_width="match_parent"
+                android:layout_height="258dp"
+                tools:layout="@layout/fragment_calendar" />
+        </FrameLayout>
+
+        <!--<CalendarView-->
+            <!--android:id="@+id/calendarView4"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content" />-->
 
         <!--<fragment-->
             <!--android:id="@+id/fragment"-->
@@ -32,11 +44,12 @@
             <!--android:layout_alignParentBottom="true"-->
             <!--android:layout_alignParentStart="true" />-->
         <FrameLayout
-            android:id="@+id/fragment_blank"
+            android:id="@+id/frame_schedule"
             android:layout_width="match_parent"
             android:layout_height="454dp"
             android:layout_alignParentBottom="true"
-            android:layout_alignParentStart="true"></FrameLayout>
+            android:layout_alignParentStart="true">
+        </FrameLayout>
     </RelativeLayout>
 
 </LinearLayout>
