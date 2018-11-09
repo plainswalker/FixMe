@@ -14,10 +14,10 @@ import com.aplusstory.fixme.cal.OneDayView;
 import java.util.Calendar;
 
 
-public class MainActivity extends FragmentActivity {
+public class NewCalendarActivity extends FragmentActivity {
 
     private static final String TAG = MConfig.TAG;
-    private static final String NAME = "MainActivity";
+    private static final String NAME = "NewCalendarActivity";
     private final String CLASS = NAME + "@" + Integer.toHexString(hashCode());
 
     private TextView thisMonthTv;
@@ -25,7 +25,7 @@ public class MainActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_new_calendar);
 
         Button addButton = (Button)findViewById(R.id.main_add_bt);
 //        Button monthButton = findViewById(R.id.main_monthly_bt);
@@ -47,7 +47,7 @@ public class MainActivity extends FragmentActivity {
 
             @Override
             public void onDayClick(OneDayView dayView) {
-                Toast.makeText(MainActivity.this, "Click  " + dayView.get(Calendar.MONTH) + "/" + dayView.get(Calendar.DAY_OF_MONTH), Toast.LENGTH_SHORT)
+                Toast.makeText(NewCalendarActivity.this, "Click  " + dayView.get(Calendar.MONTH) + "/" + dayView.get(Calendar.DAY_OF_MONTH), Toast.LENGTH_SHORT)
                         .show();
             }
 
@@ -55,7 +55,7 @@ public class MainActivity extends FragmentActivity {
         addButton.setOnClickListener(new Button.OnClickListener(){
             @Override
             public void onClick(View view){
-                Toast.makeText(MainActivity.this, "새로운 일정을 추가해봅시다.",Toast.LENGTH_SHORT).show();
+                Toast.makeText(NewCalendarActivity.this, "새로운 일정을 추가해봅시다.",Toast.LENGTH_SHORT).show();
             }
         });
     }
