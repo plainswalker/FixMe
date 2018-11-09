@@ -12,7 +12,8 @@ public class RecognizerManager implements NotificationDataManager {
     private List<Recognizer> recognizers = null;
     private long dAdvDelay = 0;
     private long tElpsedBegin;
-    private long tCondBegin;
+    private long tUseCondBegin;
+    private long tInDarkBegin;
     private boolean isEnabled = false;
     private int condCode = 0;
     private Context context;
@@ -21,9 +22,10 @@ public class RecognizerManager implements NotificationDataManager {
     public RecognizerManager(Context context){
         this.context = context;
         this.tElpsedBegin = System.currentTimeMillis();
-        this.tCondBegin = -1;
+        this.tUseCondBegin = -1;
+        this.tInDarkBegin = -1;
 
-        this.sm = new NotificationUserSettingManager();
+        this.sm = new NotificationUserSettingManager(this.context);
 //        this.sm.setFileManager(new SettingsFileManager());
         this.dAdvDelay = this.sm.getAdvisePeroiod();
     }
@@ -65,7 +67,7 @@ public class RecognizerManager implements NotificationDataManager {
         synchronized (this) {
             if (this.isEnabled) {
                 this.isEnabled = false;
-                this.tCondBegin = -1;
+                this.tUseCondBegin = -1;
                 this.condCode = 0;
             }
             for (Recognizer r : this.recognizers) {
@@ -82,34 +84,47 @@ public class RecognizerManager implements NotificationDataManager {
             synchronized (r) {
                 if (r.checkCondition()) {
                     if (r.getClass() == UserRecognizer.class) {
-                        if (this.tCondBegin > 0) {
-                            boolean usageCond = (now - this.tCondBegin) < this.dAdvDelay;
+                        if (this.tUseCondBegin > 0) {
+                            boolean usageCond = (now - this.tUseCondBegin) < this.dAdvDelay;
                             if (usageCond) {
-                                Log.d("RcgMan", "Usage Timer : " + Long.toString((now - this.tCondBegin) / 1000) + "sec");
-
+                                Log.d("RcgMan", "Usage Timer : " + Long.toString((now - this.tUseCondBegin) / 1000) + "sec");
                             } else {
                                 Log.d("RcgMan", "Usage Timer end");
                                 this.condCode |= NotificationDataManager.COND_TIME_OVERUSE;
-                                this.tCondBegin = -1;
+                                this.tUseCondBegin = -1;
                             }
                             rt = rt || !usageCond;
                         } else {
-                            this.tCondBegin = now;
+                            this.tUseCondBegin = now;
                             this.condCode &= ~NotificationDataManager.COND_TIME_OVERUSE;
                             Log.d("RcgMan", "Usage Timer begin");
                         }
                     } else if (r.getClass() == EnvironmentRecognizer.class) {
                         Log.d("RcgMan", "dark outside");
-                        rt = true;
-                        this.condCode |= NotificationDataManager.COND_ENVIRON_LIGHT;
+                        if(this.tInDarkBegin > 0){
+                            boolean indarkcond = (now - this.tInDarkBegin) < this.dAdvDelay;
+                            if(indarkcond){
+                                Log.d("RcgMan", "dark outside, time in dark : " + Long.toString((now - this.tInDarkBegin) / 1000) + "sec");
+                                this.condCode &= ~NotificationDataManager.COND_ENVIRON_LIGHT;
+                            } else{
+                                this.condCode |= NotificationDataManager.COND_ENVIRON_LIGHT;
+                                this.tInDarkBegin = now;
+                                rt = true;
+                            }
+                        } else {
+                            this.condCode |= NotificationDataManager.COND_ENVIRON_LIGHT;
+                            this.tInDarkBegin = now;
+                            rt = true;
+                        }
                     }
                 } else if (r.getClass() == UserRecognizer.class) {
                     Log.d("RcgMan", "Not Using");
                     this.tElpsedBegin = -1;
+                    this.tUseCondBegin = -1;
                     this.condCode = 0;
                     return false;
                 } else if(r.getClass() == EnvironmentRecognizer.class){
-                    this.condCode &= ~NotificationDataManager.COND_ENVIRON_LIGHT;
+                        this.condCode &= ~NotificationDataManager.COND_ENVIRON_LIGHT;
                 }
             }
         }

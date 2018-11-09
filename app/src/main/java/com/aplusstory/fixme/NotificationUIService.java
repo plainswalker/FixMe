@@ -10,6 +10,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.Handler;
@@ -24,8 +25,13 @@ import android.widget.Toast;
 import java.util.Date;
 
 public class NotificationUIService extends Service implements NotificationUIManager{
-    private static String NOTIFICATION_CHANNEL_ID = "FixMe_Noti";
-    private static int NOTIFICATION_ID = (int) new Date().getTime();
+    public static final String NOTIFICATION_SERVICE_ACTION_START = "com.aplusstory.fixme.action.NOTIFICATION_SERVICE_START";
+    public static final String NOTIFICATION_SERVICE_ACTION_STOP = "com.aplusstory.fixme.action.NOTIFICATION_SERVICE_STOP";
+
+    public static final String NOTIFICATION_SERVICE_RUNNING_FLAG_SP_NAME = "advise_running";
+    public static final String NOTIFICATION_SERVICE_RUNNING_FLAG_SP_KEY = "is_running";
+    private static final String NOTIFICATION_CHANNEL_ID = "FixMe_Noti";
+    private static final int NOTIFICATION_ID = (int) new Date().getTime();
 
     public static final int UPDATE_DELAY = 5000;
 
@@ -117,18 +123,31 @@ public class NotificationUIService extends Service implements NotificationUIMana
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        this.initialize();
-        this.enable();
-        if(this.dataManager != null) {
-            this.dataManager.enable();
+        if(intent != null) {
+            SharedPreferences sp = this.getSharedPreferences(NotificationUIService.NOTIFICATION_SERVICE_RUNNING_FLAG_SP_NAME, 0);
+            String action = intent.getAction();
+            if (action != null && action.equals(NotificationUIService.NOTIFICATION_SERVICE_ACTION_START)) {
+                this.initialize();
+                this.enable();
+                if (this.dataManager != null) {
+                    this.dataManager.enable();
+                }
+                if (this.thd != null && !this.thd.isAlive()) {
+                    this.thd.start();
+                }
+                this.notificationManager = (NotificationManager) this.getSystemService(NotificationManager.class);
+                sp.edit().putBoolean(NOTIFICATION_SERVICE_RUNNING_FLAG_SP_KEY, true).apply();
+
+            } else if (intent.getAction().equals(NotificationUIService.NOTIFICATION_SERVICE_ACTION_STOP)) {
+                sp.edit().putBoolean(NOTIFICATION_SERVICE_RUNNING_FLAG_SP_KEY, false).apply();
+                this.quit();
+            }
         }
-        if(this.thd != null && !this.thd.isAlive()) {
-            this.thd.start();
-        }
-        this.notificationManager = (NotificationManager) this.getSystemService(NotificationManager.class);
 
         return START_NOT_STICKY;
     }
+
+
 
     @Override
     public void onDestroy() {
@@ -261,7 +280,9 @@ public class NotificationUIService extends Service implements NotificationUIMana
         }
         private void settingsAction(Context context){
             Log.d("NotiActRecev","settings action received");
-            //change window to settings
+            Intent it = new Intent(NotificationUIService.this, SettingsActivity.class);
+            it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            NotificationUIService.this.startActivity(it);
 //            Toast.makeText(context,"setting", Toast.LENGTH_SHORT).show();
         }
         private void quitAction(Context context){
@@ -340,30 +361,24 @@ public class NotificationUIService extends Service implements NotificationUIMana
     public void updateNotification(String msg, long elapsedTimeInMilliSeconds){
         if(this.dataManager != null) {
             StringBuilder sb = new StringBuilder(msg);
-
-            sb.append("   ").append(this.getString(R.string.notification_msg_elapsed_time_prefix)).append(" ");
             if(elapsedTimeInMilliSeconds > 0) {
-//        final long d = 24 * 60 * 60 * 1000;
+                sb.append("   ").append(this.getString(R.string.notification_msg_elapsed_time_prefix)).append(" ");
+//              final long d = 24 * 60 * 60 * 1000;
                 final long h = 60 * 60 * 1000;
                 final long m = 60 * 1000;
                 final long s = 1000;
-
-//        if(elapsedTimeInMilliSeconds / d > 0){
-//            sb.append(elapsedTimeInMilliSeconds/d).append(this.getString(R.string.notification_msg_elapsed_time_second_postfix));
-//        }
-
+//              if(elapsedTimeInMilliSeconds / d > 0){
+//                    sb.append(elapsedTimeInMilliSeconds/d).append(this.getString(R.string.notification_msg_elapsed_time_second_postfix));
+//              }
                 if (elapsedTimeInMilliSeconds / h > 0) {
                     sb.append(elapsedTimeInMilliSeconds / h).append(this.getString(R.string.notification_msg_elapsed_time_hour_postfix));
                 }
-
                 if (elapsedTimeInMilliSeconds / m > 0) {
                     sb.append(elapsedTimeInMilliSeconds / m).append(this.getString(R.string.notification_msg_elapsed_time_minute_postfix));
                 }
-
-//            if (elapsedTimeInMilliSeconds / s > 0) {
-//                sb.append(elapsedTimeInMilliSeconds / s).append(this.getString(R.string.notification_msg_elapsed_time_second_postfix));
-//            }
-
+//              if (elapsedTimeInMilliSeconds / s > 0) {
+//                  sb.append(elapsedTimeInMilliSeconds / s).append(this.getString(R.string.notification_msg_elapsed_time_second_postfix));
+//              }
                 if (elapsedTimeInMilliSeconds < m){
                     sb.append(this.getString(R.string.notification_msg_elapsed_time_under_minute));
                 }
@@ -435,12 +450,15 @@ public class NotificationUIService extends Service implements NotificationUIMana
             this.dataManager.disable();
             this.dataManager.destroy();
         }
-        this.notificationManager.cancel(NotificationUIService.NOTIFICATION_ID);
+        if(this.notificationManager != null) {
+            this.notificationManager.cancel(NotificationUIService.NOTIFICATION_ID);
+        }
         this.thd.interrupt();
         this.unregisterReceiver(this.br);
         if(WinDetectService.getInstance() != null){
             WinDetectService.getInstance().stopSelf();
         }
+        this.stopForeground(true);
         this.stopSelf();
     }
 
