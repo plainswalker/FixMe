@@ -102,8 +102,10 @@ public class UserRecognizer implements Recognizer{
                 long now = System.currentTimeMillis();
                 if(that.wdsInstance != null) {
                     synchronized (that) {
-                        if (that.tUserRecog > 0 && that.tScreenOn > 0 && that.dUserRecog > now - that.tUserRecog) {
-                            that.cond = true;
+                        if (that.tUserRecog > 0 && that.tScreenOn > 0) {
+                            if(that.dUserRecog > now - that.tUserRecog){
+                                that.cond = true;
+                            }
                         } else {
                             that.cond = false;
                         }

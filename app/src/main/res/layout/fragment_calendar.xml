@@ -5,11 +5,26 @@
     android:layout_height="match_parent"
     tools:context=".CalendarFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-
-    <CalendarView
-        android:id="@+id/calendarView"
+    <TextView
+        android:id="@+id/this_month_tv"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content"
+        android:text="EMPTY_TEXT_VIEW"
+        android:textColor="#888888" />
+
+    <FrameLayout
+        android:id="@+id/main_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/this_month_tv">
+
+        <fragment
+            android:id="@+id/monthly_calender"
+            android:name="com.aplusstory.fixme.MonthlyFragment"
+            android:layout_width="match_parent"
+            android:layout_height="258dp"
+            tools:layout="@layout/fragment_monthly" />
+
+    </FrameLayout>
 
 </FrameLayout>

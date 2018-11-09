@@ -48,8 +48,12 @@
     final String[] item = {"선택하세요", "5분마다", "10분마다", "30분마다", "1시간마다", "3시간마다"};
     -->
 
-
-
-    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_world">Hello world!</string>
+    <string name="event_icon">Event icon</string>
+    <string name="add_thing">일정추가</string>
+    <string name="daily">일간</string>
+    <string name="weekly">주간</string>
+    <string name="monthly">월간</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="month">월</string>
 </resources>
