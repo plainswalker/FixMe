@@ -39,5 +39,16 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         );
+
+        Button footprintB = (Button) findViewById(R.id.FootprintButton);
+        footprintB.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent it = new Intent(getApplicationContext(), TestLocationActivity.class);
+                        startActivity(it);
+                    }
+                }
+        );
     }
 }

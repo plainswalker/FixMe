@@ -9,9 +9,12 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.webkit.SslErrorHandler;
 import android.widget.Toast;
 
 import java.text.DateFormat;
@@ -29,6 +32,7 @@ public class CurrentLocationManager extends Service implements LocationDataManag
     private LocationManager lm = null;
     private Thread thd = null;
     private boolean isEnabled = false;
+    private Handler hd = null;
 
     @Nullable
     @Override
@@ -49,8 +53,11 @@ public class CurrentLocationManager extends Service implements LocationDataManag
         if(this.moRecog == null){
 
         }
+        if(this.hd == null){
+            this.hd = new ServiceHandler();
+        }
         if(this.thd == null || !this.thd.isAlive()){
-            this.thd = new ServiceThread();
+            this.thd = new ServiceThread(this.hd);
             this.thd.start();
         }
 
@@ -99,34 +106,49 @@ public class CurrentLocationManager extends Service implements LocationDataManag
         Log.d(CurrentLocationManager.class.getName(), provider + " disabled");
     }
 
+    public class ServiceHandler extends Handler{
+        @Override
+        public void handleMessage(Message msg) {
+            CurrentLocationManager that = CurrentLocationManager.this;
+            if(that.lm != null){
+                if(that.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
+                        ==PackageManager.PERMISSION_GRANTED){
+                    that.lm.requestLocationUpdates(
+                            LocationManager.GPS_PROVIDER
+                            , CurrentLocationManager.DELAY_LOCA_UPDATE
+                            , 5
+                            , that
+                    );
+                }
+                if(that.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+                        ==PackageManager.PERMISSION_GRANTED){
+                    that.lm.requestLocationUpdates(
+                            LocationManager.NETWORK_PROVIDER
+                            , CurrentLocationManager.DELAY_LOCA_UPDATE
+                            , 5
+                            , that
+                    );
+                }
+            }
+        }
+    }
+
     public class ServiceThread extends Thread{
+        Handler hd = null;
+
+        public ServiceThread(Handler hd){
+            this.hd = hd;
+        }
+
         @Override
         public void run() {
             CurrentLocationManager that = CurrentLocationManager.this;
             while(that.isEnabled){
-                if(that.moRecog == null || that.moRecog.isEnabled()){
-                    if(that.lm != null){
-                        if(that.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
-                            ==PackageManager.PERMISSION_GRANTED){
-                            that.lm.requestLocationUpdates(
-                                    LocationManager.GPS_PROVIDER
-                                    , CurrentLocationManager.DELAY_LOCA_UPDATE
-                                    , 5
-                                    , that
-                            );
-                        }
-                        if(that.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-                            ==PackageManager.PERMISSION_GRANTED){
-                            that.lm.requestLocationUpdates(
-                                    LocationManager.NETWORK_PROVIDER
-                                    , CurrentLocationManager.DELAY_LOCA_UPDATE
-                                    , 5
-                                    , that
-                            );
-                        }
+                if(that.moRecog == null || !that.moRecog.isEnabled()){
+                    if(this.hd != null) {
+                        this.hd.sendEmptyMessage(0);
                     }
                 }
-
                 try{
                     Thread.sleep(CurrentLocationManager.DELAY_THREAD_LOOP);
                 } catch (InterruptedException e){
