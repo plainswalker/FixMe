@@ -3,6 +3,8 @@
     package="com.aplusstory.fixme">
 
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
 
     <application
         android:allowBackup="true"
@@ -18,9 +20,11 @@
         <service android:name=".WinDetectService"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
             <intent-filter>
-                <action android:name="android.accessibilityservice.AccessibilityService"></action>
+                <action android:name="android.accessibilityservice.AccessibilityService"/>
             </intent-filter>
         </service>
+        <service android:name=".CurrentLocationManager"/>
+
         <activity android:name=".MainActivity">
             <!--<intent-filter>-->
                 <!--<action android:name="android.intent.action.MAIN" />-->
@@ -45,9 +49,7 @@
         <activity android:name=".ScheduleTimeActivity" />
         <activity android:name=".ScheduleRepeationActivity" />
         <activity android:name=".ScheduleAlarmActivity" />
-        <activity android:name=".ScheduleColorActivity"></activity>
-        <activity
-            android:name=".NewCalendarActivity">
-        </activity>
+        <activity android:name=".ScheduleColorActivity"/>
+        <activity android:name=".NewCalendarActivity"/>
     </application>
 </manifest>
