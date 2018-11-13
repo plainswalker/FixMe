@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Binder;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -90,7 +91,7 @@ public class CurrentLocationManager extends Service implements LocationDataManag
         if(this.fm != null){
             this.fm.setCurrentLocation(loca);
         }
-
+        this.lm.removeUpdates(this);
     }
 
     @Override
@@ -114,7 +115,7 @@ public class CurrentLocationManager extends Service implements LocationDataManag
             CurrentLocationManager that = CurrentLocationManager.this;
             if(that.lm != null){
                 if(that.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
-                        ==PackageManager.PERMISSION_GRANTED){
+                        == PackageManager.PERMISSION_GRANTED){
                     that.lm.requestLocationUpdates(
                             LocationManager.GPS_PROVIDER
                             , CurrentLocationManager.DELAY_LOCA_UPDATE
@@ -123,7 +124,7 @@ public class CurrentLocationManager extends Service implements LocationDataManag
                     );
                 }
                 if(that.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-                        ==PackageManager.PERMISSION_GRANTED){
+                        == PackageManager.PERMISSION_GRANTED){
                     that.lm.requestLocationUpdates(
                             LocationManager.NETWORK_PROVIDER
                             , CurrentLocationManager.DELAY_LOCA_UPDATE
