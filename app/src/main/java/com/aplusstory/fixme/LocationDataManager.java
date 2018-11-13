@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.Locale;
 
 
+import org.jetbrains.annotations.Nullable;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONArray;
@@ -23,10 +24,33 @@ public interface LocationDataManager {
         public static final String DATE_FORMAT_GMT = "yyyy-MM-dd HH:mm:ss";
 
         long datetime; // in milliseconds
-        float latitude;
-        float longtitude;
+        double latitude;
+        double longtitude;
 
-        public LocatonData(String datetime, float latitude, float longtitude){
+        @Nullable
+        public static LocatonData parseJSON(JSONObject json){
+            DateFormat df = new SimpleDateFormat(DATE_FORMAT_GMT, Locale.US);
+            Date date = null;
+            long datetime = -1;
+            double latitude = 0.0;
+            double longtitude = 0.0;
+            String dateTimeStr, latitudeStr,LongtitudeStr;
+
+            try {
+               dateTimeStr = json.getString(KEY_DATETIME);
+               latitude = json.getDouble(KEY_LATITUDE);
+               longtitude = json.getDouble(KEY_LONGTITUDE);
+               date = df.parse(dateTimeStr);
+               datetime = date.getTime();
+            } catch(JSONException e){
+                return null;
+            } catch (ParseException e){
+                return null;
+            }
+            return new LocatonData(datetime, latitude, longtitude);
+        }
+
+        public LocatonData(String datetime, double latitude, double longtitude){
             DateFormat df = new SimpleDateFormat(DATE_FORMAT_GMT, Locale.US);
             Date date = null;
             try {
@@ -41,7 +65,7 @@ public interface LocationDataManager {
             this.longtitude = longtitude;
         }
 
-        public LocatonData(long datetime, float latitude, float longtitude){
+        public LocatonData(long datetime, double latitude, double longtitude){
             this.datetime = datetime;
             this.latitude = latitude;
             this.longtitude = longtitude;
@@ -56,6 +80,7 @@ public interface LocationDataManager {
                 json.put(KEY_DATETIME, dateStr);
                 json.put(KEY_LATITUDE, this.latitude);
                 json.put(KEY_LONGTITUDE, this.longtitude);
+
             } catch (JSONException e){
                 //error handle
             }
