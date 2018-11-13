@@ -22,8 +22,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import kotlin.collections.DoubleIterator;
+
 public class CurrentLocationManager extends Service implements LocationDataManager, LocationListener {
-//    public static final long DELAY_LOCA_UPDATE = 300000;
+//    public static final long DELAY_LOCA_UPDATE = 5 * 60 * 1000;
     public static final long DELAY_LOCA_UPDATE = 10000;
     public static final long DELAY_THREAD_LOOP = 10000;
 
@@ -73,13 +75,13 @@ public class CurrentLocationManager extends Service implements LocationDataManag
         Date date = new Date(now);
         DateFormat df = new SimpleDateFormat(LocatonData.DATE_FORMAT_GMT, Locale.US);
         String dStr = df.format(date);
-        float latitude = (float) location.getLatitude();
-        float longtitude = (float) location.getLongitude();
+        double latitude =  location.getLatitude();
+        double longtitude = location.getLongitude();
 
         Log.d(CurrentLocationManager.class.getName(),
              "You're now on : "
-                + Float.toString(latitude)
-                + ", " + Float.toString(longtitude)
+                + Double.toString(latitude)
+                + ", " + Double.toString(longtitude)
                 + ", at : "
                 + dStr
         );
@@ -163,5 +165,26 @@ public class CurrentLocationManager extends Service implements LocationDataManag
         if(fm instanceof LocationFileManager){
             this.fm = (LocationFileManager) fm;
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        if(this.fm != null){
+            this.fm.destroy();
+        }
+
+        if(this.lm != null){
+            this.lm.removeUpdates(this);
+        }
+
+        if(this.moRecog != null){
+            this.moRecog.destroy();
+        }
+
+        if(this.thd != null && this.thd.isAlive()){
+            this.thd.interrupt();
+        }
+
+        super.onDestroy();
     }
 }
