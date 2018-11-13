@@ -6,9 +6,14 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
 
 public class TestLocationActivity extends Activity implements View.OnClickListener{
     final String start_service = "on";
@@ -22,9 +27,11 @@ public class TestLocationActivity extends Activity implements View.OnClickListen
         setContentView(R.layout.activity_test_location);
         Button serviceB = (Button) findViewById(R.id.toggleService);
         Button locaButton = (Button) findViewById(R.id.getLoca);
+        Button importLocaButton = (Button) findViewById(R.id.importLocaData);
         serviceB.setOnClickListener(this);
         serviceB.setText(start_service);
         locaButton.setOnClickListener(this);
+        importLocaButton.setOnClickListener(this);
         requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, PackageManager.PERMISSION_GRANTED);
     }
 
@@ -50,8 +57,21 @@ public class TestLocationActivity extends Activity implements View.OnClickListen
                 TextView longtiText = findViewById(R.id.longtiText);
                 SharedPreferences sp = getSharedPreferences(LocationFileManager.FILENAME_CURRENT_LOCATION, 0);
                 dateText.setText(sp.getString(LocationDataManager.LocatonData.KEY_DATETIME,""));
-                latiText.setText(Float.toString(sp.getFloat(LocationDataManager.LocatonData.KEY_LATITUDE,0.0F)));
-                longtiText.setText(Float.toString(sp.getFloat(LocationDataManager.LocatonData.KEY_LONGTITUDE,0.0F)));
+                latiText.setText(sp.getString(LocationDataManager.LocatonData.KEY_LATITUDE,""));
+                longtiText.setText(sp.getString(LocationDataManager.LocatonData.KEY_LONGTITUDE,""));
+                break;
+            case R.id.importLocaData:
+                try {
+                    Scanner sc = new Scanner(new File(LocationFileManager.getFilenameForToday(this)));
+                    TextView locaDataText = findViewById(R.id.textLocaData);
+                    StringBuilder sb = new StringBuilder();
+                    while(sc.hasNext()){
+                        sb.append(sc.next());
+                    }
+                    locaDataText.setText(sb.toString());
+                } catch (FileNotFoundException e){
+                    Log.d(TestLocationActivity.class.getName(), e.toString());
+                }
                 break;
         }
     }

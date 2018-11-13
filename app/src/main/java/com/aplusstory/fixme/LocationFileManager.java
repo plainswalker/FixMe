@@ -31,8 +31,14 @@ public class LocationFileManager implements FileManager {
 
     Context context;
 
+    public static String getFilenameForToday(Context context) {
+        return context.getFilesDir()
+         + "/" + FILENAME_LOCATION_PREFIX
+        + new SimpleDateFormat(DATE_FORMAT_GMT_DATE, Locale.US)
+                .format(new Date(System.currentTimeMillis()));
+    }
     public String getFilenameForToday(){
-        return this.context.getFilesDir() + (FILENAME_LOCATION_PREFIX + dfDate.format(this.cal.getTime()));
+        return this.context.getFilesDir() + "/" + FILENAME_LOCATION_PREFIX + dfDate.format(this.cal.getTime());
     }
 
     public LocationFileManager(Context context){
