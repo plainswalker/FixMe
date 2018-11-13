@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -88,6 +89,24 @@ public class ScheduleFragment extends Fragment {
             }
         });
 
+        Button colorButton = (Button) returnView.findViewById(R.id.colorButton);
+        colorButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), ScheduleColorActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        Button repeatButton = (Button) returnView.findViewById(R.id.repeationButton);
+        repeatButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), ScheduleRepeationActivity.class);
+                startActivity(intent);
+            }
+        });
+
         return returnView;
     }
 
@@ -97,6 +116,8 @@ public class ScheduleFragment extends Fragment {
             mListener.onFragmentInteraction(uri);
         }
     }
+
+
 
     @Override
     public void onAttach(Context context) {
@@ -114,6 +135,7 @@ public class ScheduleFragment extends Fragment {
         super.onDetach();
         mListener = null;
     }
+
 
     /**
      * This interface must be implemented by activities that contain this

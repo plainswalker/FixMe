@@ -6,6 +6,7 @@ package com.example.nayunpark.fixme_ui;
 import android.net.Uri;
 import android.os.Bundle;
 //import android.app.FragmentManager;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 //import android.app.Fragment;
 import android.support.v4.app.Fragment;
@@ -13,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.support.v4.app.FragmentTransaction;
 //import android.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -82,6 +84,8 @@ public class ScheduleActivity extends AppCompatActivity implements ScheduleFragm
     public void onFragmentInteraction(Uri uri) {
 
     }
+
+
 
 
 
