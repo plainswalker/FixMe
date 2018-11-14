@@ -35,7 +35,6 @@ public class ScheduleRepeatWeeklyFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    boolean[] checkedDay;
 
 
     private String checkDay = ""; // has information which day is checked
@@ -97,8 +96,6 @@ public class ScheduleRepeatWeeklyFragment extends Fragment {
 
 
 
-
-
         Button confirmButton = (Button) returnView.findViewById(R.id.confirmButton);
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -116,11 +113,13 @@ public class ScheduleRepeatWeeklyFragment extends Fragment {
 
                 setCheckDay(temp);
 
-                Toast.makeText(getContext(), "매주 "+checkDay, Toast.LENGTH_SHORT).show();
+                ((ScheduleRepeationActivity)getActivity()).textViewRD.setText("매주 "+checkDay);
+                ((ScheduleRepeationActivity)getActivity()).repeatState = 2;
+                ((ScheduleRepeationActivity)getActivity()).onCheckedDateSet(checkDay);
 
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                 fragmentManager.beginTransaction().hide(ScheduleRepeatWeeklyFragment.this).commit();
-                //fragmentManager.popBackStack();
+                fragmentManager.popBackStack();
             }
         });
 
@@ -164,5 +163,6 @@ public class ScheduleRepeatWeeklyFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+        void onCheckedDateSet(String dates);
     }
 }

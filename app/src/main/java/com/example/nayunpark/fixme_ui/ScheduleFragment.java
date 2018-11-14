@@ -6,15 +6,19 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import static android.app.Activity.RESULT_OK;
 
 
 /**
@@ -37,6 +41,9 @@ public class ScheduleFragment extends Fragment {
 
     Date today = new Date();
     SimpleDateFormat date = new SimpleDateFormat("yyyy.MM.dd");
+    String repeatDate;
+    int repeatState = 0;
+    private int REQUEST_RESULT = 1;
 
     private OnFragmentInteractionListener mListener;
 
@@ -103,10 +110,9 @@ public class ScheduleFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), ScheduleRepeationActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent, REQUEST_RESULT);
             }
         });
-
         return returnView;
     }
 
@@ -117,6 +123,19 @@ public class ScheduleFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == REQUEST_RESULT) {
+            if(resultCode == RESULT_OK) {
+//                Bundle bundle = getArguments();
+//                ScheduleData scheduleData = bundle.getParcelable("scheduleData");
+//                Toast.makeText(getContext(), scheduleData.repeatState, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Activity Terminated", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
 
 
     @Override
@@ -151,4 +170,11 @@ public class ScheduleFragment extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
+    private void refresh() {
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        transaction.detach(this).attach(this).commit();
+    }
+
+
 }

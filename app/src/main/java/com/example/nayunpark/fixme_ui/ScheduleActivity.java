@@ -64,7 +64,7 @@ public class ScheduleActivity extends AppCompatActivity implements ScheduleFragm
                     Fragment schfrg = (Fragment) new ScheduleFragment();
                     FragmentTransaction ft = this.fm.beginTransaction();
                     final FragmentTransaction add = ft.add(R.id.fragment_blank, schfrg);
-//                    ft.addToBackStack(null);
+
                     ft.commit();
                 }
                 rt = true;
