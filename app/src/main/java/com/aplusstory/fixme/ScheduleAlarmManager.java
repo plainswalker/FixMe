@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.Serializable;
 
@@ -48,23 +49,36 @@ public class ScheduleAlarmManager implements ScheduleDataManager {
             this.alr = new AlarmReceiver();
             this.context.registerReceiver(this.alr, this.intfl);
         }
-        if(this.alm != null && this.alr != null) {
+        if(this.alm != null) {
             Intent it = new Intent();
             it.setAction(ScheduleAlarmManager.SCHEDULE_ALARM_START_ACTION);
-            it.putExtra(KEY_LOCATON, loca);
-            PendingIntent pit = PendingIntent.getBroadcast(this.context, 0,it,PendingIntent.FLAG_UPDATE_CURRENT);
+            Bundle bd = new Bundle();
+            bd.putSerializable(KEY_LOCATON, loca);
+            it.putExtra(KEY_LOCATON, bd);
+            PendingIntent pit = PendingIntent.getBroadcast(this.context, 0, it, PendingIntent.FLAG_UPDATE_CURRENT);
+            Intent itAct = new Intent(it);
+            itAct.setClass(context, SplashActivity.class);
+            PendingIntent pitAct = PendingIntent.getActivity(this.context, 0, itAct, PendingIntent.FLAG_UPDATE_CURRENT);
             this.alm.set(AlarmManager.RTC_WAKEUP, time, pit);
+            this.alm.set(AlarmManager.RTC_WAKEUP, time, pitAct);
         }
     }
 
     public class AlarmReceiver extends BroadcastReceiver{
         @Override
         public void onReceive(Context context, Intent intent) {
+            Bundle extra = intent.getBundleExtra(KEY_LOCATON);
             Log.d(ScheduleAlarmManager.class.getName(),
                     "alarm received, from : "
-                    + context.getPackageCodePath()
+                    + context.getClass().getName()
                     + ", location : \n"
-                    + ((LocationDataManager.LocatonData)intent.getSerializableExtra(ScheduleAlarmManager.KEY_LOCATON)).toString());
+                    + ((LocationDataManager.LocatonData)extra.getSerializable(KEY_LOCATON)).toString());
+            Toast.makeText(context,"alarm!",Toast.LENGTH_SHORT).show();
+
+//            Intent it = new Intent(context.getApplicationContext(), SplashActivity.class);
+//            it.setAction(intent.getAction());
+//            it.putExtra(KEY_LOCATON, extra);
+//            context.startActivity(it);
         }
     }
 

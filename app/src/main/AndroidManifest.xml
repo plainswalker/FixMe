@@ -3,8 +3,8 @@
     package="com.aplusstory.fixme">
 
     <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -13,32 +13,41 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
-        <service android:name=".NotificationUIService"
-            android:permission="android.permission.VIBRATE">
-        </service>
-        <service android:name=".WinDetectService"
+        <service
+            android:name=".NotificationUIService"
+            android:permission="android.permission.VIBRATE"></service>
+        <service
+            android:name=".WinDetectService"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
             <intent-filter>
-                <action android:name="android.accessibilityservice.AccessibilityService"/>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
             </intent-filter>
         </service>
-        <service android:name=".CurrentLocationManager"/>
+        <service android:name=".CurrentLocationManager" />
 
+
+        <activity android:name=".TestMainActivity">
+             <intent-filter>
+             <action android:name="android.intent.action.MAIN" />
+             <category android:name="android.intent.category.LAUNCHER" />
+             </intent-filter>
+        </activity>
         <activity android:name=".MainActivity">
-            <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.MAIN" />-->
-                <!--<category android:name="android.intent.category.LAUNCHER" />-->
-            <!--</intent-filter>-->
+
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.MAIN" /> -->
+            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+            <!-- </intent-filter> -->
         </activity>
         <activity
             android:name=".SplashActivity"
             android:screenOrientation="portrait"
             android:theme="@style/SplashTheme">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            <!--<intent-filter>-->
+                <!--<action android:name="android.intent.action.MAIN" />-->
+
+                <!--<category android:name="android.intent.category.LAUNCHER" />-->
+            <!--</intent-filter>-->
         </activity>
         <activity android:name=".ScheduleActivity" />
         <activity android:name=".SettingsActivity" />
@@ -49,7 +58,16 @@
         <activity android:name=".ScheduleTimeActivity" />
         <activity android:name=".ScheduleRepeationActivity" />
         <activity android:name=".ScheduleAlarmActivity" />
-        <activity android:name=".ScheduleColorActivity"/>
-        <activity android:name=".NewCalendarActivity"/>
+        <receiver android:name=".ScheduleAlarmReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.INPUT_METHOD_CHANGED"/>
+                <action android:name="com.aplusstory.fixme.action.ALARM_START"/>
+            </intent-filter>
+        </receiver>
+        <activity android:name=".ScheduleColorActivity" />
+        <activity android:name=".NewCalendarActivity" />
     </application>
+
 </manifest>
