@@ -24,6 +24,7 @@
             </intent-filter>
         </service>
         <service android:name=".CurrentLocationManager"/>
+        <service android:name=".ScheduleAlarmManager"/>
 
         <activity android:name=".MainActivity">
             <!--<intent-filter>-->
