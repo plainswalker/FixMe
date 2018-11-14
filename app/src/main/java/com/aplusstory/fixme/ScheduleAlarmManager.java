@@ -2,70 +2,58 @@ package com.aplusstory.fixme;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import java.io.Serializable;
 
-public class ScheduleAlarmManager implements ScheduleDataManager {
+public class ScheduleAlarmManager extends Service implements ScheduleDataManager {
     public static final String SCHEDULE_ALARM_START_ACTION = "com.aplusstory.fixme.action.ALARM_START";
-    public static final String KEY_TIME = "time";
     public static final String KEY_LOCATON = "location";
+    public static final double RANGE_ALARM = 25.0;
+    public static final Class ALARM_ACTIVITY = null;
 
-    private Context context;
-    private IntentFilter intfl;
-    private BroadcastReceiver alr;
-    private AlarmManager alm;
-
-
-    public ScheduleAlarmManager(Context context){
-        this.context = context;
-        if(this.intfl == null){
-            this.intfl = new IntentFilter();
-            intfl.addAction(ScheduleAlarmManager.SCHEDULE_ALARM_START_ACTION);
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        LocationDataManager.LocatonData loca;
+        loca = (LocationDataManager.LocatonData)intent.getBundleExtra(KEY_LOCATON).getSerializable(KEY_LOCATON);
+        SharedPreferences sp = this.getSharedPreferences(LocationFileManager.FILENAME_CURRENT_LOCATION,0);
+        long now = System.currentTimeMillis();
+        double lat = Double.parseDouble(sp.getString(LocationDataManager.LocatonData.KEY_LATITUDE, "0.0"));
+        double longt = Double.parseDouble(sp.getString(LocationDataManager.LocatonData.KEY_LONGTITUDE, "0.0"));
+        LocationDataManager.LocatonData currentLoca = new LocationDataManager.LocatonData(now, lat, longt);
+        if(loca != null && currentLoca != null && currentLoca.distanceTo(loca) < RANGE_ALARM) {
+            Intent it = new Intent(intent);
+            it.setClass(this, ALARM_ACTIVITY);
+            this.startActivity(intent);
         }
-
-        if(this.alr == null){
-            this.alr = new AlarmReceiver();
-            this.context.registerReceiver(this.alr, this.intfl);
-        }
-
-        if(this.alm == null){
-            this.alm = (AlarmManager)this.context.getSystemService(Context.ALARM_SERVICE);
-        }
+        return START_NOT_STICKY;
     }
 
-    public void setAlarm(long time, LocationDataManager.LocatonData loca){
-        if(this.alr == null){
-            if(this.intfl == null){
-                this.intfl = new IntentFilter();
-                intfl.addAction(ScheduleAlarmManager.SCHEDULE_ALARM_START_ACTION);
-            }
-            this.alr = new AlarmReceiver();
-            this.context.registerReceiver(this.alr, this.intfl);
-        }
-        if(this.alm != null && this.alr != null) {
-            Intent it = new Intent();
+    public static void setAlarm(Context context, AlarmManager alm, long time, LocationDataManager.LocatonData loca){
+        if(alm != null){
+            Intent it = new Intent(context, ScheduleAlarmManager.class);
             it.setAction(ScheduleAlarmManager.SCHEDULE_ALARM_START_ACTION);
-            it.putExtra(KEY_LOCATON, loca);
-            PendingIntent pit = PendingIntent.getBroadcast(this.context, 0,it,PendingIntent.FLAG_UPDATE_CURRENT);
-            this.alm.set(AlarmManager.RTC_WAKEUP, time, pit);
+            Bundle bd = new Bundle();
+            bd.putSerializable(KEY_LOCATON, loca);
+            it.putExtra(KEY_LOCATON, bd);
+            PendingIntent pit = PendingIntent.getService(context, 0,it,PendingIntent.FLAG_UPDATE_CURRENT);
+            alm.set(AlarmManager.RTC_WAKEUP, time, pit);
         }
     }
 
-    public class AlarmReceiver extends BroadcastReceiver{
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Log.d(ScheduleAlarmManager.class.getName(),
-                    "alarm received, from : "
-                    + context.getPackageCodePath()
-                    + ", location : \n"
-                    + ((LocationDataManager.LocatonData)intent.getSerializableExtra(ScheduleAlarmManager.KEY_LOCATON)).toString());
-        }
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
     }
 
     @Override
