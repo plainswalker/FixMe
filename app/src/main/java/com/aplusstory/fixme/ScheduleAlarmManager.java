@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.Serializable;
 
@@ -19,7 +20,7 @@ public class ScheduleAlarmManager extends Service implements ScheduleDataManager
     public static final String SCHEDULE_ALARM_START_ACTION = "com.aplusstory.fixme.action.ALARM_START";
     public static final String KEY_LOCATON = "location";
     public static final double RANGE_ALARM = 25.0;
-    public static final Class ALARM_ACTIVITY = null;
+    public static final Class ALARM_ACTIVITY = null;//set the alarm activity here
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -30,10 +31,10 @@ public class ScheduleAlarmManager extends Service implements ScheduleDataManager
         double lat = Double.parseDouble(sp.getString(LocationDataManager.LocatonData.KEY_LATITUDE, "0.0"));
         double longt = Double.parseDouble(sp.getString(LocationDataManager.LocatonData.KEY_LONGTITUDE, "0.0"));
         LocationDataManager.LocatonData currentLoca = new LocationDataManager.LocatonData(now, lat, longt);
-        if(loca != null && currentLoca != null && currentLoca.distanceTo(loca) < RANGE_ALARM) {
-            Intent it = new Intent(intent);
-            it.setClass(this, ALARM_ACTIVITY);
-            this.startActivity(intent);
+        if(loca != null && currentLoca != null && currentLoca.distanceTo(loca) > RANGE_ALARM) {
+            Intent it = new Intent(this, ALARM_ACTIVITY);
+            it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            this.startActivity(it);
         }
         return START_NOT_STICKY;
     }
