@@ -1,5 +1,7 @@
 package com.aplusstory.fixme;
 
+import android.location.Location;
+
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -22,6 +24,7 @@ public interface LocationDataManager {
         public static final String KEY_LATITUDE = "latitude";
         public static final String KEY_LONGTITUDE = "longtitude";
         public static final String DATE_FORMAT_GMT = "yyyy-MM-dd HH:mm:ss";
+        public static final double T_RAD = 6378137.0D; //by meter
 
         long datetime; // in milliseconds
         double latitude;
@@ -91,6 +94,25 @@ public interface LocationDataManager {
         @Override
         public String toString() {
             return this.JSONify().toString();
+        }
+
+        public static double distance(LocatonData src, LocatonData dst){
+            double degToRad = Math.PI/180.0;
+            double dlat = (src.latitude - dst.latitude) * degToRad;
+            double dlong = (src.longtitude - dst.longtitude) * degToRad;
+
+            double a = Math.pow(Math.sin(dlat/2.0), 2.0)
+                    + (Math.cos(src.latitude * degToRad)
+                        * Math.cos(dst.latitude * degToRad)
+                        * Math.pow(Math.sin(dlong/2.0),2.0));
+
+            return 2.0 * LocatonData.T_RAD * Math.atan2(
+                    Math.sqrt(a), Math.sqrt(1.0 - a)
+            );
+        }
+
+        public double distanceTo(LocationDataManager.LocatonData dst){
+            return LocationDataManager.LocatonData.distance(this, dst);
         }
     }
     class PathData{

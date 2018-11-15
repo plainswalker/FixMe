@@ -23,10 +23,9 @@
                 <action android:name="android.accessibilityservice.AccessibilityService" />
             </intent-filter>
         </service>
-        <service android:name=".CurrentLocationManager" />
-
+        <service android:name=".CurrentLocationManager"/>
+        <service android:name=".ScheduleAlarmManager"/>
         <activity android:name=".MainActivity">
-
             <!-- <intent-filter> -->
             <!-- <action android:name="android.intent.action.MAIN" /> -->
             <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
