@@ -1,6 +1,10 @@
 package com.aplusstory.fixme;
 
 import android.Manifest;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -23,8 +27,8 @@ import java.util.Date;
 import java.util.Locale;
 
 public class CurrentLocationManager extends Service implements LocationDataManager, LocationListener {
-//    public static final long MIN_LOCA_UPDATE = 5 * 60 * 1000;
-    public static final long MIN_LOCA_UPDATE = 10000;
+    public static final long MIN_LOCA_UPDATE = 5 * 60 * 1000;
+//    public static final long MIN_LOCA_UPDATE = 10000;
     public static final long DELAY_THREAD_LOOP = 10000;
 
     private LocationFileManager fm = null;
@@ -34,6 +38,8 @@ public class CurrentLocationManager extends Service implements LocationDataManag
     private boolean isEnabled = false;
     private Handler hd = null;
     private LocationDataManager.LocatonData priviousLocation = null;
+    private long tLocaReq = -1;
+    private long dLocaReq = MIN_LOCA_UPDATE;
 
     @Nullable
     @Override
@@ -65,7 +71,23 @@ public class CurrentLocationManager extends Service implements LocationDataManag
 
         Log.d(CurrentLocationManager.class.getName(), "Service started");
 //        Toast.makeText(this, "Service started", Toast.LENGTH_SHORT);
-
+        NotificationManager nm = (NotificationManager)this.getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationChannel nc = nm.getNotificationChannel(NotificationUIService.NOTIFICATION_CHANNEL_ID);
+        Intent it = new Intent(this, TestLocationActivity.class);
+        PendingIntent ntPIntent = PendingIntent.getActivity(this,0, it, PendingIntent.FLAG_UPDATE_CURRENT);
+        Notification n = (new Notification.Builder(this, NotificationUIService.NOTIFICATION_CHANNEL_ID))
+                //                .setSmallIcon(R.drawable.FixMeIcon)
+                .setSmallIcon(R.drawable.ic_launcher_background)
+                .setContentTitle("FixMe")
+                .setContentText("GPS turned on")
+                .setVisibility(Notification.VISIBILITY_PRIVATE)
+                .setOngoing(true)
+                .setWhen(System.currentTimeMillis())
+                .setShowWhen(true)
+                .setOnlyAlertOnce(true)
+                .setContentIntent(ntPIntent)
+                .build();
+        this.startForeground((int)System.currentTimeMillis(),n);
         return Service.START_NOT_STICKY;
     }
 
@@ -167,14 +189,29 @@ public class CurrentLocationManager extends Service implements LocationDataManag
         public void run() {
             CurrentLocationManager that = CurrentLocationManager.this;
             while(that.isEnabled){
-                if(that.moRecog == null || !that.moRecog.isEnabled()){
-                    if(this.hd != null) {
-                        this.hd.sendEmptyMessage(0);
+                long now = System.currentTimeMillis();
+                if(that.tLocaReq > 0) {
+                    if (that.moRecog == null || !that.moRecog.isEnabled()) {
+                        if (this.hd != null) {
+                            Log.d(that.getClass().getName(), "No Recognizer");
+                            this.hd.sendEmptyMessage(0);
+                            that.tLocaReq = -1;
+                        }
+                    } else if (that.moRecog.checkCondition()) {
+                        if (this.hd != null) {
+                            Log.d(that.getClass().getName(), "Condition fullfilled");
+                            this.hd.sendEmptyMessage(0);
+                            that.tLocaReq = -1;
+                        }
+                    } else if(now - tLocaReq > that.dLocaReq){
+                        if(this.hd != null){
+                            Log.d(that.getClass().getName(), "Minimum time expired");
+                            this.hd.sendEmptyMessage(0);
+                            that.tLocaReq = -1;
+                        }
                     }
-                } else if(that.moRecog.checkCondition()){
-                    if(this.hd != null){
-                        this.hd.sendEmptyMessage(0);
-                    }
+                } else {
+                    that.tLocaReq = now;
                 }
                 try{
                     Thread.sleep(CurrentLocationManager.DELAY_THREAD_LOOP);

@@ -30,7 +30,7 @@ public class NotificationUIService extends Service implements NotificationUIMana
 
     public static final String NOTIFICATION_SERVICE_RUNNING_FLAG_SP_NAME = "advise_running";
     public static final String NOTIFICATION_SERVICE_RUNNING_FLAG_SP_KEY = "is_running";
-    private static final String NOTIFICATION_CHANNEL_ID = "FixMe_Noti";
+    public static final String NOTIFICATION_CHANNEL_ID = "FixMe_Noti";
     private static final int NOTIFICATION_ID = (int) new Date().getTime();
 
     public static final int UPDATE_DELAY = 5000;

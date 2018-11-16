@@ -43,7 +43,7 @@ public class TestLocationActivity extends Activity implements View.OnClickListen
             case R.id.toggleService:
                 Intent it = new Intent(this.getApplicationContext(), CurrentLocationManager.class);
                 if(!this.service){
-                    startService(it);
+                    startForegroundService(it);
                     b.setText(this.stop_service);
                 } else{
                     stopService(it);
