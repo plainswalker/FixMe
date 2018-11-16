@@ -8,14 +8,13 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.Binder;
+import android.location.LocationProvider;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.webkit.SslErrorHandler;
 import android.widget.Toast;
 
 import java.text.DateFormat;
@@ -23,11 +22,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import kotlin.collections.DoubleIterator;
-
 public class CurrentLocationManager extends Service implements LocationDataManager, LocationListener {
-//    public static final long DELAY_LOCA_UPDATE = 5 * 60 * 1000;
-    public static final long DELAY_LOCA_UPDATE = 10000;
+//    public static final long MIN_LOCA_UPDATE = 5 * 60 * 1000;
+    public static final long MIN_LOCA_UPDATE = 10000;
     public static final long DELAY_THREAD_LOOP = 10000;
 
     private LocationFileManager fm = null;
@@ -52,8 +49,11 @@ public class CurrentLocationManager extends Service implements LocationDataManag
         }
         if(this.lm == null) {
             this.lm = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
         }
         if(this.moRecog == null){
+            this.moRecog = new UserMovementRecognizer(this);
+            this.moRecog.enable();
 
         }
         if(this.hd == null){
@@ -114,23 +114,37 @@ public class CurrentLocationManager extends Service implements LocationDataManag
         public void handleMessage(Message msg) {
             CurrentLocationManager that = CurrentLocationManager.this;
             if(that.lm != null){
-                if(that.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
-                        == PackageManager.PERMISSION_GRANTED){
+                LocationProvider gps = that.lm.getProvider(LocationManager.GPS_PROVIDER);
+                LocationProvider net = that.lm.getProvider(LocationManager.NETWORK_PROVIDER);
+                LocationProvider passive = that.lm.getProvider(LocationManager.PASSIVE_PROVIDER);
+                boolean coasePermission = that.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
+                        == PackageManager.PERMISSION_GRANTED;
+                boolean finePermission = that.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+                        == PackageManager.PERMISSION_GRANTED;
+                if(passive != null && (finePermission)){
                     that.lm.requestLocationUpdates(
-                            LocationManager.GPS_PROVIDER
-                            , CurrentLocationManager.DELAY_LOCA_UPDATE
+                            LocationManager.PASSIVE_PROVIDER
+                            , CurrentLocationManager.MIN_LOCA_UPDATE
                             , 5
                             , that
                     );
-                }
-                if(that.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-                        == PackageManager.PERMISSION_GRANTED){
-                    that.lm.requestLocationUpdates(
-                            LocationManager.NETWORK_PROVIDER
-                            , CurrentLocationManager.DELAY_LOCA_UPDATE
-                            , 5
-                            , that
-                    );
+                } else {
+                    if (gps != null && finePermission) {
+                        that.lm.requestLocationUpdates(
+                                LocationManager.GPS_PROVIDER
+                                , CurrentLocationManager.MIN_LOCA_UPDATE
+                                , 5
+                                , that
+                        );
+                    }
+                    if (net != null && coasePermission) {
+                        that.lm.requestLocationUpdates(
+                                LocationManager.NETWORK_PROVIDER
+                                , CurrentLocationManager.MIN_LOCA_UPDATE
+                                , 5
+                                , that
+                        );
+                    }
                 }
             }
         }
@@ -149,6 +163,10 @@ public class CurrentLocationManager extends Service implements LocationDataManag
             while(that.isEnabled){
                 if(that.moRecog == null || !that.moRecog.isEnabled()){
                     if(this.hd != null) {
+                        this.hd.sendEmptyMessage(0);
+                    }
+                } else if(that.moRecog.checkCondition()){
+                    if(this.hd != null){
                         this.hd.sendEmptyMessage(0);
                     }
                 }
