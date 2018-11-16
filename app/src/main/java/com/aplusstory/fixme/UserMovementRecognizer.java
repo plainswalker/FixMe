@@ -30,13 +30,29 @@ public class UserMovementRecognizer implements Recognizer, SensorEventListener{
     public static final String KEY_DELTA_YAW = "dy";
 
     private static final long GAP_OF_TIME = 100;
-    private static final long SHAKE_THRESHOLD = 500;
+    private static final long SHAKE_THRESHOLD = 800;
+
+//    private static final int STEP_THRESHOLD = 15;
+    private static final int STEP_THRESHOLD = 3;
 
     private Context context;
-    private boolean cond = false;
+    private boolean cond = true;
     private boolean isEnabled = false;
     private Thread thd = null;
     private SensorManager sm = null;
+    private boolean[] senGot = {false, false, false, false};
+    private static final int INDEX_ACCELEOMETER = 0;
+    private static final int INDEX_GYROSCOPE = 1;
+    private static final int INDEX_STEP_COUNTER = 2;
+    private static final int INDEX_STEP_DETECTOR = 3;
+
+    private long tStep = -1;
+//    private long dStep = DELAY_AMIN / 2;
+    private long dStep = DELAY_SOMESEC;
+    private int sCurrent = 0;
+    private int sBegin = -1;
+    private boolean stepDetected = false;
+
     private long T = -1;
     private float[]  V = {0.0F, 0.0F, 0.0F};
     private float[] dV = {0.0F, 0.0F, 0.0F};
@@ -57,40 +73,85 @@ public class UserMovementRecognizer implements Recognizer, SensorEventListener{
         }
 
         if(this.sm == null){
-            if(!this.getSensorManager()){
-                Log.d(this.getClass().getName(), "Failed to get sensor");
+            if(!this.registerSensors()){
+                Log.d(this.getClass().getName(), "Failed to get some sensors");
             }
         }
 
         this.enable();
     }
-    private boolean getSensorManager(){
-        this.sm = (SensorManager) this.context.getSystemService(Context.SENSOR_SERVICE);
+    private boolean registerSensors(){
+        if(this.sm == null) {
+            this.sm = (SensorManager) this.context.getSystemService(Context.SENSOR_SERVICE);
+        }
         Sensor acc = this.sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         Sensor gyro = this.sm.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
-        if(acc != null && gyro != null) {
-            sm.registerListener(this, acc, SensorManager.SENSOR_DELAY_FASTEST);
-            sm.registerListener(this, gyro, SensorManager.SENSOR_DELAY_FASTEST);
-        } else {
-            this.sm = null;
+        Sensor stpDtc = this.sm.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR);
+        Sensor stpCnt = this.sm.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
+
+        if(acc != null) {
+            sm.registerListener(this, acc, SensorManager.SENSOR_DELAY_NORMAL);
+            this.senGot[INDEX_ACCELEOMETER] = true;
         }
 
-        return this.sm != null;
+        if(gyro != null){
+            sm.registerListener(this, gyro, SensorManager.SENSOR_DELAY_NORMAL);
+            this.senGot[INDEX_GYROSCOPE] = true;
+        }
+
+        if(stpDtc != null){
+            sm.registerListener(this, stpDtc, SensorManager.SENSOR_DELAY_NORMAL);
+            this.senGot[INDEX_STEP_DETECTOR] = true;
+        }
+
+        if(stpCnt != null){
+            sm.registerListener(this, stpCnt, SensorManager.SENSOR_DELAY_NORMAL);
+            this.senGot[INDEX_STEP_COUNTER] = true;
+        }
+
+        return senGot[INDEX_ACCELEOMETER]
+            && senGot[INDEX_GYROSCOPE]
+            && senGot[INDEX_STEP_DETECTOR]
+            && senGot[INDEX_STEP_COUNTER];
     }
 
     private class MovementRecognizingThread extends Thread{
         @Override
         public void run() {
             UserMovementRecognizer that = UserMovementRecognizer.this;
-            while(that.isEnabled){
-                //loop
-                if(that.sm != null){
+            long now;
 
-                }
+            while(that.isEnabled){
                 try{
                     Thread.sleep(UserMovementRecognizer.DELAY_FEWSEC);
                 } catch (InterruptedException e){
                     return;
+                }
+
+                if(that.sm != null){
+                    now = System.currentTimeMillis();
+                    if(that.senGot[INDEX_STEP_DETECTOR] && that.senGot[INDEX_STEP_COUNTER]){
+                        synchronized (that) {
+                            if (that.stepDetected) {
+                                if (that.tStep > 0) {
+                                    if (now - that.tStep > that.dStep) {
+                                        if(sCurrent - sBegin > STEP_THRESHOLD){
+                                            that.cond = true;
+                                        } else {
+                                            that.cond = false;
+                                        }
+                                        that.stepDetected = false;
+                                    } else {
+                                        Log.d(that.getClass().getName(), "current steps : " + Integer.toString(that.sCurrent));
+                                    }
+                                } else {
+                                    Log.d(that.getClass().getName(), "user walking");
+                                    that.tStep = now;
+                                    that.sBegin = sCurrent;
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -155,6 +216,7 @@ public class UserMovementRecognizer implements Recognizer, SensorEventListener{
                     this.thd = new MovementRecognizingThread();
                     this.thd.start();
                 }
+                this.registerSensors();
             }
         }
     }
@@ -164,35 +226,51 @@ public class UserMovementRecognizer implements Recognizer, SensorEventListener{
         if(this.isEnabled) {
             synchronized (this) {
                 this.isEnabled = false;
+                this.sm.unregisterListener(this);
             }
         }
     }
 
     @Override
     public void destroy() {
-        this.thd.interrupt();
+        if(this.thd != null && this.thd.isAlive()) {
+            this.thd.interrupt();
+        }
+
         this.disable();
     }
 
     private float getDeltaV(){
-        return Math.abs(this.dV[0] + this.dV[1] + this.dV[2]);
+        return (float)Math.sqrt(
+                Math.pow((double)this.dV[0], 2.0)
+            +   Math.pow((double)this.dV[1], 2.0)
+            +   Math.pow((double)this.dV[2], 2.0)
+            );
     }
 
     @Override
     public void onSensorChanged(SensorEvent event) {
         float[] sv = event.values;
         float x,y,z;
-        long dT;
+        long now = System.currentTimeMillis();
+        long dT = now - this.T;
         switch (event.sensor.getType()) {
+            case Sensor.TYPE_STEP_DETECTOR:
+                Log.d(this.getClass().getName(), "Step detected");
+                synchronized (this){
+                    this.stepDetected = true;
+                }
+                break;
+            case Sensor.TYPE_STEP_COUNTER:
+                Log.d(this.getClass().getName(), "Step counted. steps : " + Float.toString(sv[0]));
+                synchronized (this){
+                    this.stepDetected = true;
+                    this.sCurrent = Math.max((int)sv[0], sCurrent);
+                }
+                break;
             case Sensor.TYPE_ACCELEROMETER:
                 x = sv[0]; y = sv[1]; z = sv[2];
-                Log.d(this.getClass().getName(),
-                 "Accellometer value changed"
-                    + " , x : " + Float.toString(x)
-                    + " , y : " + Float.toString(y)
-                    + " , z : " + Float.toString(z));
-                dT = System.currentTimeMillis() - this.T;
-                if(dT > 100) {
+                if(dT > GAP_OF_TIME) {
                     synchronized (this) {
                         this.dV[0] = x - this.V[0];
                         this.dV[1] = y - this.V[1];
@@ -200,21 +278,23 @@ public class UserMovementRecognizer implements Recognizer, SensorEventListener{
                         this. V[0] = x;
                         this. V[1] = y;
                         this. V[2] = z;
-                        this.A = this.getDeltaV()/(float)(dT * 1000);
+                        this.A = this.getDeltaV()/dT * 10000;
                     }
+//                    Log.d(this.getClass().getName(),
+//                            "Accellometer value changed"
+//                                    + " , dx : " + Float.toString(this.dV[0])
+//                                    + " , dy : " + Float.toString(this.dV[1])
+//                                    + " , dz : " + Float.toString(this.dV[2])
+//                                    + " , speed : " + Float.toString(this.A)
+//                    );
                 }
                 break;
             case Sensor.TYPE_GYROSCOPE:
                 Log.d(this.getClass().getName(), "");
                 synchronized (this){
                     x = sv[0]; y = sv[1]; z = sv[2];
-                    Log.d(this.getClass().getName(),
-                            "gyroscope value changed"
-                                    + " , x : " + Float.toString(x)
-                                    + " , y : " + Float.toString(y)
-                                    + " , z : " + Float.toString(z));
-                    dT = System.currentTimeMillis() - this.T;
                     if(dT > 100) {
+
                         synchronized (this) {
                             this.dTh[0] = x - this.V[0];
                             this.dTh[1] = y - this.V[1];
@@ -222,10 +302,20 @@ public class UserMovementRecognizer implements Recognizer, SensorEventListener{
                             this. Th[0] = x;
                             this. Th[1] = y;
                             this. Th[2] = z;
+
+//                            Log.d(this.getClass().getName(),
+//                                    "gyroscope value changed"
+//                                            + " , x : " + Float.toString(x)
+//                                            + " , y : " + Float.toString(y)
+//                                            + " , z : " + Float.toString(z)
+//                            );
                         }
                     }
                 }
                 break;
+        }
+        synchronized (this) {
+            this.T = now;
         }
     }
 
