@@ -33,6 +33,7 @@ public class CurrentLocationManager extends Service implements LocationDataManag
     private Thread thd = null;
     private boolean isEnabled = false;
     private Handler hd = null;
+    private LocationDataManager.LocatonData priviousLocation = null;
 
     @Nullable
     @Override
@@ -53,8 +54,6 @@ public class CurrentLocationManager extends Service implements LocationDataManag
         }
         if(this.moRecog == null){
             this.moRecog = new UserMovementRecognizer(this);
-            this.moRecog.enable();
-
         }
         if(this.hd == null){
             this.hd = new ServiceHandler();
@@ -65,7 +64,7 @@ public class CurrentLocationManager extends Service implements LocationDataManag
         }
 
         Log.d(CurrentLocationManager.class.getName(), "Service started");
-        Toast.makeText(this, "Service started", Toast.LENGTH_SHORT);
+//        Toast.makeText(this, "Service started", Toast.LENGTH_SHORT);
 
         return Service.START_NOT_STICKY;
     }
@@ -88,10 +87,15 @@ public class CurrentLocationManager extends Service implements LocationDataManag
         );
 
         LocatonData loca = new LocatonData(now, latitude, longtitude);
+
         if(this.fm != null){
-            this.fm.setCurrentLocation(loca);
+            if( this.priviousLocation == null ||
+                loca.distanceTo(this.priviousLocation) > 15) {
+                this.fm.setCurrentLocation(loca);
+            }
         }
         this.lm.removeUpdates(this);
+        this.priviousLocation = loca;
     }
 
     @Override
@@ -122,29 +126,31 @@ public class CurrentLocationManager extends Service implements LocationDataManag
                 boolean finePermission = that.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
                         == PackageManager.PERMISSION_GRANTED;
                 if(passive != null && (finePermission)){
+                    Log.d(this.getClass().getName(), "passive provider request");
                     that.lm.requestLocationUpdates(
                             LocationManager.PASSIVE_PROVIDER
                             , CurrentLocationManager.MIN_LOCA_UPDATE
                             , 5
                             , that
                     );
-                } else {
-                    if (gps != null && finePermission) {
-                        that.lm.requestLocationUpdates(
-                                LocationManager.GPS_PROVIDER
-                                , CurrentLocationManager.MIN_LOCA_UPDATE
-                                , 5
-                                , that
-                        );
-                    }
-                    if (net != null && coasePermission) {
-                        that.lm.requestLocationUpdates(
-                                LocationManager.NETWORK_PROVIDER
-                                , CurrentLocationManager.MIN_LOCA_UPDATE
-                                , 5
-                                , that
-                        );
-                    }
+                }
+                if (gps != null && finePermission) {
+                    Log.d(this.getClass().getName(), "gps provider request");
+                    that.lm.requestLocationUpdates(
+                            LocationManager.GPS_PROVIDER
+                            , CurrentLocationManager.MIN_LOCA_UPDATE
+                            , 5
+                            , that
+                    );
+                }
+                if (net != null && coasePermission) {
+                    Log.d(this.getClass().getName(), "network provider request");
+                    that.lm.requestLocationUpdates(
+                            LocationManager.NETWORK_PROVIDER
+                            , CurrentLocationManager.MIN_LOCA_UPDATE
+                            , 5
+                            , that
+                    );
                 }
             }
         }
