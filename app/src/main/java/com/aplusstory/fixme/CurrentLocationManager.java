@@ -9,14 +9,12 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.location.LocationProvider;
-import android.os.Binder;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.webkit.SslErrorHandler;
 import android.widget.Toast;
 
 import java.text.DateFormat;
@@ -24,11 +22,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import kotlin.collections.DoubleIterator;
-
 public class CurrentLocationManager extends Service implements LocationDataManager, LocationListener {
-//    public static final long DELAY_LOCA_UPDATE = 5 * 60 * 1000;
-    public static final long DELAY_LOCA_UPDATE = 10000;
+//    public static final long MIN_LOCA_UPDATE = 5 * 60 * 1000;
+    public static final long MIN_LOCA_UPDATE = 10000;
     public static final long DELAY_THREAD_LOOP = 10000;
 
     private LocationFileManager fm = null;
@@ -53,6 +49,7 @@ public class CurrentLocationManager extends Service implements LocationDataManag
         }
         if(this.lm == null) {
             this.lm = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
         }
         if(this.moRecog == null){
             this.moRecog = new UserMovementRecognizer(this);
@@ -127,7 +124,7 @@ public class CurrentLocationManager extends Service implements LocationDataManag
                 if(passive != null && (finePermission)){
                     that.lm.requestLocationUpdates(
                             LocationManager.PASSIVE_PROVIDER
-                            , CurrentLocationManager.DELAY_LOCA_UPDATE
+                            , CurrentLocationManager.MIN_LOCA_UPDATE
                             , 5
                             , that
                     );
@@ -135,7 +132,7 @@ public class CurrentLocationManager extends Service implements LocationDataManag
                     if (gps != null && finePermission) {
                         that.lm.requestLocationUpdates(
                                 LocationManager.GPS_PROVIDER
-                                , CurrentLocationManager.DELAY_LOCA_UPDATE
+                                , CurrentLocationManager.MIN_LOCA_UPDATE
                                 , 5
                                 , that
                         );
@@ -143,7 +140,7 @@ public class CurrentLocationManager extends Service implements LocationDataManag
                     if (net != null && coasePermission) {
                         that.lm.requestLocationUpdates(
                                 LocationManager.NETWORK_PROVIDER
-                                , CurrentLocationManager.DELAY_LOCA_UPDATE
+                                , CurrentLocationManager.MIN_LOCA_UPDATE
                                 , 5
                                 , that
                         );
@@ -166,6 +163,10 @@ public class CurrentLocationManager extends Service implements LocationDataManag
             while(that.isEnabled){
                 if(that.moRecog == null || !that.moRecog.isEnabled()){
                     if(this.hd != null) {
+                        this.hd.sendEmptyMessage(0);
+                    }
+                } else if(that.moRecog.checkCondition()){
+                    if(this.hd != null){
                         this.hd.sendEmptyMessage(0);
                     }
                 }
