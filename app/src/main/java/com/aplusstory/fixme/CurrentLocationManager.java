@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.location.LocationProvider;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.Handler;
@@ -54,6 +55,8 @@ public class CurrentLocationManager extends Service implements LocationDataManag
             this.lm = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         }
         if(this.moRecog == null){
+            this.moRecog = new UserMovementRecognizer(this);
+            this.moRecog.enable();
 
         }
         if(this.hd == null){
@@ -114,23 +117,37 @@ public class CurrentLocationManager extends Service implements LocationDataManag
         public void handleMessage(Message msg) {
             CurrentLocationManager that = CurrentLocationManager.this;
             if(that.lm != null){
-                if(that.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
-                        == PackageManager.PERMISSION_GRANTED){
+                LocationProvider gps = that.lm.getProvider(LocationManager.GPS_PROVIDER);
+                LocationProvider net = that.lm.getProvider(LocationManager.NETWORK_PROVIDER);
+                LocationProvider passive = that.lm.getProvider(LocationManager.PASSIVE_PROVIDER);
+                boolean coasePermission = that.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
+                        == PackageManager.PERMISSION_GRANTED;
+                boolean finePermission = that.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+                        == PackageManager.PERMISSION_GRANTED;
+                if(passive != null && (finePermission)){
                     that.lm.requestLocationUpdates(
-                            LocationManager.GPS_PROVIDER
+                            LocationManager.PASSIVE_PROVIDER
                             , CurrentLocationManager.DELAY_LOCA_UPDATE
                             , 5
                             , that
                     );
-                }
-                if(that.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-                        == PackageManager.PERMISSION_GRANTED){
-                    that.lm.requestLocationUpdates(
-                            LocationManager.NETWORK_PROVIDER
-                            , CurrentLocationManager.DELAY_LOCA_UPDATE
-                            , 5
-                            , that
-                    );
+                } else {
+                    if (gps != null && finePermission) {
+                        that.lm.requestLocationUpdates(
+                                LocationManager.GPS_PROVIDER
+                                , CurrentLocationManager.DELAY_LOCA_UPDATE
+                                , 5
+                                , that
+                        );
+                    }
+                    if (net != null && coasePermission) {
+                        that.lm.requestLocationUpdates(
+                                LocationManager.NETWORK_PROVIDER
+                                , CurrentLocationManager.DELAY_LOCA_UPDATE
+                                , 5
+                                , that
+                        );
+                    }
                 }
             }
         }
