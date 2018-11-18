@@ -98,7 +98,7 @@ public class LocationFileManager implements FileManager {
             rt = new LocationDataManager.LocatonData(
                      this.sp.getString(LocationDataManager.LocatonData.KEY_DATETIME,"")
                     ,Double.parseDouble(this.sp.getString(LocationDataManager.LocatonData.KEY_LATITUDE, ""))
-                    ,Double.parseDouble(this.sp.getString(LocationDataManager.LocatonData.KEY_LONGTITUDE, ""))
+                    ,Double.parseDouble(this.sp.getString(LocationDataManager.LocatonData.KEY_LONGITUDE, ""))
             );
         }
 
@@ -114,7 +114,7 @@ public class LocationFileManager implements FileManager {
         if(this.sp != null){
             SharedPreferences.Editor ed = this.sp.edit();
             ed.putString(LocationDataManager.LocatonData.KEY_LATITUDE, Double.toString(loca.latitude));
-            ed.putString(LocationDataManager.LocatonData.KEY_LONGTITUDE, Double.toString(loca.longtitude));
+            ed.putString(LocationDataManager.LocatonData.KEY_LONGITUDE, Double.toString(loca.longitude));
             Date dt = new Date(loca.datetime);
             String dtStr = df.format(dt);
             ed.putString(LocationDataManager.LocatonData.KEY_DATETIME, dtStr);
