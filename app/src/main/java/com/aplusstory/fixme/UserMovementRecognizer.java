@@ -32,8 +32,8 @@ public class UserMovementRecognizer implements Recognizer, SensorEventListener{
     private static final long GAP_OF_TIME = 100;
     private static final long SHAKE_THRESHOLD = 800;
 
-//    private static final int STEP_THRESHOLD = 15;
-    private static final int STEP_THRESHOLD = 3;
+    private static final int STEP_THRESHOLD = 15;
+//    private static final int STEP_THRESHOLD = 3;
 
     private Context context;
     private boolean cond = true;
@@ -47,8 +47,8 @@ public class UserMovementRecognizer implements Recognizer, SensorEventListener{
     private static final int INDEX_STEP_DETECTOR = 3;
 
     private long tStep = -1;
-//    private long dStep = DELAY_AMIN / 2;
-    private long dStep = DELAY_SOMESEC;
+    private long dStep = DELAY_AMIN / 2;
+//    private long dStep = DELAY_SOMESEC;
     private int sCurrent = 0;
     private int sBegin = -1;
     private boolean stepDetected = false;
@@ -120,7 +120,7 @@ public class UserMovementRecognizer implements Recognizer, SensorEventListener{
         public void run() {
             UserMovementRecognizer that = UserMovementRecognizer.this;
             long now;
-
+            that.cond = false;
             while(that.isEnabled){
                 try{
                     Thread.sleep(UserMovementRecognizer.DELAY_FEWSEC);
@@ -149,6 +149,8 @@ public class UserMovementRecognizer implements Recognizer, SensorEventListener{
                                     that.tStep = now;
                                     that.sBegin = sCurrent;
                                 }
+                            } else{
+                                that.cond = false;
                             }
                         }
                     }
@@ -167,7 +169,7 @@ public class UserMovementRecognizer implements Recognizer, SensorEventListener{
     @Override
     public boolean isEnabled() {
         synchronized (this) {
-            return false;
+            return this.isEnabled;
         }
     }
 
