@@ -50,7 +50,6 @@ public class MainActivity extends AppCompatActivity
     private Double lon = null;
 
     private Button bt_find; //주소로 찾기 버튼
-    private Button bt_fac;  //주변 편의시설 찾기 버튼
 
     @Override
     public void onLocationChange(Location location) {
@@ -67,7 +66,6 @@ public class MainActivity extends AppCompatActivity
 
         //버튼 선언
         bt_find = (Button) findViewById(R.id.bt_findadd);
-        bt_fac = (Button) findViewById(R.id.bt_findfac);
 
         //Tmap 각종 객체 선언
         tmapdata = new TMapData(); //POI검색, 경로검색 등의 지도데이터를 관리하는 클래스
@@ -138,7 +136,6 @@ public class MainActivity extends AppCompatActivity
 
         //버튼 리스너 등록
         bt_find.setOnClickListener(this);
-        bt_fac.setOnClickListener(this);
 
     }
     //핀 찍을 data
@@ -182,14 +179,12 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.bt_findadd:
                 convertToAddress();
-                break;
-            case R.id.bt_findfac:
-                getAroundBizPoi();
                 break;
         }
     }
@@ -199,7 +194,7 @@ public class MainActivity extends AppCompatActivity
     public void convertToAddress() {
         //다이얼로그 띄워서, 검색창에 입력받음
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("POI 통합 검색");
+        builder.setTitle("통합 검색");
 
         final EditText input = new EditText(this);
         builder.setView(input);
@@ -234,25 +229,5 @@ public class MainActivity extends AppCompatActivity
         });
 
         builder.show();
-    }
-
-    //2. 주변 편의시설 검색하기
-    /* 화면 중심의 위도 경도를 통한, 주변 편의시설 검색 */
-    public void getAroundBizPoi() {
-        TMapData tmapdata = new TMapData();
-
-        TMapPoint point = tmapview.getCenterPoint();
-
-        tmapdata.findAroundNamePOI(point, "편의점;은행", 1, 99,
-                new TMapData.FindAroundNamePOIListenerCallback() {
-                    @Override
-                    public void onFindAroundNamePOI(ArrayList<TMapPOIItem> poiItem) {
-                        for (int i = 0; i < poiItem.size(); i++) {
-                            TMapPOIItem item = poiItem.get(i);
-                            Log.d("편의시설","POI Name: " + item.getPOIName() + "," + "Address: "
-                                    + item.getPOIAddress().replace("null", ""));
-                        }
-                    }
-                });
     }
 }
