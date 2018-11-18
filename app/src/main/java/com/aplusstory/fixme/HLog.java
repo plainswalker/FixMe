@@ -36,7 +36,7 @@ public class HLog {
         }
     }
 
-    public static final void v(String TAG, String CLASS, String msg) {
+    public static final void v(String TAG   , String CLASS, String msg) {
         if(isDebugMode) {
             String THREAD = Thread.currentThread().getName();
             String text = "[" + THREAD + "] " + CLASS + " " + msg;
