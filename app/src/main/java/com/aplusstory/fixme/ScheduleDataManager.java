@@ -78,9 +78,16 @@ public interface ScheduleDataManager extends UserDataManager{
                         sch.hasLocation = true;
                         LocationDataManager.LocatonData loca =
                         LocationDataManager.LocatonData.parseJSON(json.getJSONObject(KEY_LOCATION));
-                        sch.latitude = loca.latitude;
-                        sch.longitude = loca.longtitude;
+                        if(loca != null) {
+                            sch.latitude = loca.latitude;
+                            sch.longitude = loca.longitude;
+                            sch.locationAddress = json.getString(KEY_LOCATION_TAG);
+                        }
                     }
+
+                    sch.memo = json.getString(KEY_MEMO);
+                    sch.alarmInterval = json.getInt(KEY_ALARM_INTERVAL_CODE);
+                    sch.tableColor = json.getInt(KEY_TABLE_COLOR_CODE);
                 }
             } catch(Exception e){
                 Log.d(ScheduleData.class.getName(), e.toString());
