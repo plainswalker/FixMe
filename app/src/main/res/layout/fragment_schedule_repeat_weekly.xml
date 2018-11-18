@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ScheduleRepeatWeeklyFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <CheckBox
+                    android:id="@+id/checkMon"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:text="월요일" />
+
+                <CheckBox
+                    android:id="@+id/checkWed"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:text="수요일" />
+
+                <CheckBox
+                    android:id="@+id/checkFri"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:text="금요일" />
+
+                <CheckBox
+                    android:id="@+id/checkSun"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:text="일요일" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <CheckBox
+                    android:id="@+id/checkTue"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:text="화요일" />
+
+                <CheckBox
+                    android:id="@+id/checkThu"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:text="목요일" />
+
+                <CheckBox
+                    android:id="@+id/checkSat"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:text="토요일" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/confirmButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="confirm" />
+    </LinearLayout>
+
+</FrameLayout>

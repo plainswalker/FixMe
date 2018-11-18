@@ -1,45 +1,45 @@
 package com.aplusstory.fixme;
 
 
-import java.util.Date;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-public class ScheduleData {
+public class ScheduleData implements Parcelable {
 
-    public static class RepeatDuration{
-        public static final int REPEAT_DAYLY = 0;
-        public static final int REPEAT_WEEKLY = 1;
-        public static final int REPEAT_MONTHLY = 2;
-        public static final int REPEAT_YEARLY = 3;
-    }
-    public static class TableColor{
-        public static final int WHITE = 0;
-        public static final int LIGHTGREEN = 1;
-        public static final int SKYBLUE = 2;
-        public static final int PINK = 3;
-        public static final int YELLOW = 4;
-        public static final int PURPLE = 5;
-        public static final int RED = 6;
-        public static final int CYAN = 7;
-        public static final int BLUE = 8;
-        public static final int GREEN = 9;
-        public static final int BLACK = 10;
+    public String repeatDate;
+    public int repeatState;
+
+    public ScheduleData(String repeatDate, int repeatState) {
+        this.repeatDate = repeatDate;
+        this.repeatState = repeatState;
     }
 
-    boolean isRepeated;
-    int repeatDuration;
-    long scheduleBegin;
-    long scheduleEnd;
-    Double latitude;
-    Double longitude;
-    String locationAddress;
-    String memo;
-    long alertTime;
-    int tableColor;
-    //TODO : getters, setters
-    public void setBegin(Date date){
-        this.scheduleBegin = date.getTime();
-    }
-    public void setEnd(Date date){
 
+    protected ScheduleData(Parcel in) {
+        repeatDate = in.readString();
+        repeatState = in.readInt();
+    }
+
+    public static final Creator<ScheduleData> CREATOR = new Creator<ScheduleData>() {
+        @Override
+        public ScheduleData createFromParcel(Parcel in) {
+            return new ScheduleData(in);
+        }
+
+        @Override
+        public ScheduleData[] newArray(int size) {
+            return new ScheduleData[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(repeatDate);
+        dest.writeInt(repeatState);
     }
 }

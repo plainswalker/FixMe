@@ -1,5 +1,6 @@
 package com.aplusstory.fixme;
 
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -12,9 +13,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import static android.app.Activity.RESULT_OK;
 
 
 /**
@@ -37,6 +41,9 @@ public class ScheduleFragment extends Fragment {
 
     Date today = new Date();
     SimpleDateFormat date = new SimpleDateFormat("yyyy.MM.dd");
+    String repeatDate;
+    int repeatState = 0;
+    private int REQUEST_RESULT = 1;
 
     private OnFragmentInteractionListener mListener;
 
@@ -87,6 +94,23 @@ public class ScheduleFragment extends Fragment {
             }
         });
 
+        Button colorButton = (Button) returnView.findViewById(R.id.colorButton);
+        colorButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), ScheduleColorActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        Button repeatButton = (Button) returnView.findViewById(R.id.repeationButton);
+        repeatButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), ScheduleRepeationActivity.class);
+                startActivityForResult(intent, REQUEST_RESULT);
+            }
+        });
         return returnView;
     }
 
@@ -96,6 +120,21 @@ public class ScheduleFragment extends Fragment {
             mListener.onFragmentInteraction(uri);
         }
     }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == REQUEST_RESULT) {
+            if(resultCode == RESULT_OK) {
+//                Bundle bundle = getArguments();
+//                ScheduleData scheduleData = bundle.getParcelable("scheduleData");
+//                Toast.makeText(getContext(), scheduleData.repeatState, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Activity Terminated", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
 
     @Override
     public void onAttach(Context context) {
@@ -128,4 +167,11 @@ public class ScheduleFragment extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
+    private void refresh() {
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        transaction.detach(this).attach(this).commit();
+    }
+
+
 }
