@@ -4,31 +4,31 @@ package com.aplusstory.fixme;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class ScheduleData implements Parcelable {
+public class ScheduleRepeatData implements Parcelable {
 
     public String repeatDate;
     public int repeatState;
 
-    public ScheduleData(String repeatDate, int repeatState) {
+    public ScheduleRepeatData(String repeatDate, int repeatState) {
         this.repeatDate = repeatDate;
         this.repeatState = repeatState;
     }
 
 
-    protected ScheduleData(Parcel in) {
+    protected ScheduleRepeatData(Parcel in) {
         repeatDate = in.readString();
         repeatState = in.readInt();
     }
 
-    public static final Creator<ScheduleData> CREATOR = new Creator<ScheduleData>() {
+    public static final Creator<ScheduleRepeatData> CREATOR = new Creator<ScheduleRepeatData>() {
         @Override
-        public ScheduleData createFromParcel(Parcel in) {
-            return new ScheduleData(in);
+        public ScheduleRepeatData createFromParcel(Parcel in) {
+            return new ScheduleRepeatData(in);
         }
 
         @Override
-        public ScheduleData[] newArray(int size) {
-            return new ScheduleData[size];
+        public ScheduleRepeatData[] newArray(int size) {
+            return new ScheduleRepeatData[size];
         }
     };
 

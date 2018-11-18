@@ -27,7 +27,7 @@ public class ScheduleColorActivity extends AppCompatActivity {
         colorInfoArrayList.add(new SettingsColorInfo(R.drawable.ic_info_black_24dp, "black"));
         colorInfoArrayList.add(new SettingsColorInfo(R.drawable.ic_info_black_24dp, "red"));
 
-        ColorRecyclerAdapter colorRecyclerAdapter = new ColorRecyclerAdapter(colorInfoArrayList);
+        ScheduleColorRecyclerAdapter colorRecyclerAdapter = new ScheduleColorRecyclerAdapter(colorInfoArrayList);
         recyclerView.setAdapter(colorRecyclerAdapter);
     }
 }

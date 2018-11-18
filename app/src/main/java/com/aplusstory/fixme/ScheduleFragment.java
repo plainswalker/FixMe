@@ -128,7 +128,7 @@ public class ScheduleFragment extends Fragment {
         if(requestCode == REQUEST_RESULT) {
             if(resultCode == RESULT_OK) {
 //                Bundle bundle = getArguments();
-//                ScheduleData scheduleData = bundle.getParcelable("scheduleData");
+//                ScheduleRepeatData scheduleData = bundle.getParcelable("scheduleData");
 //                Toast.makeText(getContext(), scheduleData.repeatState, Toast.LENGTH_SHORT).show();
                 Toast.makeText(getContext(), "Activity Terminated", Toast.LENGTH_SHORT).show();
             }

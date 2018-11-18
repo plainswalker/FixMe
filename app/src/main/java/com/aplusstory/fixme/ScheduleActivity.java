@@ -16,9 +16,10 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 
-public class ScheduleActivity extends AppCompatActivity implements ScheduleFragment.OnFragmentInteractionListener {
+public class ScheduleActivity extends AppCompatActivity implements ScheduleUIManager, ScheduleFragment.OnFragmentInteractionListener {
     Toolbar toolbar;
-    private FragmentManager fm = null;
+    private FragmentManager fgm = null;
+    ScheduleDataManager dm = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,13 +33,10 @@ public class ScheduleActivity extends AppCompatActivity implements ScheduleFragm
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_full_menu);
 
-        if(this.fm == null){
-            this.fm = this.getFragmentManager();
+        if(this.fgm == null){
+            this.fgm = this.getFragmentManager();
         }
-
     }
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -53,9 +51,9 @@ public class ScheduleActivity extends AppCompatActivity implements ScheduleFragm
 
         switch (item.getItemId()) {
             case R.id.add_schedule:
-                if(this.fm != null && !this.fm.isDestroyed()){
+                if(this.fgm != null && !this.fgm.isDestroyed()){
                     Fragment schfrg = (Fragment) new ScheduleFragment();
-                    FragmentTransaction ft = this.fm.beginTransaction();
+                    FragmentTransaction ft = this.fgm.beginTransaction();
                     ft.add(R.id.frame_schedule, schfrg);
 //                    ft.addToBackStack(null);
                     ft.commit();
@@ -78,8 +76,17 @@ public class ScheduleActivity extends AppCompatActivity implements ScheduleFragm
 
     }
 
+    @Override
+    public void setDataManager(UserDataManager m) {
+        if(m instanceof ScheduleDataManager){
+            this.setDataManager((ScheduleDataManager)m);
+        }
+    }
 
-
+    @Override
+    public void setDataManager(ScheduleDataManager m) {
+        this.dm = m;
+    }
 
     /*@Override
     public boolean onCreateOptionsMenu(Menu menu) {

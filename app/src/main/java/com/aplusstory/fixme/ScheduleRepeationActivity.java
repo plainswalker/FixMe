@@ -130,7 +130,7 @@ public class ScheduleRepeationActivity extends AppCompatActivity
 
         if(item.getItemId() == R.id.schedule_confirm) {
 //            ScheduleFragment scheduleFragment = new ScheduleFragment();
-//            ScheduleData scheduleData = new ScheduleData(dates, repeatState);
+//            ScheduleRepeatData scheduleData = new ScheduleRepeatData(dates, repeatState);
 //            Bundle bundle = new Bundle();
 //            bundle.putParcelable("scheduleData", scheduleData);
 //            scheduleFragment.setArguments(bundle);

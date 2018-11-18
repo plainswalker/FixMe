@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class ColorRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class ScheduleColorRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     public static class ColorRecyclerViewHolder extends RecyclerView.ViewHolder {
 
@@ -25,7 +25,7 @@ public class ColorRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
     }
 
     private ArrayList<SettingsColorInfo> settingsColorInfoArrayList;
-    ColorRecyclerAdapter(ArrayList<SettingsColorInfo> settingsColorInfoArrayList) {
+    ScheduleColorRecyclerAdapter(ArrayList<SettingsColorInfo> settingsColorInfoArrayList) {
         this.settingsColorInfoArrayList = settingsColorInfoArrayList;
     }
 
