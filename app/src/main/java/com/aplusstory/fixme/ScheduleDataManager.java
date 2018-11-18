@@ -50,6 +50,7 @@ public interface ScheduleDataManager extends UserDataManager{
         Double longitude;
         String locationAddress;
         String memo;
+        boolean hasAlarm;
         int alarmInterval;
         int tableColor;
 
@@ -89,7 +90,10 @@ public interface ScheduleDataManager extends UserDataManager{
                     }
 
                     sch.memo = json.getString(KEY_MEMO);
-                    sch.alarmInterval = json.getInt(KEY_ALARM_INTERVAL_CODE);
+                    if(json.has(KEY_ALARM_INTERVAL_CODE)) {
+                        sch.hasAlarm = true;
+                        sch.alarmInterval = json.getInt(KEY_ALARM_INTERVAL_CODE);
+                    }
                     sch.tableColor = json.getInt(KEY_TABLE_COLOR_CODE);
                 }
             } catch(Exception e){
@@ -135,7 +139,9 @@ public interface ScheduleDataManager extends UserDataManager{
                 }
 
                 json.put(KEY_MEMO, this.memo);
-                json.put(KEY_ALARM_INTERVAL_CODE, this.alarmInterval);
+                if(this.hasAlarm) {
+                    json.put(KEY_ALARM_INTERVAL_CODE, this.alarmInterval);
+                }
                 json.put(KEY_TABLE_COLOR_CODE, this.tableColor);
             }catch(JSONException e){
                 Log.d(this.getClass().getName(), e.toString());

@@ -2,9 +2,14 @@ package com.aplusstory.fixme;
 
 
 import android.content.Context;
+import android.content.SharedPreferences;
+
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +20,7 @@ public class ScheduleManager implements ScheduleDataManager {
     private Map<String, ScheduleData> schBuf = null;
     private Map<Integer, String> schMonthMap = null;
     private List<String> schList = null;
+    private SharedPreferences sp = null;
 
     public ScheduleManager(Context context){
         this.context = context;
@@ -32,8 +38,60 @@ public class ScheduleManager implements ScheduleDataManager {
         return rt;
     }
 
-    public ScheduleData getData(){
-        return null;
+    public List<String> getMonthlyList(int year, int month) {
+        ArrayList<String> rt = new ArrayList<>();
+        Calendar cBegin = Calendar.getInstance();
+        Calendar cEnd = Calendar.getInstance();
+
+        for(String s : this.schList){
+            ScheduleData sch = this.schBuf.get(s);
+            if(sch.isRepeated){
+                Calendar cRptFin = Calendar.getInstance();
+                cRptFin.setTime(new Date(sch.repeatEnd));
+                if(cRptFin.get(Calendar.YEAR) <= year && cRptFin.get(Calendar.MONTH) <= month) {
+                    switch (sch.repeatType) {
+                        case RepeatDuration.REPEAT_DAYLY:
+                            rt.add(s);
+                            break;
+                        case RepeatDuration.REPEAT_WEEKLY:
+                            rt.add(s);
+                            break;
+                        case RepeatDuration.REPEAT_MONTHLY:
+                            rt.add(s);
+                            break;
+                        case RepeatDuration.REPEAT_YEARLY:
+                            cBegin.setTime(new Date(sch.scheduleBegin));
+                            cEnd.setTime(new Date(sch.scheduleEnd));
+                            if(cBegin.get(Calendar.MONTH) == month
+                            || cEnd.get(Calendar.MONTH) == month) {
+                                rt.add(s);
+                            }
+                            break;
+                        default:
+                            //something wrong
+                    }
+                }
+            } else{
+                cBegin.setTime(new Date(sch.scheduleBegin));
+                cEnd.setTime(new Date(sch.scheduleEnd));
+                if((cBegin.get(Calendar.YEAR)   == year
+                ||  cEnd.get(Calendar.YEAR)     == year)
+                && (cBegin.get(Calendar.MONTH)  == month
+                ||  cEnd.get(Calendar.MONTH)    == month)){
+                    rt.add(s);
+                }
+            }
+        }
+
+        return rt;
+    }
+
+    @Nullable
+    public ScheduleData getData(String name){
+        if(this.schBuf.containsKey(name))
+            return this.schBuf.get(name);
+        else
+            return null;
     }
 
     @Override
