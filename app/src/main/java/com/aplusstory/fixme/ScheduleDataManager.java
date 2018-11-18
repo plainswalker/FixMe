@@ -21,6 +21,7 @@ public interface ScheduleDataManager extends UserDataManager{
     void setFileManager(FileManager f);
 
     class ScheduleData implements Serializable {
+        public static final String KEY_NAME = "name";
         public static final String KEY_REPEATED = "is_repeated";
         public static final String KEY_REPEAT_TYPE_CODE = "repeat_type";
         public static final String KEY_REPEAT_DAY_OF_WEEK = "repeat_day_of_week";
@@ -35,6 +36,7 @@ public interface ScheduleDataManager extends UserDataManager{
 
         public static final String DATE_FORMAT_GMT = "yyyy-MM-dd HH:mm:ss";
 
+        String name;
         boolean isRepeated;
         int repeatType;
         boolean[] repeatDayOfWeek = {false, false, false, false, false, false, false, false};
@@ -57,6 +59,7 @@ public interface ScheduleDataManager extends UserDataManager{
             DateFormat df = new SimpleDateFormat(DATE_FORMAT_GMT, Locale.US);
 
             try{
+                sch.name = json.getString(KEY_NAME);
                 sch.isRepeated = json.getBoolean(KEY_REPEATED);
                 if(sch.isRepeated) {
                     sch.repeatType = json.getInt(KEY_REPEAT_TYPE_CODE);
@@ -103,6 +106,7 @@ public interface ScheduleDataManager extends UserDataManager{
             DateFormat df = new SimpleDateFormat(DATE_FORMAT_GMT, Locale.US);
 
             try {
+                json.put(KEY_NAME, this.name);
                 json.put(KEY_REPEATED, this.isRepeated);
                 if(this.isRepeated) {
                     json.put(KEY_REPEAT_TYPE_CODE, this.repeatType);

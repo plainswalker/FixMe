@@ -30,7 +30,7 @@ public class ScheduleAlarmManager extends Service {
         SharedPreferences sp = this.getSharedPreferences(LocationFileManager.FILENAME_CURRENT_LOCATION,0);
         long now = System.currentTimeMillis();
         double lat = Double.parseDouble(sp.getString(LocationDataManager.LocatonData.KEY_LATITUDE, "0.0"));
-        double longt = Double.parseDouble(sp.getString(LocationDataManager.LocatonData.KEY_LONGTITUDE, "0.0"));
+        double longt = Double.parseDouble(sp.getString(LocationDataManager.LocatonData.KEY_LONGITUDE, "0.0"));
         LocationDataManager.LocatonData currentLoca = new LocationDataManager.LocatonData(now, lat, longt);
         if(loca != null && currentLoca.distanceTo(loca) > RANGE_ALARM) {
             Intent it = new Intent(this, ALARM_ACTIVITY);
@@ -43,21 +43,18 @@ public class ScheduleAlarmManager extends Service {
     public static boolean setAlarm(Context context,
                                 AlarmManager alm,
                                 long time,
-                                LocationDataManager.LocatonData loca,
-                                ScheduleDataManager.ScheduleData sch){
+                                LocationDataManager.LocatonData loca){
         boolean rt = false;
         if(alm != null){
             Intent it = new Intent(context, ScheduleAlarmManager.class);
             it.setAction(ScheduleAlarmManager.SCHEDULE_ALARM_START_ACTION);
             Bundle bd = new Bundle();
             bd.putSerializable(KEY_LOCATON, loca);
-            bd.putSerializable(KEY_SCHEDULE, sch);
             it.putExtra(KEY_LOCATON, bd);
             PendingIntent pit = PendingIntent.getService(context, 0,it,PendingIntent.FLAG_UPDATE_CURRENT);
             alm.set(AlarmManager.RTC_WAKEUP, time, pit);
             rt = true;
         }
-
         return true;
     }
 
