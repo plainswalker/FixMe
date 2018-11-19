@@ -6,8 +6,8 @@ import android.os.Parcelable;
 
 public class ScheduleData implements Parcelable {
 
-    public String repeatDate;
-    public int repeatState;
+    private String repeatDate;
+    private int repeatState;
 
     public ScheduleData(String repeatDate, int repeatState) {
         this.repeatDate = repeatDate;
@@ -41,5 +41,21 @@ public class ScheduleData implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(repeatDate);
         dest.writeInt(repeatState);
+    }
+
+    public String getRepeatDate() {
+        return repeatDate;
+    }
+
+    public void setRepeatDate(String repeatDate) {
+        this.repeatDate = repeatDate;
+    }
+
+    public int getRepeatState() {
+        return repeatState;
+    }
+
+    public void setRepeatState(int repeatState) {
+        this.repeatState = repeatState;
     }
 }

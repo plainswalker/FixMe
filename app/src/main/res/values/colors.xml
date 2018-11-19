@@ -4,4 +4,22 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="colorTest">#0936b7</color>
+    <color name="colorWhite">#FFFFFF</color>
+    <color name="colorBlue">#2196F3</color>
+    <drawable name="bg_select">#2196F3</drawable>
+    <drawable name="bg">#EEEEEE</drawable>
+
+    <color name="chartColor1">#ff8576</color>
+    <color name="chartColor2">#ff9750</color>
+    <color name="chartColor3">#ffd042</color>
+    <color name="chartColor4">#fff48a</color>
+    <color name="chartColor5">#c2e644</color>
+    <color name="chartColor6">#72d36c</color>
+    <color name="chartColor7">#66e9da</color>
+    <color name="chartColor8">#7bb6de</color>
+    <color name="chartColor9">#aa85d7</color>
+    <color name="chartColor10">#e97ddb</color>
+    <color name="chartColor11">#dd769d</color>
+
+    <color name="black_overlay">#66000000</color>
 </resources>

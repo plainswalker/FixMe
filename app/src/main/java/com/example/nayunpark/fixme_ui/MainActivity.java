@@ -22,6 +22,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        Button todayFootprintButton = (Button) findViewById(R.id.FootprintButton);
+        todayFootprintButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), ChartActivity.class);
+                startActivity(intent);
+            }
+        });
+
         Button settingsB = (Button) findViewById(R.id.SettingsButton);
         settingsB.setOnClickListener(new View.OnClickListener() {
             @Override

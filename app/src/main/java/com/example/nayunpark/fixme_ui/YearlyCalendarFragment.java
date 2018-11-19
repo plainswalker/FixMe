@@ -4,28 +4,20 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.Spinner;
-import android.widget.Toast;
-
-import java.util.Arrays;
 
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link ScheduleRepeatWeeklyFragment.OnFragmentInteractionListener} interface
+ * {@link YearlyCalendarFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link ScheduleRepeatWeeklyFragment#newInstance} factory method to
+ * Use the {@link YearlyCalendarFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ScheduleRepeatWeeklyFragment extends Fragment {
+public class YearlyCalendarFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -35,21 +27,9 @@ public class ScheduleRepeatWeeklyFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-
-
-    private String checkDay = ""; // has information which day is checked
-
-    public void setCheckDay(String checkDay) {
-        this.checkDay = checkDay;
-    }
-
-    public String getCheckDay() {
-        return checkDay;
-    }
-
     private OnFragmentInteractionListener mListener;
 
-    public ScheduleRepeatWeeklyFragment() {
+    public YearlyCalendarFragment() {
         // Required empty public constructor
     }
 
@@ -59,11 +39,11 @@ public class ScheduleRepeatWeeklyFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment ScheduleRepeatWeeklyFragment.
+     * @return A new instance of fragment YearlyCalendarFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static ScheduleRepeatWeeklyFragment newInstance(String param1, String param2) {
-        ScheduleRepeatWeeklyFragment fragment = new ScheduleRepeatWeeklyFragment();
+    public static YearlyCalendarFragment newInstance(String param1, String param2) {
+        YearlyCalendarFragment fragment = new YearlyCalendarFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -83,47 +63,8 @@ public class ScheduleRepeatWeeklyFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-        View returnView = inflater.inflate(R.layout.fragment_schedule_repeat_weekly, container, false);
-
-        final CheckBox checkBoxMon = (CheckBox) returnView.findViewById(R.id.checkMon);
-        final CheckBox checkBoxTue = (CheckBox) returnView.findViewById(R.id.checkTue);
-        final CheckBox checkBoxWed = (CheckBox) returnView.findViewById(R.id.checkWed);
-        final CheckBox checkBoxThu = (CheckBox) returnView.findViewById(R.id.checkThu);
-        final CheckBox checkBoxFri = (CheckBox) returnView.findViewById(R.id.checkFri);
-        final CheckBox checkBoxSat = (CheckBox) returnView.findViewById(R.id.checkSat);
-        final CheckBox checkBoxSun = (CheckBox) returnView.findViewById(R.id.checkSun);
-
-
-
-        Button confirmButton = (Button) returnView.findViewById(R.id.confirmButton);
-        confirmButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                String temp = "";
-
-                if(checkBoxMon.isChecked()) temp += "월";
-                if(checkBoxTue.isChecked()) temp += "화";
-                if(checkBoxWed.isChecked()) temp += "수";
-                if(checkBoxThu.isChecked()) temp += "목";
-                if(checkBoxFri.isChecked()) temp += "금";
-                if(checkBoxSat.isChecked()) temp += "토";
-                if(checkBoxSun.isChecked()) temp += "일";
-
-                setCheckDay(temp);
-
-                ((ScheduleRepeationActivity)getActivity()).textViewRD.setText("매주 "+checkDay);
-                ((ScheduleRepeationActivity)getActivity()).repeatState = 2;
-                ((ScheduleRepeationActivity)getActivity()).onCheckedDateSet(checkDay);
-
-
-                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                fragmentManager.beginTransaction().hide(ScheduleRepeatWeeklyFragment.this).commit();
-                fragmentManager.popBackStack();
-            }
-        });
-
+        // Inflate the layout for this fragment
+        View returnView = inflater.inflate(R.layout.fragment_yearly_calendar, container, false);
         return returnView;
     }
 
@@ -161,12 +102,8 @@ public class ScheduleRepeatWeeklyFragment extends Fragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-
-
     public interface OnFragmentInteractionListener {
+        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
-        void onCheckedDateSet(String dates);
     }
-
-
 }

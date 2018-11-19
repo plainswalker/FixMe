@@ -24,8 +24,15 @@ public class ScheduleColorActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
 
         ArrayList<SettingsColorInfo> colorInfoArrayList = new ArrayList<>();
-        colorInfoArrayList.add(new SettingsColorInfo(R.drawable.ic_info_black_24dp, "black"));
-        colorInfoArrayList.add(new SettingsColorInfo(R.drawable.ic_info_black_24dp, "red"));
+        colorInfoArrayList.add(new SettingsColorInfo(R.drawable.ic_red_circle_padding, "빨간색"));
+        colorInfoArrayList.add(new SettingsColorInfo(R.drawable.ic_pink_circle, "분홍색"));
+        colorInfoArrayList.add(new SettingsColorInfo(R.drawable.ic_yellow_circle, "노란색"));
+        colorInfoArrayList.add(new SettingsColorInfo(R.drawable.ic_yellowgreen_circle, "연두색"));
+        colorInfoArrayList.add(new SettingsColorInfo(R.drawable.ic_green_circle, "초록색"));
+        colorInfoArrayList.add(new SettingsColorInfo(R.drawable.ic_mint_circle, "민트색"));
+        colorInfoArrayList.add(new SettingsColorInfo(R.drawable.ic_skyblue_circle, "하늘색"));
+        colorInfoArrayList.add(new SettingsColorInfo(R.drawable.ic_blue_circle, "파란색"));
+        colorInfoArrayList.add(new SettingsColorInfo(R.drawable.ic_purple_circle, "보라색"));
 
         ColorRecyclerAdapter colorRecyclerAdapter = new ColorRecyclerAdapter(colorInfoArrayList);
         recyclerView.setAdapter(colorRecyclerAdapter);

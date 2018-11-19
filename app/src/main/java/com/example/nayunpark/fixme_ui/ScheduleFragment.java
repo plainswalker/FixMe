@@ -1,9 +1,11 @@
 package com.example.nayunpark.fixme_ui;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcel;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -12,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,7 +44,7 @@ public class ScheduleFragment extends Fragment {
 
     Date today = new Date();
     SimpleDateFormat date = new SimpleDateFormat("yyyy.MM.dd");
-    String repeatDate;
+    String repeatDate = "none";
     int repeatState = 0;
     private int REQUEST_RESULT = 1;
 
@@ -78,7 +81,10 @@ public class ScheduleFragment extends Fragment {
         TextView textView = (TextView) returnView.findViewById(R.id.scheduleDate);
         textView.setText(date.format(today));
 
-        Button timeButton = (Button) returnView.findViewById(R.id.timeButton);
+        TextView repeationDetail = (TextView) returnView.findViewById(R.id.repeationDetail);
+        repeationDetail.setText(repeatDate);
+
+        ImageButton timeButton = (ImageButton) returnView.findViewById(R.id.timeButton);
         timeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -87,7 +93,7 @@ public class ScheduleFragment extends Fragment {
             }
         });
 
-        Button alarmButton = (Button) returnView.findViewById(R.id.alarmButton);
+        ImageButton alarmButton = (ImageButton) returnView.findViewById(R.id.alarmButton);
         alarmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -96,7 +102,7 @@ public class ScheduleFragment extends Fragment {
             }
         });
 
-        Button colorButton = (Button) returnView.findViewById(R.id.colorButton);
+        ImageButton colorButton = (ImageButton) returnView.findViewById(R.id.colorButton);
         colorButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -105,7 +111,7 @@ public class ScheduleFragment extends Fragment {
             }
         });
 
-        Button repeatButton = (Button) returnView.findViewById(R.id.repeationButton);
+        ImageButton repeatButton = (ImageButton) returnView.findViewById(R.id.repeationButton);
         repeatButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -113,6 +119,18 @@ public class ScheduleFragment extends Fragment {
                 startActivityForResult(intent, REQUEST_RESULT);
             }
         });
+
+        Button deleteButton = (Button) returnView.findViewById(R.id.deleteButton);
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                fragmentManager.beginTransaction().hide(ScheduleFragment.this).commit();
+                fragmentManager.popBackStack();
+            }
+        });
+
+
         return returnView;
     }
 
@@ -129,10 +147,15 @@ public class ScheduleFragment extends Fragment {
 
         if(requestCode == REQUEST_RESULT) {
             if(resultCode == RESULT_OK) {
-//                Bundle bundle = getArguments();
-//                ScheduleData scheduleData = bundle.getParcelable("scheduleData");
-//                Toast.makeText(getContext(), scheduleData.repeatState, Toast.LENGTH_SHORT).show();
-                Toast.makeText(getContext(), "Activity Terminated", Toast.LENGTH_SHORT).show();
+                Bundle bundle = this.getArguments();
+                if(bundle != null) {
+                    ScheduleData scheduleData = bundle.getParcelable("schedule");
+
+                    repeatDate = scheduleData.getRepeatDate();
+                    repeatState = scheduleData.getRepeatState();
+                }
+                refresh();
+                Toast.makeText(getContext(), "repeatDate: "+repeatDate+", repeatState: "+repeatState, Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -149,11 +172,15 @@ public class ScheduleFragment extends Fragment {
         }
     }
 
+
+
     @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
     }
+
+
 
 
     /**

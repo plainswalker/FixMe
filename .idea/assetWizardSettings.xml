@@ -16,12 +16,28 @@
                             <entry key="actionbar">
                               <value>
                                 <PersistentState>
+                                  <option name="children">
+                                    <map>
+                                      <entry key="image">
+                                        <value>
+                                          <PersistentState>
+                                            <option name="values">
+                                              <map>
+                                                <entry key="paddingPercent" value="-10" />
+                                              </map>
+                                            </option>
+                                          </PersistentState>
+                                        </value>
+                                      </entry>
+                                    </map>
+                                  </option>
                                   <option name="values">
                                     <map>
                                       <entry key="assetType" value="IMAGE" />
-                                      <entry key="imageAsset" value="$USER_HOME$/Downloads/confirm.png" />
-                                      <entry key="outputName" value="ic_full_confirm" />
+                                      <entry key="imageAsset" value="$USER_HOME$/Downloads/calendar_toolbar.png" />
+                                      <entry key="outputName" value="ic_calendar" />
                                       <entry key="theme" value="HOLO_DARK" />
+                                      <entry key="themeColor" value="095e96" />
                                     </map>
                                   </option>
                                 </PersistentState>
