@@ -89,7 +89,6 @@ public class ScheduleTimeActivity extends AppCompatActivity  {
         @Override
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
             TextView textView = (TextView)findViewById(R.id.startTime);
-
             textView.setText(String.format("%02d", hourOfDay)+":"+String.format("%02d", minute));
 
         }
@@ -128,5 +127,9 @@ public class ScheduleTimeActivity extends AppCompatActivity  {
     };
 
 
-
+    @Override
+    public void onBackPressed() {
+        
+        super.onBackPressed();
+    }
 }

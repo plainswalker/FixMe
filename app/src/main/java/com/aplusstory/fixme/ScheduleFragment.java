@@ -123,18 +123,18 @@ public class ScheduleFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
+        Log.d(this.getClass().getName(), "onActivityResult, reqCode : " + requestCode + " resCode : " + resultCode);
         if(requestCode == REQUEST_RESULT) {
             if(resultCode == RESULT_OK) {
 //                Bundle bundle = getArguments();
 //                ScheduleRepeatData scheduleData = bundle.getParcelable("scheduleData");
 //                Toast.makeText(getContext(), scheduleData.repeatState, Toast.LENGTH_SHORT).show();
+
                 Toast.makeText(getContext(), "Activity Terminated", Toast.LENGTH_SHORT).show();
             }
         }
+        super.onActivityResult(requestCode, resultCode, data);
     }
-
 
     @Override
     public void onAttach(Context context) {
