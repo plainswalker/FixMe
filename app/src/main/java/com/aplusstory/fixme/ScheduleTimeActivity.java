@@ -3,6 +3,7 @@ package com.aplusstory.fixme;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -20,8 +21,13 @@ import android.widget.Toast;
 import java.util.Calendar;
 
 public class ScheduleTimeActivity extends AppCompatActivity  {
+    public static final String  EXTRA_NAME_ARGUMENT = "schedule_time";
+    public static final String  KEY_TIME_BEGIN = ScheduleDataManager.ScheduleData.KEY_DATE_SCHEDULE_BEGIN;
+    public static final String  KEY_TIME_END = ScheduleDataManager.ScheduleData.KEY_DATE_SCHEDULE_END;
+
     Toolbar toolbar2;
     TextView textViewST,textViewSD, textViewET, textViewED;
+    Calendar cStart, cEnd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +47,9 @@ public class ScheduleTimeActivity extends AppCompatActivity  {
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH);
         int day = calendar.get(Calendar.DATE);
+
+        this.cStart = (Calendar)calendar.clone();
+        this.cEnd = (Calendar)calendar.clone();
 
         final TimePickerDialog dialog = new TimePickerDialog(this, listenerST, hour, minute,false);
         final DatePickerDialog datePickerDialog = new DatePickerDialog(this, listenerSD, year, month, day);
@@ -90,17 +99,19 @@ public class ScheduleTimeActivity extends AppCompatActivity  {
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
             TextView textView = (TextView)findViewById(R.id.startTime);
             textView.setText(String.format("%02d", hourOfDay)+":"+String.format("%02d", minute));
+            ScheduleTimeActivity.this.cStart.set(Calendar.HOUR_OF_DAY, hourOfDay);
+            ScheduleTimeActivity.this.cStart.set(Calendar.MINUTE, hourOfDay);
 
         }
     };
 
     private DatePickerDialog.OnDateSetListener listenerSD = new DatePickerDialog.OnDateSetListener() {
-
         @Override
-
         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
             TextView textView = (TextView)findViewById(R.id.startDate);
             textView.setText(year+"년 "+monthOfYear+"월 "+dayOfMonth+"일");
+            ScheduleTimeActivity.this.cStart.set(Calendar.MONTH, monthOfYear);
+            ScheduleTimeActivity.this.cStart.set(Calendar.DAY_OF_MONTH, dayOfMonth);
         }
 
     };
@@ -109,9 +120,9 @@ public class ScheduleTimeActivity extends AppCompatActivity  {
         @Override
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
             TextView textView = (TextView)findViewById(R.id.endTime);
-
             textView.setText(String.format("%02d", hourOfDay)+":"+String.format("%02d", minute));
-
+            ScheduleTimeActivity.this.cEnd.set(Calendar.HOUR_OF_DAY, hourOfDay);
+            ScheduleTimeActivity.this.cEnd.set(Calendar.MINUTE, hourOfDay);
         }
     };
 
@@ -122,14 +133,21 @@ public class ScheduleTimeActivity extends AppCompatActivity  {
         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
             TextView textView = (TextView)findViewById(R.id.endDate);
             textView.setText(year+"년 "+monthOfYear+"월 "+dayOfMonth+"일");
+            ScheduleTimeActivity.this.cEnd.set(Calendar.MONTH, monthOfYear);
+            ScheduleTimeActivity.this.cEnd.set(Calendar.DAY_OF_MONTH, dayOfMonth);
         }
 
     };
 
-
     @Override
     public void onBackPressed() {
-        
+        Intent it = new Intent();
+        Bundle bd = new Bundle();
+        bd.putLong(ScheduleTimeActivity.KEY_TIME_BEGIN, this.cStart.getTimeInMillis());
+        bd.putLong(ScheduleTimeActivity.KEY_TIME_END, this.cEnd.getTimeInMillis());
+        it.putExtra(ScheduleTimeActivity.EXTRA_NAME_ARGUMENT, bd);
+        this.setResult(RESULT_OK, it);
+        this.finish();
         super.onBackPressed();
     }
 }

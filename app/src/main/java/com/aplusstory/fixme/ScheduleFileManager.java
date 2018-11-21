@@ -8,10 +8,17 @@ import org.jetbrains.annotations.Nullable;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.Reader;
+import java.io.Writer;
 import java.nio.CharBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -54,7 +61,7 @@ public class ScheduleFileManager implements FileManager {
     }
     public boolean putSchedule(ScheduleDataManager.ScheduleData sch){
         boolean rt = false;
-        FileWriter fw = null;
+        Writer fw = null;
         String filepath;
 
         if(this.listSch.containsKey(sch.name)){
@@ -64,8 +71,10 @@ public class ScheduleFileManager implements FileManager {
         }
 
         try{
-            fw = new FileWriter(filepath, false);
-            fw.write(sch.toString());
+            fw = new OutputStreamWriter(new FileOutputStream(filepath), StandardCharsets.UTF_16);
+            String toWrite = sch.toString();
+            Log.d(this.getClass().getName(), "data to write : \n" + toWrite);
+            fw.write(toWrite);
             rt = true;
             fw.flush();
             this.sp.edit().putString(sch.name, filepath).apply();
@@ -79,11 +88,11 @@ public class ScheduleFileManager implements FileManager {
     @Nullable
     @Override
     public String getData(String schName) {
-        FileReader fr = null;
+        Reader fr = null;
         StringBuilder sb = new StringBuilder();
 
         try {
-            fr = new FileReader(this.listSch.get(schName));
+            fr = new InputStreamReader(new FileInputStream(this.listSch.get(schName)), StandardCharsets.UTF_16);
             CharBuffer buf = CharBuffer.allocate(255);
             int i;
             while (fr.ready()) {
@@ -93,8 +102,9 @@ public class ScheduleFileManager implements FileManager {
         }catch (Exception e){
             Log.d(this.getClass().getName(), e.toString());
         }
-
-        return sb.toString();
+        String rt = sb.toString();
+        Log.d(this.getClass().getName(), "data to read : \n" + rt);
+        return rt;
     }
 
     @Override

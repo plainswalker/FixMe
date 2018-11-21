@@ -40,7 +40,7 @@
                 android:paddingLeft="10dp" />
 
             <EditText
-                android:id="@+id/editText2"
+                android:id="@+id/scheduleMemo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"

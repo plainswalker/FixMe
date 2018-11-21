@@ -73,8 +73,6 @@ public class ScheduleRepeationActivity extends AppCompatActivity
             this.fragmentManager = this.getSupportFragmentManager();
         }
 
-
-
         Button noneButton = (Button) findViewById(R.id.noneButton);
         noneButton.setOnClickListener(this);
 

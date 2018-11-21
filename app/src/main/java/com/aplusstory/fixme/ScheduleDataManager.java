@@ -19,6 +19,8 @@ public interface ScheduleDataManager extends UserDataManager{
 
     @Override
     void setFileManager(FileManager f);
+    ScheduleData getData(String name);
+    boolean putData(ScheduleData sch);
 
     class ScheduleData implements Serializable {
         public static final String KEY_NAME = "name";
@@ -36,23 +38,23 @@ public interface ScheduleDataManager extends UserDataManager{
 
         public static final String DATE_FORMAT_GMT = "yyyy-MM-dd HH:mm:ss";
 
-        String name;
-        boolean isRepeated;
-        int repeatType;
+        String name = null;
+        boolean isRepeated = false;
+        int repeatType = -1;
         boolean[] repeatDayOfWeek = {false, false, false, false, false, false, false, false};
         //repeatDayOfWeek[1] : sunday, ... , repeatDayOfWeek[7] : saturday, repeatDayOfWeek[0]
         //repeatDayOfWeek[0] : repeatType == RepeatDuration.REPEAT_DAYLY
-        long repeatEnd;
-        long scheduleBegin;
-        long scheduleEnd;
-        boolean hasLocation;
-        Double latitude;
-        Double longitude;
-        String locationAddress;
-        String memo;
-        boolean hasAlarm;
-        int alarmInterval;
-        int tableColor;
+        long repeatEnd = -1;
+        long scheduleBegin = -1;
+        long scheduleEnd = -1;
+        boolean hasLocation = false;
+        Double latitude = 0.0;
+        Double longitude = 0.0;
+        String locationAddress = null;
+        String memo = null;
+        boolean hasAlarm = false;
+        int alarmInterval = -1;
+        int tableColor = 0;
 
         @Nullable
         public static ScheduleData parseJSON(JSONObject json){
@@ -289,5 +291,34 @@ public interface ScheduleDataManager extends UserDataManager{
         public static final int BLUE = 8;
         public static final int GREEN = 9;
         public static final int BLACK = 10;
+
+        public static String getColorText(int colorCode){
+            switch (colorCode){
+                case BLACK:
+                    return "black";
+                case RED:
+                    return "red";
+                case BLUE:
+                    return "blue";
+                case GREEN:
+                    return "green";
+                case YELLOW:
+                    return "yellow";
+                case PURPLE:
+                    return "purple";
+                case PINK:
+                    return "pink";
+                case CYAN:
+                    return "cyan";
+                case SKYBLUE:
+                    return "skyblue";
+                case LIGHTGREEN:
+                    return "lightGreen";
+                case WHITE:
+                    return "white";
+                default:
+                    return "";
+            }
+        }
     }
 }

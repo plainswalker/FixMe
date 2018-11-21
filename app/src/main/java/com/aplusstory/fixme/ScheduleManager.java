@@ -1,6 +1,7 @@
 package com.aplusstory.fixme;
 
 
+import android.app.AlarmManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 
@@ -86,12 +87,36 @@ public class ScheduleManager implements ScheduleDataManager {
         return rt;
     }
 
+    @Override
     @Nullable
     public ScheduleData getData(String name){
         if(this.schBuf.containsKey(name))
             return this.schBuf.get(name);
         else
             return null;
+    }
+
+    @Override
+    public boolean putData(ScheduleData sch) {
+        if(sch.hasAlarm){
+            AlarmManager alm = (AlarmManager) this.context.getSystemService(Context.ALARM_SERVICE);
+            SharedPreferences sp = context.getSharedPreferences(ScheduleAlarmManager.FILENAME_SCHEDULE_ALARM_CODE, 0);
+            if(alm != null && sp != null) {
+                int reqCode;
+                if(sp.contains(sch.name)){
+                    reqCode = sp.getInt(sch.name, -1);
+                } else{
+                    reqCode = (int)System.currentTimeMillis();
+                }
+                ScheduleAlarmManager.setAlarm(this.context, alm, sch, reqCode);
+            }
+        }
+
+        if(this.fm != null && !this.schList.contains(sch.name)){
+            return this.fm.putSchedule(sch);
+        } else {
+            return false;
+        }
     }
 
     @Override

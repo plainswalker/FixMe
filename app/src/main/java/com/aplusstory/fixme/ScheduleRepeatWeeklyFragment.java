@@ -18,25 +18,12 @@ import android.widget.Toast;
 
 public class ScheduleRepeatWeeklyFragment extends Fragment implements View.OnClickListener{
     public static final String ARG_PARAM_CHECK_DAY = "check_day";
-//    private static final String ARG_PARAM2 = "param2";
-//
-//    private String mParam1;
-//    private String mParam2;
 
     private Bundle arg;
 
     private boolean[] checkDay = {false, false, false, false, false, false, false}; // has information which day is checked
 
     private OnFragmentInteractionListener mListener = null;
-
-//    public static ScheduleRepeatWeeklyFragment newInstance(String param1, String param2) {
-//        ScheduleRepeatWeeklyFragment fragment = new ScheduleRepeatWeeklyFragment();
-//        Bundle args = new Bundle();
-//        args.putString(ARG_PARAM1, param1);
-//        args.putString(ARG_PARAM2, param2);
-//        fragment.setArguments(args);
-//        return fragment;
-//    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
