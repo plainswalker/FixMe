@@ -38,10 +38,11 @@
 
     </RelativeLayout>
 
-    <fragment
-        android:id="@+id/footprint_fragment"
-        android:name="com.example.nayunpark.fixme_ui.PieChartFragment"
+    <FrameLayout
+        android:id="@+id/footprint_frame"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="match_parent">
+
+    </FrameLayout>
 
 </LinearLayout>

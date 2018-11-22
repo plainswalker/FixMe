@@ -61,12 +61,12 @@ public class ScheduleActivity extends AppCompatActivity implements ScheduleFragm
         switch (item.getItemId()) {
             case R.id.add_schedule:
                 if(this.fm != null && !this.fm.isDestroyed()){
-                    Fragment schfrg = (Fragment) new ScheduleFragment();
-                    FragmentTransaction ft = this.fm.beginTransaction();
-                    final FragmentTransaction add = ft.add(R.id.fragment_blank, schfrg);
+                Fragment schfrg = (Fragment) new ScheduleFragment();
+                FragmentTransaction ft = this.fm.beginTransaction();
+                final FragmentTransaction add = ft.add(R.id.fragment_blank, schfrg);
 
-                    ft.commit();
-                }
+                ft.commit();
+            }
                 rt = true;
                 break;
             case android.R.id.home:

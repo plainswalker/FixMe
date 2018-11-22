@@ -47,10 +47,12 @@ public class ChartActivity extends AppCompatActivity {
         if(this.fragmentManager == null) {
             this.fragmentManager = this.getSupportFragmentManager();
         }
-//        fragment = new PieChartFragment();
-//        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-//        fragmentTransaction.replace(R.id.footprint_fragment, fragment);
-//        fragmentTransaction.commit();
+
+        fragment = new PieChartFragment();
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.add(R.id.footprint_frame, fragment);
+        fragmentTransaction.commit();
+
     }
 
 
@@ -62,10 +64,11 @@ public class ChartActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.ic_footprint_calendar:
                 if(this.fragmentManager != null && !this.fragmentManager.isDestroyed()){
-                    fragment = new YearlyCalendarFragment();
-                    FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                    fragmentTransaction.replace(R.id.fragment_yearly_calendar, fragment);
-                    fragmentTransaction.commit();
+                    Fragment yearlyCalendarFragment = (Fragment) new YearlyCalendarFragment();
+                    FragmentTransaction ft = this.fragmentManager.beginTransaction();
+                    ft.replace(R.id.footprint_frame, yearlyCalendarFragment);
+
+                    ft.commit();
                 }
 
                 rt = true;
