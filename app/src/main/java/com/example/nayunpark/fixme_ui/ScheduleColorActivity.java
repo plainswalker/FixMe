@@ -1,5 +1,6 @@
 package com.example.nayunpark.fixme_ui;
 
+import android.graphics.drawable.GradientDrawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;

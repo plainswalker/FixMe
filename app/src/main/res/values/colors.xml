@@ -21,5 +21,15 @@
     <color name="chartColor10">#e97ddb</color>
     <color name="chartColor11">#dd769d</color>
 
+    <color name="scheduleColor1">#fe97a4</color>
+    <color name="scheduleColor2">#fcb1f3</color>
+    <color name="scheduleColor3">#fcf6b1</color>
+    <color name="scheduleColor4">#c6f089</color>
+    <color name="scheduleColor5">#59b142</color>
+    <color name="scheduleColor6">#7ddfcc</color>
+    <color name="scheduleColor7">#89d7f0</color>
+    <color name="scheduleColor8">#5b53ff</color>
+    <color name="scheduleColor9">#d997fe</color>
+
     <color name="black_overlay">#66000000</color>
 </resources>
