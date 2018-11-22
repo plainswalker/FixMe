@@ -93,7 +93,7 @@ public class SettingsActivity extends AppCompatActivity {
                         startActivity(intent);
                         break;
                     case 1:
-                        Intent intent2 = new Intent(getApplicationContext(), FavoriteActivity.class);
+                        Intent intent2 = new Intent(getApplicationContext(), FootprintRoutineActivity.class);
                         startActivity(intent2);
                         break;
                 }

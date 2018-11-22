@@ -1,5 +1,6 @@
 package com.example.nayunpark.fixme_ui;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -23,19 +24,20 @@ public class FavoriteActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_full_menu);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+
+        Intent intent = getIntent();
 
         TextView favoriteName = (TextView) findViewById(R.id.favoriteName);
-        favoriteName.setText("중앙대학교");
+        favoriteName.setText(intent.getStringExtra("location"));
 
         TextView favoriteAddress = (TextView) findViewById(R.id.favoriteAddress);
-        favoriteAddress.setText("서울특별시 동작구 흑석로 48");
+        favoriteAddress.setText("address of location"); //get address from map api?
 
         final ImageView starImage = (ImageView) findViewById(R.id.starImage);
 
         final Button favoriteButton = (Button) findViewById(R.id.favoriteButton);
-        favoriteButton.setText("즐겨찾기 해제");
+        favoriteButton.setText("즐겨찾기 등록");
         favoriteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

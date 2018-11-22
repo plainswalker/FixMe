@@ -69,7 +69,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
             android:layout_marginTop="10dp"
-            app:srcCompat="@drawable/favorite_star_200" />
+            app:srcCompat="@drawable/favorite_star_dark_200" />
 
         <Button
             android:id="@+id/favoriteButton"
@@ -95,8 +95,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:inputType="textPersonName"
-            android:text="Name" />
+            android:hint="입력하세요."
+            android:inputType="textPersonName" />
 
     </LinearLayout>
 

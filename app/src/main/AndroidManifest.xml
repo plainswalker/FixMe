@@ -42,7 +42,8 @@
             android:label="@string/title_activity_full_alarm"
             android:theme="@style/FullscreenTheme" />
         <activity android:name=".ChartActivity" />
-        <activity android:name=".FavoriteActivity"></activity>
+        <activity android:name=".FavoriteActivity" />
+        <activity android:name=".FootprintRoutineActivity"></activity>
     </application>
 
 </manifest>
