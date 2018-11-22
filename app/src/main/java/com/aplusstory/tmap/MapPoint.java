@@ -5,15 +5,20 @@ public class MapPoint {
     private double latitude;
     private double longitude;
 
+
+
+    private String address;
+
     public MapPoint(){
         super();
     }
 
-    public MapPoint(String Name, double latitude, double longitude) {
+    public MapPoint(String Name, double latitude, double longitude, String address) {
         //super();
         this.Name = Name;
         this.latitude = latitude;
         this.longitude = longitude;
+        this.address = address;
     }
 
 
@@ -40,5 +45,12 @@ public class MapPoint {
     public void setLongitude(double longitude) {
         this.longitude = longitude;
     }
+    public String getAddress() {
+        return address;
+    }
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
 }
 

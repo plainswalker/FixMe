@@ -198,7 +198,39 @@ public class MapFragment extends Fragment
 
         //버튼 리스너 등록
         bt_find.setOnClickListener(this);
+        tmapview.setOnLongClickListenerCallback(new TMapView.OnLongClickListenerCallback(){
 
+            @Override
+            public void onLongPressEvent(ArrayList<TMapMarkerItem> arrayList, ArrayList<TMapPOIItem> arrayList1, TMapPoint tMapPoint) {
+                lat = tMapPoint.getLatitude();
+                lon = tMapPoint.getLongitude();
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                tmapdata.convertGpsToAddress(lat, lon, new TMapData.ConvertGPSToAddressListenerCallback() {
+                    @Override
+                    public void onConvertToGPSToAddress(String strAddress) {
+                        address = strAddress;
+                    }
+                });
+                builder.setTitle("이곳으로 지정하시겠습니까?\n"+address);
+
+                builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //이곳에 데이터 인텐트에 담아서 넘겨주고, 확정 짓는 코드 필요
+                    }
+                });
+                builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+
+                builder.show();
+                //1. 위도, 경도로 주소 검색하기
+
+            }
+        });
 
         return view;
     }
@@ -227,6 +259,7 @@ public class MapFragment extends Fragment
         mListener = null;
     }
 
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -242,9 +275,9 @@ public class MapFragment extends Fragment
         void onFragmentInteraction(Uri uri);
     }
     //핀 찍을 data
-    public void addPoint(String name, double latitude, double longitude) {
+    public void addPoint(String name, double latitude, double longitude, String address) {
         // 강남 //
-        m_mapPoint.add(new MapPoint(name, latitude, longitude));
+        m_mapPoint.add(new MapPoint(name, latitude, longitude, address));
         m_tmapPoint.add(new TMapPoint(latitude, longitude));
     }
 
@@ -267,7 +300,7 @@ public class MapFragment extends Fragment
             item1.setIcon(bitmap);
 
             item1.setCalloutTitle(m_mapPoint.get(i).getName());
-            item1.setCalloutSubTitle("통합검색 결과");
+            item1.setCalloutSubTitle(m_mapPoint.get(i).getAddress());
             item1.setCanShowCallout(true);
             item1.setAutoCalloutVisible(true);
 
@@ -319,7 +352,7 @@ public class MapFragment extends Fragment
                             Log.d("주소로찾기", "POI Name: " + item.getPOIName().toString() + ", " +
                                     "Address: " + item.getPOIAddress().replace("null", "") + ", " +
                                     "Point: " + item.getPOIPoint().toString());
-                            addPoint(item.getPOIName(),item.getPOIPoint().getLatitude(),item.getPOIPoint().getLongitude());
+                            addPoint(item.getPOIName(),item.getPOIPoint().getLatitude(),item.getPOIPoint().getLongitude(),item.getPOIAddress());
                         }
                         TMapInfo tmapInfo = tmapview.getDisplayTMapInfo(m_tmapPoint);
                         tmapview.setCenterPoint(tmapInfo.getTMapPoint().getLongitude(),tmapInfo.getTMapPoint().getLatitude());
