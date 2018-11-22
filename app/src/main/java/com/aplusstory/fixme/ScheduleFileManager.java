@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -23,6 +24,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 
 public class ScheduleFileManager implements FileManager {
     public static final String FILENAME_SCHEDULE_PREFIX = "schedule_";
@@ -61,7 +63,7 @@ public class ScheduleFileManager implements FileManager {
     }
     public boolean putSchedule(ScheduleDataManager.ScheduleData sch){
         boolean rt = false;
-        Writer fw = null;
+        FileWriter fw = null;
         String filepath;
 
         if(this.listSch.containsKey(sch.name)){
@@ -71,7 +73,8 @@ public class ScheduleFileManager implements FileManager {
         }
 
         try{
-            fw = new OutputStreamWriter(new FileOutputStream(filepath), StandardCharsets.UTF_16);
+            fw = new FileWriter(filepath);
+//            fw = new OutputStreamWriter(new FileOutputStream(filepath), StandardCharsets.UTF_16);
             String toWrite = sch.toString();
             Log.d(this.getClass().getName(), "data to write : \n" + toWrite);
             fw.write(toWrite);
@@ -90,14 +93,17 @@ public class ScheduleFileManager implements FileManager {
     public String getData(String schName) {
         Reader fr = null;
         StringBuilder sb = new StringBuilder();
-
+        Scanner sc;
         try {
-            fr = new InputStreamReader(new FileInputStream(this.listSch.get(schName)), StandardCharsets.UTF_16);
-            CharBuffer buf = CharBuffer.allocate(255);
+            File f = new File(this.listSch.get(schName));
+            Log.d(this.getClass().getName(), "file to read : " + f.getAbsolutePath());
+            sc = new Scanner(f);
+//            fr = new InputStreamReader(new FileInputStream(this.listSch.get(schName)), StandardCharsets.UTF_16);
+//            CharBuffer buf = CharBuffer.allocate(255);
             int i;
-            while (fr.ready()) {
-                i = fr.read(buf);
-                sb.append(buf);
+            while (sc.hasNext()) {
+//                i = fr.read(buf);
+                sb.append(sc.next());
             }
         }catch (Exception e){
             Log.d(this.getClass().getName(), e.toString());
