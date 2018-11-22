@@ -1,7 +1,5 @@
 package com.aplusstory.fixme;
 
-import android.location.Location;
-
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -22,13 +20,13 @@ public interface LocationDataManager {
     public class LocatonData implements Serializable{
         public static final String KEY_DATETIME = "datetime";
         public static final String KEY_LATITUDE = "latitude";
-        public static final String KEY_LONGTITUDE = "longtitude";
+        public static final String KEY_LONGITUDE = "longitude";
         public static final String DATE_FORMAT_GMT = "yyyy-MM-dd HH:mm:ss";
         public static final double T_RAD = 6378137.0D; //by meter
 
         long datetime; // in milliseconds
         double latitude;
-        double longtitude;
+        double longitude;
 
         @Nullable
         public static LocatonData parseJSON(JSONObject json){
@@ -42,7 +40,7 @@ public interface LocationDataManager {
             try {
                dateTimeStr = json.getString(KEY_DATETIME);
                latitude = json.getDouble(KEY_LATITUDE);
-               longtitude = json.getDouble(KEY_LONGTITUDE);
+               longtitude = json.getDouble(KEY_LONGITUDE);
                date = df.parse(dateTimeStr);
                datetime = date.getTime();
             } catch(JSONException e){
@@ -53,7 +51,7 @@ public interface LocationDataManager {
             return new LocatonData(datetime, latitude, longtitude);
         }
 
-        public LocatonData(String datetime, double latitude, double longtitude){
+        public LocatonData(String datetime, double latitude, double longitude){
             DateFormat df = new SimpleDateFormat(DATE_FORMAT_GMT, Locale.US);
             Date date = null;
             try {
@@ -65,13 +63,13 @@ public interface LocationDataManager {
             this.datetime = (date != null) ? date.getTime() : -1;
 
             this.latitude = latitude;
-            this.longtitude = longtitude;
+            this.longitude = longitude;
         }
 
-        public LocatonData(long datetime, double latitude, double longtitude){
+        public LocatonData(long datetime, double latitude, double longitude){
             this.datetime = datetime;
             this.latitude = latitude;
-            this.longtitude = longtitude;
+            this.longitude = longitude;
         }
 
         public JSONObject JSONify(){
@@ -82,7 +80,7 @@ public interface LocationDataManager {
                 String dateStr = df.format(datetime);
                 json.put(KEY_DATETIME, dateStr);
                 json.put(KEY_LATITUDE, this.latitude);
-                json.put(KEY_LONGTITUDE, this.longtitude);
+                json.put(KEY_LONGITUDE, this.longitude);
 
             } catch (JSONException e){
                 //error handle
@@ -99,7 +97,7 @@ public interface LocationDataManager {
         public static double distance(LocatonData src, LocatonData dst){
             double degToRad = Math.PI/180.0;
             double dlat = (src.latitude - dst.latitude) * degToRad;
-            double dlong = (src.longtitude - dst.longtitude) * degToRad;
+            double dlong = (src.longitude - dst.longitude) * degToRad;
 
             double a = Math.pow(Math.sin(dlat/2.0), 2.0)
                     + (Math.cos(src.latitude * degToRad)

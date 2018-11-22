@@ -1,42 +1,38 @@
 package com.aplusstory.fixme;
 
+//import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
-//import android.support.v4.app.Fragment;
+//import android.app.Fragment;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import static android.app.Activity.RESULT_OK;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link ScheduleFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link ScheduleFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class ScheduleFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+public class ScheduleFragment extends Fragment implements View.OnClickListener{
+    public static final String ARG_KEY_SCHEDULE = "argument_schedule";
+    public static final String ARG_KEY_DELETE = "argument_delete";
+    public static final String ARG_KEY_TODAY = "argument_today";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private Bundle arg = null;
 
     Date today = new Date();
     SimpleDateFormat date = new SimpleDateFormat("yyyy.MM.dd");
+    private int REQUEST_RESULT = 1;
+    private ScheduleDataManager.ScheduleData sch = new ScheduleDataManager.ScheduleData();
 
     private OnFragmentInteractionListener mListener;
 
@@ -44,19 +40,20 @@ public class ScheduleFragment extends Fragment {
         // Required empty public constructor
     }
 
-
-    // TODO: Rename and change types and number of parameters
-    public static ScheduleFragment newInstance() {
-        return new ScheduleFragment();
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(ScheduleFragment.class.toString(),ScheduleFragment.class.toString() + " created");
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+        if(this.getArguments() != null){
+            this.arg = new Bundle(this.getArguments());
+            if(this.arg.containsKey(ARG_KEY_SCHEDULE)){
+                this.sch = (ScheduleDataManager.ScheduleData) this.arg.getSerializable(ARG_KEY_SCHEDULE);
+                this.today = new Date(sch.scheduleBegin);
+            } else if(this.arg.containsKey(ARG_KEY_TODAY)){
+                this.today = new Date(this.arg.getLong(ARG_KEY_TODAY));
+            }
+        } else{
+            this.arg = new Bundle();
         }
     }
 
@@ -69,12 +66,21 @@ public class ScheduleFragment extends Fragment {
         TextView textView = (TextView) returnView.findViewById(R.id.scheduleDate);
         textView.setText(date.format(today));
 
+        EditText nameView = (EditText) returnView.findViewById(R.id.scheduleName);
+        if(this.sch.name != null){
+            nameView.setText(this.sch.name);
+        }
+        EditText memoView = (EditText) returnView.findViewById(R.id.scheduleMemo);
+        if(this.sch.memo != null){
+            memoView.setText(this.sch.memo);
+        }
+
         Button timeButton = (Button) returnView.findViewById(R.id.timeButton);
         timeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), ScheduleTimeActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent, REQUEST_RESULT);
             }
         });
 
@@ -82,19 +88,97 @@ public class ScheduleFragment extends Fragment {
         alarmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), ScheduleAlarmActivity.class);
-                startActivity(intent);
+                Intent intent = new Intent(getActivity(), ScheduleAlarmIntervalActivity.class);
+                startActivityForResult(intent, REQUEST_RESULT);
             }
         });
+
+        Button colorButton = (Button) returnView.findViewById(R.id.colorButton);
+        colorButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), ScheduleColorActivity.class);
+                startActivityForResult(intent, REQUEST_RESULT);
+            }
+        });
+
+        Button repeatButton = (Button) returnView.findViewById(R.id.repeationButton);
+        repeatButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), ScheduleRepeationActivity.class);
+                startActivityForResult(intent, REQUEST_RESULT);
+            }
+        });
+
+        Button locationButton = (Button) returnView.findViewById(R.id.locationButton);
+        locationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(ScheduleFragment.this.getContext(), "Map to select location", Toast.LENGTH_SHORT).show();
+                //TODO : start map activity here
+            }
+        });
+
+        Button applyButton = (Button) returnView.findViewById(R.id.applyButton);
+        applyButton.setOnClickListener(this);
+
+        Button deleteButton = (Button) returnView.findViewById(R.id.delteButton);
+        deleteButton.setOnClickListener(this);
 
         return returnView;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d(this.getClass().getName(), "onActivityResult, reqCode : " + requestCode + " resCode : " + resultCode);
+        if(requestCode == REQUEST_RESULT) {
+            if(resultCode == RESULT_OK && data != null) {
+                if(data.hasExtra(ScheduleRepeationActivity.EXTRA_NAME_ARGUMENT)){
+                    Bundle bd = data.getBundleExtra(ScheduleRepeationActivity.EXTRA_NAME_ARGUMENT);
+                    int rptCode = bd.getInt(ScheduleRepeationActivity.ARGUMENT_KEY_REPEAT_CODE);
+                    Date rptEnd = new Date(bd.getLong(ScheduleRepeationActivity.ARGUMENT_KEY_REPEAT_END));
+                    this.sch.isRepeated = true;
+                    this.sch.repeatType = rptCode;
+                    this.sch.repeatEnd = rptEnd.getTime();
+                    if(this.sch.repeatType == ScheduleDataManager.RepeatDuration.REPEAT_WEEKLY){
+                        boolean[] rptDoW = bd.getBooleanArray(ScheduleRepeationActivity.ARGUMENT_KEY_REPEAT_WEEKLY);
+                        for(int i = 0; i < rptDoW.length; i++){
+                            this.sch.repeatDayOfWeek[i + 1] = rptDoW[i];
+                        }
+                    }
+                    Log.d(this.getClass().getName(), "repeatCode : " + rptCode + ", repeatEnd : " + rptEnd.toString());
+                }
+
+                if(data.hasExtra(ScheduleColorActivity.EXTRA_NAME_ARGUMENT)){
+                    int crCode = data.getIntExtra(ScheduleColorActivity.EXTRA_NAME_ARGUMENT, ScheduleDataManager.TableColor.WHITE);
+                    if(crCode > 0){
+                        this.sch.tableColor = crCode;
+                        Log.d(this.getClass().getName(), "color : " + ScheduleDataManager.TableColor.getColorText(crCode));
+                    }
+                }
+
+                if(data.hasExtra(ScheduleAlarmIntervalActivity.EXTRA_NAME_ARGUMENT)){
+                    int almintCode = data.getIntExtra(ScheduleAlarmIntervalActivity.EXTRA_NAME_ARGUMENT, -1);
+                    if(almintCode >= 0){
+                        this.sch.hasAlarm = true;
+                        this.sch.alarmInterval = almintCode;
+                        Log.d(this.getClass().getName(), "alarm interval : " + almintCode);
+                    }
+                }
+
+                if(data.hasExtra(ScheduleTimeActivity.EXTRA_NAME_ARGUMENT)){
+                    Bundle bd = data.getBundleExtra(ScheduleTimeActivity.EXTRA_NAME_ARGUMENT);
+                    Date begin = new Date(bd.getLong(ScheduleTimeActivity.KEY_TIME_BEGIN));
+                    Date end = new Date(bd.getLong(ScheduleTimeActivity.KEY_TIME_END));
+                    this.sch.scheduleBegin = begin.getTime();
+                    this.sch.scheduleEnd = end.getTime();
+                    Log.d(this.getClass().getName(), "schedule begin : " + begin.toString() + ", end : " + end.toString());
+                }
+//                Toast.makeText(getContext(), "Activity Terminated", Toast.LENGTH_SHORT).show();
+            }
         }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
@@ -114,18 +198,49 @@ public class ScheduleFragment extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+    @Override
+    public void onClick(View v) {
+        FragmentManager fragmentManager = null;
+        FragmentTransaction ft = null;
+        switch(v.getId()){
+            case R.id.applyButton:
+                fragmentManager = this.getActivity().getSupportFragmentManager();
+                ft =  fragmentManager.beginTransaction().hide(this);
+                EditText nameView = this.getView().findViewById(R.id.scheduleName);
+                this.sch.name = nameView.getText().toString();;
+                EditText memoView = this.getView().findViewById(R.id.scheduleMemo);
+                this.sch.memo = memoView.getText().toString();
+                this.arg.putSerializable(ScheduleFragment.ARG_KEY_SCHEDULE, this.sch);
+                Log.d(this.getClass().getName(), "result schedule json : \n" + this.sch.toString());
+                if(this.mListener != null){
+                    this.mListener.onFragmentInteraction(this.arg);
+                }
+                break;
+            case R.id.delteButton:
+                fragmentManager = this.getActivity().getSupportFragmentManager();
+                ft =  fragmentManager.beginTransaction().hide(this);
+                this.arg.putBoolean(ScheduleFragment.ARG_KEY_DELETE, true);
+                if(this.mListener != null){
+                    this.mListener.onFragmentInteraction(this.arg);
+                }
+                break;
+        }
+        if(fragmentManager != null && ft != null){
+            ft.commit();
+            fragmentManager.popBackStack();
+        }
+
+
     }
+
+    public interface OnFragmentInteractionListener {
+        void onFragmentInteraction(Bundle arg);
+    }
+
+    private void refresh() {
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        transaction.detach(this).attach(this).commit();
+    }
+
+
 }

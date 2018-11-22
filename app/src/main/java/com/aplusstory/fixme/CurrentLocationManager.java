@@ -1,6 +1,10 @@
 package com.aplusstory.fixme;
 
 import android.Manifest;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -8,14 +12,13 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.Binder;
+import android.location.LocationProvider;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.webkit.SslErrorHandler;
 import android.widget.Toast;
 
 import java.text.DateFormat;
@@ -23,11 +26,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import kotlin.collections.DoubleIterator;
-
 public class CurrentLocationManager extends Service implements LocationDataManager, LocationListener {
-//    public static final long DELAY_LOCA_UPDATE = 5 * 60 * 1000;
-    public static final long DELAY_LOCA_UPDATE = 10000;
+    public static final long MIN_LOCA_UPDATE = 5 * 60 * 1000;
+//    public static final long MIN_LOCA_UPDATE = 10000;
     public static final long DELAY_THREAD_LOOP = 10000;
 
     private LocationFileManager fm = null;
@@ -36,6 +37,9 @@ public class CurrentLocationManager extends Service implements LocationDataManag
     private Thread thd = null;
     private boolean isEnabled = false;
     private Handler hd = null;
+    private LocationDataManager.LocatonData priviousLocation = null;
+    private long tLocaReq = -1;
+    private long dLocaReq = MIN_LOCA_UPDATE;
 
     @Nullable
     @Override
@@ -52,9 +56,10 @@ public class CurrentLocationManager extends Service implements LocationDataManag
         }
         if(this.lm == null) {
             this.lm = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
         }
         if(this.moRecog == null){
-
+            this.moRecog = new UserMovementRecognizer(this);
         }
         if(this.hd == null){
             this.hd = new ServiceHandler();
@@ -64,9 +69,25 @@ public class CurrentLocationManager extends Service implements LocationDataManag
             this.thd.start();
         }
 
-        Log.d(CurrentLocationManager.class.getName(), "Service started");
-        Toast.makeText(this, "Service started", Toast.LENGTH_SHORT);
-
+//        Log.d(CurrentLocationManager.class.getName(), "Service started");
+////        Toast.makeText(this, "Service started", Toast.LENGTH_SHORT);
+//        NotificationManager nm = (NotificationManager)this.getSystemService(Context.NOTIFICATION_SERVICE);
+//        NotificationChannel nc = nm.getNotificationChannel(NotificationUIService.NOTIFICATION_CHANNEL_ID);
+//        Intent it = new Intent(this, TestLocationActivity.class);
+//        PendingIntent ntPIntent = PendingIntent.getActivity(this,0, it, PendingIntent.FLAG_UPDATE_CURRENT);
+//        Notification n = (new Notification.Builder(this, NotificationUIService.NOTIFICATION_CHANNEL_ID))
+//                //                .setSmallIcon(R.drawable.FixMeIcon)
+//                .setSmallIcon(R.drawable.ic_launcher_background)
+//                .setContentTitle("FixMe")
+//                .setContentText("GPS turned on")
+//                .setVisibility(Notification.VISIBILITY_PRIVATE)
+//                .setOngoing(true)
+//                .setWhen(System.currentTimeMillis())
+//                .setShowWhen(true)
+//                .setOnlyAlertOnce(true)
+//                .setContentIntent(ntPIntent)
+//                .build();
+//        this.startForeground((int)System.currentTimeMillis(),n);
         return Service.START_NOT_STICKY;
     }
 
@@ -88,10 +109,15 @@ public class CurrentLocationManager extends Service implements LocationDataManag
         );
 
         LocatonData loca = new LocatonData(now, latitude, longtitude);
+
         if(this.fm != null){
-            this.fm.setCurrentLocation(loca);
+            if( this.priviousLocation == null ||
+                loca.distanceTo(this.priviousLocation) > 15) {
+                this.fm.setCurrentLocation(loca);
+            }
         }
         this.lm.removeUpdates(this);
+        this.priviousLocation = loca;
     }
 
     @Override
@@ -114,20 +140,36 @@ public class CurrentLocationManager extends Service implements LocationDataManag
         public void handleMessage(Message msg) {
             CurrentLocationManager that = CurrentLocationManager.this;
             if(that.lm != null){
-                if(that.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
-                        == PackageManager.PERMISSION_GRANTED){
+                LocationProvider gps = that.lm.getProvider(LocationManager.GPS_PROVIDER);
+                LocationProvider net = that.lm.getProvider(LocationManager.NETWORK_PROVIDER);
+                LocationProvider passive = that.lm.getProvider(LocationManager.PASSIVE_PROVIDER);
+                boolean coasePermission = that.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION)
+                        == PackageManager.PERMISSION_GRANTED;
+                boolean finePermission = that.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+                        == PackageManager.PERMISSION_GRANTED;
+                if(passive != null && (finePermission)){
+                    Log.d(this.getClass().getName(), "passive provider request");
                     that.lm.requestLocationUpdates(
-                            LocationManager.GPS_PROVIDER
-                            , CurrentLocationManager.DELAY_LOCA_UPDATE
+                            LocationManager.PASSIVE_PROVIDER
+                            , CurrentLocationManager.MIN_LOCA_UPDATE
                             , 5
                             , that
                     );
                 }
-                if(that.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-                        == PackageManager.PERMISSION_GRANTED){
+                if (gps != null && finePermission) {
+                    Log.d(this.getClass().getName(), "gps provider request");
+                    that.lm.requestLocationUpdates(
+                            LocationManager.GPS_PROVIDER
+                            , CurrentLocationManager.MIN_LOCA_UPDATE
+                            , 5
+                            , that
+                    );
+                }
+                if (net != null && coasePermission) {
+                    Log.d(this.getClass().getName(), "network provider request");
                     that.lm.requestLocationUpdates(
                             LocationManager.NETWORK_PROVIDER
-                            , CurrentLocationManager.DELAY_LOCA_UPDATE
+                            , CurrentLocationManager.MIN_LOCA_UPDATE
                             , 5
                             , that
                     );
@@ -147,10 +189,29 @@ public class CurrentLocationManager extends Service implements LocationDataManag
         public void run() {
             CurrentLocationManager that = CurrentLocationManager.this;
             while(that.isEnabled){
-                if(that.moRecog == null || !that.moRecog.isEnabled()){
-                    if(this.hd != null) {
-                        this.hd.sendEmptyMessage(0);
+                long now = System.currentTimeMillis();
+                if(that.tLocaReq > 0) {
+                    if (that.moRecog == null || !that.moRecog.isEnabled()) {
+                        if (this.hd != null) {
+                            Log.d(that.getClass().getName(), "No Recognizer");
+                            this.hd.sendEmptyMessage(0);
+                            that.tLocaReq = -1;
+                        }
+                    } else if (that.moRecog.checkCondition()) {
+                        if (this.hd != null) {
+                            Log.d(that.getClass().getName(), "Condition fullfilled");
+                            this.hd.sendEmptyMessage(0);
+                            that.tLocaReq = -1;
+                        }
+                    } else if(now - tLocaReq > that.dLocaReq){
+                        if(this.hd != null){
+                            Log.d(that.getClass().getName(), "Minimum time expired");
+                            this.hd.sendEmptyMessage(0);
+                            that.tLocaReq = -1;
+                        }
                     }
+                } else {
+                    that.tLocaReq = now;
                 }
                 try{
                     Thread.sleep(CurrentLocationManager.DELAY_THREAD_LOOP);
