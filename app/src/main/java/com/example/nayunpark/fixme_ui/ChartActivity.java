@@ -30,7 +30,7 @@ import java.util.Date;
 public class ChartActivity extends AppCompatActivity {
     Toolbar toolbar;
     Fragment fragment;
-    FragmentManager fragmentManager;
+    private FragmentManager fragmentManager = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,13 +40,17 @@ public class ChartActivity extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_full_menu);
 
-        fragment = new PieChartFragment();
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.footprint_fragment, fragment);
-        fragmentTransaction.commit();
+        if(this.fragmentManager == null) {
+            this.fragmentManager = this.getSupportFragmentManager();
+        }
+//        fragment = new PieChartFragment();
+//        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+//        fragmentTransaction.replace(R.id.footprint_fragment, fragment);
+//        fragmentTransaction.commit();
     }
 
 
@@ -57,13 +61,12 @@ public class ChartActivity extends AppCompatActivity {
 
         switch (item.getItemId()) {
             case R.id.ic_footprint_calendar:
-//                TODO: Replace fragment
-//                Fragment fragment2 = new YearlyCalendarFragment();
-//
-//                FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-//                fragmentTransaction.replace(R.id.yearly_calendar, fragment2);
-//                fragmentTransaction.commit();
-                Toast.makeText(this, "Yearly Calendar", Toast.LENGTH_SHORT).show();
+                if(this.fragmentManager != null && !this.fragmentManager.isDestroyed()){
+                    fragment = new YearlyCalendarFragment();
+                    FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                    fragmentTransaction.replace(R.id.fragment_yearly_calendar, fragment);
+                    fragmentTransaction.commit();
+                }
 
                 rt = true;
                 break;

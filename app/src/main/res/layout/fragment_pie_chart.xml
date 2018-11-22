@@ -5,20 +5,21 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    tools:context=".PieChartFragment">
+    tools:context=".PieChartFragment"
+    android:id="@+id/fragment_pie_chart">
 
     <!-- TODO: Update blank fragment layout -->
 
-        <TextView
-            android:id="@+id/chart_date"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:gravity="center"
-            android:text="Date"
-            android:textAppearance="@style/TextAppearance.AppCompat.Display1"
-            android:textColor="#000000"
-            android:textSize="30sp" />
+    <TextView
+        android:id="@+id/chart_date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:gravity="center"
+        android:text="Date"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+        android:textColor="#616161"
+        android:textSize="28sp" />
 
         <com.github.mikephil.charting.charts.PieChart
             android:id="@+id/piechart"

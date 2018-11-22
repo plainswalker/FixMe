@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 
 /**
@@ -65,6 +66,10 @@ public class YearlyCalendarFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View returnView = inflater.inflate(R.layout.fragment_yearly_calendar, container, false);
+
+        TextView textView = (TextView) returnView.findViewById(R.id.yeartest);
+        textView.setBackgroundResource(R.color.chartColor5);
+
         return returnView;
     }
 

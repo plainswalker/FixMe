@@ -2,24 +2,14 @@ package com.example.nayunpark.fixme_ui;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ListAdapter;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
-import android.widget.SimpleAdapter;
-import android.widget.Switch;
-import android.widget.Toast;
 import android.support.v7.widget.Toolbar;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -103,7 +93,7 @@ public class SettingsActivity extends AppCompatActivity {
                         startActivity(intent);
                         break;
                     case 1:
-                        Intent intent2 = new Intent(getApplicationContext(), FavoritesActivity.class);
+                        Intent intent2 = new Intent(getApplicationContext(), FavoriteActivity.class);
                         startActivity(intent2);
                         break;
                 }
