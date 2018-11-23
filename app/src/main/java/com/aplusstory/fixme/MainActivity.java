@@ -11,7 +11,6 @@ import com.aplusstory.fixme.ScheduleActivity;
 import com.aplusstory.fixme.SettingsActivity;
 
 public class MainActivity extends AppCompatActivity {
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,6 +27,15 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         );
+
+        Button todayFootprintButton = (Button) findViewById(R.id.FootprintButton);
+        todayFootprintButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), ChartActivity.class);
+                startActivity(intent);
+            }
+        });
 
         Button settingsB = (Button) findViewById(R.id.SettingsButton);
         settingsB.setOnClickListener(

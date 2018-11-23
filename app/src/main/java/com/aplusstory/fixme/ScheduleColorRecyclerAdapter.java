@@ -47,7 +47,7 @@ public class ScheduleColorRecyclerAdapter extends RecyclerView.Adapter<RecyclerV
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, final int i) {
         ColorRecyclerViewHolder colorRecyclerViewHolder = (ColorRecyclerViewHolder) viewHolder;
 
-        colorRecyclerViewHolder.colorImageView.setImageResource(settingsColorInfoArrayList.get(i).colorIconId);
+        colorRecyclerViewHolder.colorImageView.setImageResource(settingsColorInfoArrayList.get(i).colorId);
         colorRecyclerViewHolder.colorTextView.setText(settingsColorInfoArrayList.get(i).colorName);
         colorRecyclerViewHolder.colorTextView.setOnClickListener(new View.OnClickListener() {
             @Override

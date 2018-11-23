@@ -86,22 +86,23 @@ public class SettingsActivity extends AppCompatActivity {
         ListView list2 = (ListView) findViewById(R.id.settingList2);
         ArrayAdapter<String> arrayAdapter2 = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, setlist2);
         list2.setAdapter(arrayAdapter2);
-        list2.setOnItemClickListener(
-            new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    switch(position) {
-                        case 0:
-                            Intent intent = new Intent(getApplicationContext(), FootDataSettingsActivity.class);
-                            startActivity(intent);
-                            break;
-                        case 1:
-                            Intent intent2 = new Intent(getApplicationContext(), FavoritesActivity.class);
-                            startActivity(intent2);
-                            break;
-                    }
+
+        list2.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = null;
+                switch (position) {
+                    case 0:
+                        intent = new Intent(getApplicationContext(), FootDataSettingsActivity.class);
+                        break;
+                    case 1:
+                        intent = new Intent(getApplicationContext(), FootprintRoutineActivity.class);
+                        break;
+                }
+                if(intent != null) {
+                    startActivity(intent);
                 }
             }
-        );
+        });
     }
 }
