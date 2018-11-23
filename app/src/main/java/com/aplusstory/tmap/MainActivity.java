@@ -17,7 +17,6 @@ public class MainActivity extends AppCompatActivity implements MapFragment.OnFra
 
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         if(this.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)==PackageManager.PERMISSION_GRANTED){
@@ -33,10 +32,12 @@ public class MainActivity extends AppCompatActivity implements MapFragment.OnFra
 
 
         MapFragment mapFragment = (MapFragment) getSupportFragmentManager().findFragmentById(R.id.mainfragment);
+        PathFragment pathFragment = (PathFragment) getSupportFragmentManager().findFragmentById(R.id.mainfragment);
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.mainfragment, mapFragment);
+
         fragmentTransaction.commit();
 
 
