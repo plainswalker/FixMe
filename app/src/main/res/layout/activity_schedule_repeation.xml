@@ -102,35 +102,40 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="없음" />
+            android:text="없음"
+            android:background="@drawable/background_selector"/>
 
         <Button
             android:id="@+id/dailyButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="매일" />
+            android:text="매일"
+            android:background="@drawable/background_selector"/>
 
         <Button
             android:id="@+id/weeklyButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="매주" />
+            android:text="매주"
+            android:background="@drawable/background_selector"/>
 
         <Button
             android:id="@+id/monthlyButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="매달" />
+            android:text="매달"
+            android:background="@drawable/background_selector"/>
 
         <Button
             android:id="@+id/yearlyButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="매년" />
+            android:text="매년"
+            android:background="@drawable/background_selector"/>
     </LinearLayout>
 
     <FrameLayout

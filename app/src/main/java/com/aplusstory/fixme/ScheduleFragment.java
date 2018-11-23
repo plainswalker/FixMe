@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -70,12 +71,15 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener{
         if(this.sch.name != null){
             nameView.setText(this.sch.name);
         }
-        EditText memoView = (EditText) returnView.findViewById(R.id.scheduleMemo);
+        EditText memoView = (EditText) returnView.findViewById(R.id.memoText);
         if(this.sch.memo != null){
             memoView.setText(this.sch.memo);
         }
 
-        Button timeButton = (Button) returnView.findViewById(R.id.timeButton);
+        TextView repeationDetail = (TextView) returnView.findViewById(R.id.repeationDetail);
+        repeationDetail.setText("aaa");
+
+        ImageButton timeButton = (ImageButton) returnView.findViewById(R.id.timeButton);
         timeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -84,7 +88,7 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener{
             }
         });
 
-        Button alarmButton = (Button) returnView.findViewById(R.id.alarmButton);
+        ImageButton alarmButton = (ImageButton) returnView.findViewById(R.id.alarmButton);
         alarmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -93,7 +97,7 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener{
             }
         });
 
-        Button colorButton = (Button) returnView.findViewById(R.id.colorButton);
+        ImageButton colorButton = (ImageButton) returnView.findViewById(R.id.colorButton);
         colorButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -102,7 +106,7 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener{
             }
         });
 
-        Button repeatButton = (Button) returnView.findViewById(R.id.repeationButton);
+        ImageButton repeatButton = (ImageButton) returnView.findViewById(R.id.repeationButton);
         repeatButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -111,19 +115,20 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener{
             }
         });
 
-        Button locationButton = (Button) returnView.findViewById(R.id.locationButton);
+        ImageButton locationButton = (ImageButton) returnView.findViewById(R.id.locationButton);
         locationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(ScheduleFragment.this.getContext(), "Map to select location", Toast.LENGTH_SHORT).show();
-                //TODO : start map activity here
+//                Toast.makeText(ScheduleFragment.this.getContext(), "Map to select location", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getActivity(), TMapActivity.class);
+                startActivityForResult(intent, REQUEST_RESULT);
             }
         });
 
         Button applyButton = (Button) returnView.findViewById(R.id.applyButton);
         applyButton.setOnClickListener(this);
 
-        Button deleteButton = (Button) returnView.findViewById(R.id.delteButton);
+        Button deleteButton = (Button) returnView.findViewById(R.id.deleteButton);
         deleteButton.setOnClickListener(this);
 
         return returnView;
@@ -208,7 +213,7 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener{
                 ft =  fragmentManager.beginTransaction().hide(this);
                 EditText nameView = this.getView().findViewById(R.id.scheduleName);
                 this.sch.name = nameView.getText().toString();;
-                EditText memoView = this.getView().findViewById(R.id.scheduleMemo);
+                EditText memoView = this.getView().findViewById(R.id.memoText);
                 this.sch.memo = memoView.getText().toString();
                 this.arg.putSerializable(ScheduleFragment.ARG_KEY_SCHEDULE, this.sch);
                 Log.d(this.getClass().getName(), "result schedule json : \n" + this.sch.toString());
@@ -216,7 +221,7 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener{
                     this.mListener.onFragmentInteraction(this.arg);
                 }
                 break;
-            case R.id.delteButton:
+            case R.id.deleteButton:
                 fragmentManager = this.getActivity().getSupportFragmentManager();
                 ft =  fragmentManager.beginTransaction().hide(this);
                 this.arg.putBoolean(ScheduleFragment.ARG_KEY_DELETE, true);
