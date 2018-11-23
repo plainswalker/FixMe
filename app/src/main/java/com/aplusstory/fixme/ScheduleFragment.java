@@ -119,8 +119,9 @@ public class ScheduleFragment extends Fragment implements View.OnClickListener{
         locationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(ScheduleFragment.this.getContext(), "Map to select location", Toast.LENGTH_SHORT).show();
-                //TODO : start map activity here
+//                Toast.makeText(ScheduleFragment.this.getContext(), "Map to select location", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getActivity(), TMapActivity.class);
+                startActivityForResult(intent, REQUEST_RESULT);
             }
         });
 
