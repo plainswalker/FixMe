@@ -1,6 +1,8 @@
 package com.aplusstory.fixme;
 
 //import android.app.FragmentTransaction;
+import android.app.AlarmManager;
+import android.content.Context;
 import android.os.Bundle;
 //import android.app.FragmentManager;
 import android.support.v4.app.FragmentManager;
@@ -91,7 +93,8 @@ public class ScheduleActivity extends AppCompatActivity
     @Override
     public void onFragmentInteraction(Bundle arg) {
         if(arg.containsKey(ScheduleFragment.ARG_KEY_SCHEDULE)){
-            if(this.dm.putData((ScheduleDataManager.ScheduleData)arg.getSerializable(ScheduleFragment.ARG_KEY_SCHEDULE))) {
+            ScheduleDataManager.ScheduleData sch = (ScheduleDataManager.ScheduleData)arg.getSerializable(ScheduleFragment.ARG_KEY_SCHEDULE);
+            if(this.dm.putData(sch)) {
                 String savedMsg = "schedule saved";
                 Toast.makeText(this, savedMsg, Toast.LENGTH_SHORT).show();
             }

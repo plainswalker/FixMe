@@ -56,6 +56,36 @@ public interface ScheduleDataManager extends UserDataManager{
         int alarmInterval = -1;
         int tableColor = 0;
 
+        public ScheduleData(){
+
+        }
+
+        public ScheduleData(ScheduleData target){
+            this.name = new String(target.name);
+            this.isRepeated = target.isRepeated;
+            if(this.isRepeated){
+                this.repeatType = target.repeatType;
+                if(this.repeatType == RepeatDuration.REPEAT_WEEKLY){
+                    System.arraycopy(this.repeatDayOfWeek, 0, target.repeatDayOfWeek, 0, this.repeatDayOfWeek.length);
+                }
+                this.repeatEnd = target.repeatEnd;
+            }
+            this.scheduleBegin = target.scheduleBegin;
+            this.scheduleEnd = target.scheduleEnd;
+            this.hasLocation = target.hasLocation;
+            if(this.hasLocation){
+                this.latitude = target.latitude;
+                this.longitude = target.longitude;
+                this.locationAddress = new String(target.locationAddress);
+            }
+            this.memo = new String(target.memo);
+            this.hasAlarm = target.hasAlarm;
+            if(this.hasAlarm){
+                this.alarmInterval = target.alarmInterval;
+            }
+            this.tableColor = target.tableColor;
+        }
+
         @Nullable
         public static ScheduleData parseJSON(JSONObject json){
             ScheduleData sch = new ScheduleData();
@@ -230,7 +260,7 @@ public interface ScheduleDataManager extends UserDataManager{
                     }
                 }
             } else {
-                rt = this.scheduleBegin >= now && this.scheduleEnd <= now;
+                rt = this.scheduleBegin <= now && this.scheduleEnd >= now;
             }
 
             return rt;
