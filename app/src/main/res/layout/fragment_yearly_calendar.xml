@@ -4,15 +4,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/fragment_yearly_calendar"
-    tools:context=".YearlyCalendarFragment">
-
+tools:context=".YearlyCalendarFragment">
     <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:id="@+id/yeartest"
+
+    <io.github.memfis19.cadar.view.MonthCalendar
+        android:id="@+id/monthCalendar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:text="연간달력"
-        android:textAppearance="@style/TextAppearance.AppCompat.Display2" />
+        android:layout_height="300dp" />
 
 </FrameLayout>

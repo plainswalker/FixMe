@@ -7,8 +7,10 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
+import com.github.ik024.calendar_lib.custom.YearView;
+
+import io.github.memfis19.cadar.view.MonthCalendar;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -24,6 +26,8 @@ public class YearlyCalendarFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
+    YearView yearView;
+    MonthCalendar monthCalendar;
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
@@ -67,12 +71,8 @@ public class YearlyCalendarFragment extends Fragment {
         // Inflate the layout for this fragment
         View returnView = inflater.inflate(R.layout.fragment_yearly_calendar, container, false);
 
-        TextView textView = (TextView) returnView.findViewById(R.id.yeartest);
-        textView.setBackgroundResource(R.color.chartColor5);
-
         return returnView;
     }
-
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
