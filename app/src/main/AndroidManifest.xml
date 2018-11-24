@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".SplashActivity"
+            android:name="com.aplusstory.fixme.SplashActivity"
             android:screenOrientation="portrait"
             android:theme="@style/SplashTheme">
             <intent-filter>
@@ -19,31 +19,31 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity">
+        <activity android:name="com.aplusstory.fixme.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ScheduleActivity" />
-        <activity android:name=".SettingsActivity" />
-        <activity android:name=".FootDataSettingsActivity" />
-        <activity android:name=".AlarmPeriodActivity" />
-        <activity android:name=".AlarmOpacityActivity" />
-        <activity android:name=".LightSensActivity" />
-        <activity android:name=".ScheduleTimeActivity" />
-        <activity android:name=".ScheduleRepeationActivity" />
-        <activity android:name=".ScheduleAlarmActivity" />
-        <activity android:name=".ScheduleColorActivity" />
+        <activity android:name="com.aplusstory.fixme.ScheduleActivity" />
+        <activity android:name="com.aplusstory.fixme.SettingsActivity" />
+        <activity android:name="com.aplusstory.fixme.FootDataSettingsActivity" />
+        <activity android:name="com.aplusstory.fixme.AlarmPeriodActivity" />
+        <activity android:name="com.aplusstory.fixme.AlarmOpacityActivity" />
+        <activity android:name="com.aplusstory.fixme.LightSensActivity" />
+        <activity android:name="com.aplusstory.fixme.ScheduleTimeActivity" />
+        <activity android:name="com.aplusstory.fixme.ScheduleRepeationActivity" />
+        <activity android:name="com.aplusstory.fixme.ScheduleAlarmActivity" />
+        <activity android:name="com.aplusstory.fixme.ScheduleColorActivity" />
         <activity
-            android:name=".FullAlarmActivity"
+            android:name="com.aplusstory.fixme.FullAlarmActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/title_activity_full_alarm"
             android:theme="@style/FullscreenTheme" />
-        <activity android:name=".FootprintActivity" />
-        <activity android:name=".FavoriteActivity" />
-        <activity android:name=".FootprintRoutineActivity"></activity>
+        <activity android:name="com.aplusstory.fixme.FootprintActivity" />
+        <activity android:name="com.aplusstory.fixme.FavoriteActivity" />
+        <activity android:name="com.aplusstory.fixme.FootprintRoutineActivity" />
     </application>
 
 </manifest>

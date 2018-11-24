@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    tools:context=".PieChartFragment"
+    tools:context="com.aplusstory.fixme.PieChartFragment"
     android:id="@+id/fragment_pie_chart">
 
     <!-- TODO: Update blank fragment layout -->

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".ScheduleRepeationActivity">
+    tools:context="com.aplusstory.fixme.ScheduleRepeationActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
