@@ -40,7 +40,6 @@ public class SplashActivity extends Activity {
         }
     }
 
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if(!CurrentLocationManager.isRunning()) {
