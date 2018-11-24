@@ -67,9 +67,6 @@ public class YearlyCalendarFragment extends Fragment {
         // Inflate the layout for this fragment
         View returnView = inflater.inflate(R.layout.fragment_yearly_calendar, container, false);
 
-        TextView textView = (TextView) returnView.findViewById(R.id.yeartest);
-        textView.setBackgroundResource(R.color.chartColor5);
-
         return returnView;
     }
 

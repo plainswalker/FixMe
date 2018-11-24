@@ -27,7 +27,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class ChartActivity extends AppCompatActivity {
+public class FootprintActivity extends AppCompatActivity {
     Toolbar toolbar;
     Fragment fragment;
     private FragmentManager fragmentManager = null;
@@ -67,6 +67,7 @@ public class ChartActivity extends AppCompatActivity {
                     Fragment yearlyCalendarFragment = (Fragment) new YearlyCalendarFragment();
                     FragmentTransaction ft = this.fragmentManager.beginTransaction();
                     ft.replace(R.id.footprint_frame, yearlyCalendarFragment);
+                    ft.addToBackStack(null);
 
                     ft.commit();
                 }

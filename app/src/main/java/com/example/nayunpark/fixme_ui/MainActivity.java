@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
         todayFootprintButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), ChartActivity.class);
+                Intent intent = new Intent(getApplicationContext(), FootprintActivity.class);
                 startActivity(intent);
             }
         });
