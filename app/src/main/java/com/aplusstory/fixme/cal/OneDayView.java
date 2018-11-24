@@ -1,6 +1,5 @@
 package com.aplusstory.fixme.cal;
 
-
 import java.util.Calendar;
 import android.content.Context;
 import android.graphics.Color;
@@ -35,6 +34,7 @@ public class OneDayView extends RelativeLayout {
     private OneDayData one;
 
     private LinearLayout eventDot;
+    private ImageView dotImg;
 
     private boolean event;
 
@@ -60,11 +60,11 @@ public class OneDayView extends RelativeLayout {
 
     private void init(Context context)
     {
-
         View v = View.inflate(context, R.layout.oneday, this);
         eventDot = (LinearLayout)v.findViewById(R.id.onday_eventDots);
         dayTv = (TextView) v.findViewById(R.id.onday_dayTv);
         msgTv = (TextView) v.findViewById(R.id.onday_msgTv);
+        dotImg = eventDot.findViewById(R.id.onedayDotImg);
         one = new OneDayData();
         event = false;
         eventDot.setVisibility(INVISIBLE);
@@ -173,5 +173,4 @@ public class OneDayView extends RelativeLayout {
         msgTv.setText((one.getMessage()==null)?"":one.getMessage());
 
     }
-
 }

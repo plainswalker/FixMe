@@ -7,6 +7,8 @@ import android.util.Log;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONTokener;
+import org.json.JSONStringer;
 
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -23,6 +25,13 @@ public class LocationFileManager implements FileManager {
     public static final String FILENAME_LOCATION_PREFIX = "location_";
     public static final String DATE_FORMAT_GMT_DATE = "yyyy-MM-dd";
 
+    public static final int FLAG_READ = 0x01;
+    public static final int FLAG_WRITE = 0x02;
+
+    public static final int READ_ONLY = FLAG_READ;
+    public static final int WRITE_ONLY = FLAG_WRITE;
+    public static final int READ_WRITE = FLAG_READ | FLAG_WRITE;
+
     private SharedPreferences sp = null;
     private FileWriter fwToday = null;
     private FileReader frToday = null;
@@ -37,11 +46,20 @@ public class LocationFileManager implements FileManager {
         + new SimpleDateFormat(DATE_FORMAT_GMT_DATE, Locale.US)
                 .format(new Date(System.currentTimeMillis()));
     }
+
     public String getFilenameForToday(){
         return this.context.getFilesDir() + "/" + FILENAME_LOCATION_PREFIX + dfDate.format(this.cal.getTime());
     }
 
     public LocationFileManager(Context context){
+        this(context, true, true);
+    }
+
+    public LocationFileManager(Context context, int flag){
+        this(context, (flag & FLAG_READ) != 0, (flag & FLAG_WRITE) != 0);
+    }
+
+    public LocationFileManager(Context context, boolean read, boolean write){
         this.context = context;
         this.sp = context.getSharedPreferences(FILENAME_CURRENT_LOCATION, 0);
         this.dfDate = new SimpleDateFormat(DATE_FORMAT_GMT_DATE, Locale.US);
@@ -49,14 +67,22 @@ public class LocationFileManager implements FileManager {
         Date now = new Date(System.currentTimeMillis());
         this.cal.setTime(now);
 
-        try {
-            this.fwToday = new FileWriter(this.getFilenameForToday(), true);
-            this.frToday = new FileReader(this.getFilenameForToday());
-        } catch(Exception e){
-            Log.d(LocationFileManager.class.getName(), e.toString());
-            this.fwToday = null;
-            this.frToday = null;
-            //error handle
+        if(write) {
+            try {
+                this.fwToday = new FileWriter(this.getFilenameForToday(), true);
+            } catch (Exception e) {
+                this.fwToday = null;
+                //error handle
+            }
+        }
+
+        if(read) {
+            try {
+                this.frToday = new FileReader(this.getFilenameForToday());
+            } catch (Exception e) {
+                Log.d(LocationFileManager.class.getName(), e.toString());
+                this.frToday = null;
+            }
         }
     }
 
@@ -98,7 +124,7 @@ public class LocationFileManager implements FileManager {
             rt = new LocationDataManager.LocatonData(
                      this.sp.getString(LocationDataManager.LocatonData.KEY_DATETIME,"")
                     ,Double.parseDouble(this.sp.getString(LocationDataManager.LocatonData.KEY_LATITUDE, ""))
-                    ,Double.parseDouble(this.sp.getString(LocationDataManager.LocatonData.KEY_LONGTITUDE, ""))
+                    ,Double.parseDouble(this.sp.getString(LocationDataManager.LocatonData.KEY_LONGITUDE, ""))
             );
         }
 
@@ -114,7 +140,7 @@ public class LocationFileManager implements FileManager {
         if(this.sp != null){
             SharedPreferences.Editor ed = this.sp.edit();
             ed.putString(LocationDataManager.LocatonData.KEY_LATITUDE, Double.toString(loca.latitude));
-            ed.putString(LocationDataManager.LocatonData.KEY_LONGTITUDE, Double.toString(loca.longtitude));
+            ed.putString(LocationDataManager.LocatonData.KEY_LONGITUDE, Double.toString(loca.longitude));
             Date dt = new Date(loca.datetime);
             String dtStr = df.format(dt);
             ed.putString(LocationDataManager.LocatonData.KEY_DATETIME, dtStr);
@@ -128,6 +154,7 @@ public class LocationFileManager implements FileManager {
         boolean rt = false;
         LocationDataManager.LocatonData loca = null;
         FileWriter fw;
+
         try {
             loca = LocationDataManager.LocatonData.parseJSON(new JSONObject(jsonStr));
             if(this.fwToday != null && fileName.equals(this.getFilenameForToday())){

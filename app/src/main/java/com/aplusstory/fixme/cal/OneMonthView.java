@@ -241,15 +241,14 @@ public class OneMonthView extends LinearLayout implements View.OnClickListener {
         OneDayView odv = (OneDayView) v;
         HLog.d(TAG, CLASS, "click " + odv.get(Calendar.MONTH) + "/" + odv.get(Calendar.DAY_OF_MONTH));
         HLog.d(TAG,CLASS,"event status : " + odv.getEvent() );
-        if(odv.getEvent()){
-            odv.setEvent(false);
-        }
-        else {odv.setEvent(true);}
+//        if(odv.getEvent()){
+//            odv.setEvent(false);
+//        }
+//        else {odv.setEvent(true);}
         HLog.d(TAG,CLASS,"event status : " + odv.getEvent() );
         this.onClickDayListener.onClick(odv);
 
 
 
     }
-
 }

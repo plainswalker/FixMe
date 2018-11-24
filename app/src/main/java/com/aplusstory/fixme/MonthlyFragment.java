@@ -6,17 +6,16 @@ import android.app.Fragment;
 //import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.aplusstory.fixme.cal.OneMonthView;
-import com.aplusstory.fixme.cal.OneDayView;
+import  com.aplusstory.fixme.cal.*;
 
 import java.util.Calendar;
 
 public class MonthlyFragment extends Fragment {
-
     private static final String TAG = MConfig.TAG;
     private static final String NAME = "MonthlyFragment";
     private final String CLASS = NAME + "@" + Integer.toHexString(hashCode());
@@ -52,7 +51,9 @@ public class MonthlyFragment extends Fragment {
         public void onChange(int year, int month) {}
 
         @Override
-        public void onDayClick(OneDayView dayView) {}
+        public void onDayClick(OneDayView dayView) {
+            HLog.d(TAG, NAME, "dummy day click listener");
+        }
 
     };
 
@@ -68,7 +69,6 @@ public class MonthlyFragment extends Fragment {
     private int mMonth = -1;
 
     public static MonthlyFragment newInstance(int year, int month) {
-
         HLog.d(TAG, NAME, "newInstance " + year + "/" + month);
 
         MonthlyFragment fragment = new MonthlyFragment();
@@ -102,8 +102,12 @@ public class MonthlyFragment extends Fragment {
 
     @Override
     public void onAttach(Context context) {
-        super.onAttach(context);
+        if(context instanceof OnMonthChangeListener){
+            HLog.d(TAG, CLASS, "listener set, listener : " + context.getClass().getName());
+            this.listener = (OnMonthChangeListener) context;
+        }
         adapter = new MonthlySlidePagerAdapter(context);
+        super.onAttach(context);
     }
 
     @Override

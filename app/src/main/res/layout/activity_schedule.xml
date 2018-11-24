@@ -30,7 +30,6 @@
                 android:layout_height="wrap_content"
                 tools:layout="@layout/fragment_calendar" />
         </FrameLayout>
-
         <!--<CalendarView-->
             <!--android:id="@+id/calendarView4"-->
             <!--android:layout_width="match_parent"-->

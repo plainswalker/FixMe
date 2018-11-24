@@ -1,5 +1,6 @@
 package com.aplusstory.fixme;
 
+import android.arch.lifecycle.CompositeGeneratedAdaptersObserver;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
@@ -17,17 +18,12 @@ import com.aplusstory.fixme.cal.OneDayView;
 import java.util.Calendar;
 
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link CalendarFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link CalendarFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class CalendarFragment extends Fragment {
+    public static final String ARG_PARAM_CALENDER = "calendar";
+
     private OnFragmentInteractionListener mListener;
     private TextView thisMonthTv = null;
+    private Bundle arg;
 
     public CalendarFragment() {
         // Required empty public constructor
@@ -42,11 +38,10 @@ public class CalendarFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(this.getClass().getName(), "Created");
-
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_calendar, container, false);
         thisMonthTv = (TextView)v.findViewById(R.id.this_month_tv);
@@ -59,26 +54,22 @@ public class CalendarFragment extends Fragment {
                 if(CalendarFragment.this.thisMonthTv != null) {
                     CalendarFragment.this.thisMonthTv.setText(year + "." + (month + 1));
                 }
+                Context context = CalendarFragment.this.getContext();
+                if(context instanceof ScheduleActivity) {
+                    ((ScheduleActivity) CalendarFragment.this.getContext()).onChange(year, month);
+                }
             }
 
             @Override
             public void onDayClick(OneDayView dayView) {
-                int month = dayView.get(Calendar.MONTH);
-                int day = dayView.get(Calendar.DAY_OF_MONTH);
-                Log.d(CalendarFragment.this.getClass().getName(), "onDayClick " + month + "." + day);
-                Toast.makeText(CalendarFragment.this.getContext(), "Click  " + month + "/" + day, Toast.LENGTH_SHORT)
-                        .show();
+                Context context = CalendarFragment.this.getContext();
+                if(context instanceof ScheduleActivity) {
+                    ((ScheduleActivity) CalendarFragment.this.getContext()).onDayClick(dayView);
+                }
             }
-
         });
 
         return v;
-    }
-
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
     }
 
     @Override
@@ -99,6 +90,6 @@ public class CalendarFragment extends Fragment {
     }
 
     public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(Uri uri);
+        void onFragmentInteraction(Bundle arg);
     }
 }

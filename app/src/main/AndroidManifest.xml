@@ -3,8 +3,13 @@
     package="com.aplusstory.fixme">
 
     <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.WRITE_OWNER_DATA"/>
+    <uses-permission android:name="android.permission.READ_OWNER_DATA"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <application
         android:allowBackup="true"
@@ -49,10 +54,18 @@
         <activity android:name=".LightSensActivity" />
         <activity android:name=".ScheduleTimeActivity" />
         <activity android:name=".ScheduleRepeationActivity" />
-        <activity android:name=".ScheduleAlarmActivity" />
-        <activity android:name=".ScheduleColorActivity" />
-        <activity android:name=".NewCalendarActivity" />
-        <activity android:name=".TestLocationActivity"/>
+        <activity android:name=".ScheduleAlarmIntervalActivity" />
+        <activity android:name=".ScheduleColorActivity"/>
+        <activity android:name=".NewCalendarActivity"/>
+        <activity
+            android:name=".FullAlarmActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_full_alarm"
+            android:theme="@style/FullscreenTheme" />
+        <activity android:name=".FootprintActivity" />
+        <activity android:name=".FavoriteActivity" />
+        <activity android:name=".FootprintRoutineActivity"/>
+        <activity android:name=".TMapActivity"/>
     </application>
 
 </manifest>
