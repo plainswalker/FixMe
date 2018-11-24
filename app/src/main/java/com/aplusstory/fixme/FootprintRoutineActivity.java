@@ -1,6 +1,9 @@
 package com.aplusstory.fixme;
 
 import android.content.Intent;
+import android.net.Uri;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -8,7 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-public class FootprintRoutineActivity extends AppCompatActivity {
+public class FootprintRoutineActivity extends AppCompatActivity implements FootprintFragment.OnFragmentInteractionListener{
 
     Toolbar toolbar;
 
@@ -22,6 +25,10 @@ public class FootprintRoutineActivity extends AppCompatActivity {
 
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.add(R.id.footPrintContainer,new FootprintFragment());
+        fragmentTransaction.commit();
 
         final TextView departureTextview = (TextView) findViewById(R.id.departureText);
         departureTextview.setText("중앙대학교");
@@ -56,6 +63,11 @@ public class FootprintRoutineActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
 
     }
 }
