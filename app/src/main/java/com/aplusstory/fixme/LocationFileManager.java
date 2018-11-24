@@ -108,6 +108,7 @@ public class LocationFileManager implements FileManager {
                 int i;
                 while (fr.ready()){
                     i = fr.read(buf);
+                    Log.d(this.getClass().getName(), "buffer : " + buf.toString());
                     sb.append(buf);
                 }
             } catch(IOException e){
