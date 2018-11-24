@@ -54,22 +54,19 @@ public class TestLocationActivity extends Activity implements View.OnClickListen
             case R.id.getLoca:
                 TextView dateText = findViewById(R.id.dateText);
                 TextView latiText = findViewById(R.id.latiText);
-                TextView longtiText = findViewById(R.id.longtiText);
+                TextView longiText = findViewById(R.id.longtiText);
                 SharedPreferences sp = getSharedPreferences(LocationFileManager.FILENAME_CURRENT_LOCATION, 0);
                 dateText.setText(sp.getString(LocationDataManager.LocatonData.KEY_DATETIME,""));
                 latiText.setText(sp.getString(LocationDataManager.LocatonData.KEY_LATITUDE,""));
-                longtiText.setText(sp.getString(LocationDataManager.LocatonData.KEY_LONGTITUDE,""));
+                longiText.setText(sp.getString(LocationDataManager.LocatonData.KEY_LONGITUDE,""));
                 break;
             case R.id.importLocaData:
                 try {
-                    Scanner sc = new Scanner(new File(LocationFileManager.getFilenameForToday(this)));
+                    LocationFileManager fm = new LocationFileManager(this, LocationFileManager.READ_ONLY);
                     TextView locaDataText = findViewById(R.id.textLocaData);
-                    StringBuilder sb = new StringBuilder();
-                    while(sc.hasNext()){
-                        sb.append(sc.next());
-                    }
+                    StringBuilder sb = new StringBuilder(fm.getData(fm.getFilenameForToday()));
                     locaDataText.setText(sb.toString());
-                } catch (FileNotFoundException e){
+                } catch (Exception e){
                     Log.d(TestLocationActivity.class.getName(), e.toString());
                 }
                 break;
