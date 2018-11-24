@@ -22,11 +22,11 @@ public class ScheduleAlarmManager extends Service {
 
     public static final String KEY_LOCATON = "location";
     public static final String KEY_SCHEDULE = "scheduleData";
-    public static final String KEY_SCHEDULE_START = "begin";
-    public static final String KEY_SCHEDULE_END = "end";
-    public static final String KEY_REPEATION = "repeation_code";
-    public static final String KEY_WEEK_REPEATON = "weekly_repeation";
-    public static final String KEY_REPEATION_END = "repeation_end";
+//    public static final String KEY_SCHEDULE_START = "begin";
+//    public static final String KEY_SCHEDULE_END = "end";
+//    public static final String KEY_REPEATION = "repeation_code";
+//    public static final String KEY_WEEK_REPEATON = "weekly_repeation";
+//    public static final String KEY_REPEATION_END = "repeation_end";
 
     public static final double RANGE_ALARM = 25.0;
     public static final Class ALARM_ACTIVITY = FullAlarmActivity.class;//set the alarm activity here
@@ -134,7 +134,7 @@ public class ScheduleAlarmManager extends Service {
             it.setAction(ScheduleAlarmManager.SCHEDULE_ALARM_START_ACTION);
             Bundle bd = new Bundle();
             bd.putSerializable(KEY_SCHEDULE, sch);
-            it.putExtra(KEY_SCHEDULE, sch);
+            it.putExtra(KEY_SCHEDULE, bd);
             if(!it.hasExtra(KEY_SCHEDULE)){
                 Log.d(context.getClass().getName(), "wtf");
             }

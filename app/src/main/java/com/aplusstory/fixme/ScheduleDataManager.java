@@ -189,10 +189,11 @@ public interface ScheduleDataManager extends UserDataManager{
         }
 
         public boolean isValid(){
-            return this.isValid(System.currentTimeMillis());
+            return true;
+//            return this.isValidNow(System.currentTimeMillis());
         }
 
-        public boolean isValid(long now){
+        public boolean isValidNow(long now){
             boolean rt = false;
             if(this.isRepeated){
                 if(now > this.repeatEnd){
