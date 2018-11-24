@@ -217,7 +217,7 @@ public class LocationFileManager implements FileManager {
             String jsonStr = locatonData.toString();
             Log.d(LocationFileManager.class.getName(), "json to write : " + jsonStr);
             try {
-                this.fwToday.write(jsonStr);
+                this.fwToday.write(jsonStr + "\n");
                 rt = true;
                 this.fwToday.flush();
             }  catch(Exception e){
