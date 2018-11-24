@@ -1,6 +1,8 @@
 package com.aplusstory.fixme;
 
 import android.Manifest;
+import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -18,18 +20,24 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.util.ArrayMap;
 import android.util.Log;
 import android.widget.Toast;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 public class CurrentLocationManager extends Service implements LocationDataManager, LocationListener {
-    public static final long MIN_LOCA_UPDATE = 5 * 60 * 1000;
+    public static final long MIN_LOCA_UPDATE = 2 * 60 * 1000;
 //    public static final long MIN_LOCA_UPDATE = 10000;
     public static final long DELAY_THREAD_LOOP = 10000;
+    public static final double DISTANCE_THRESHOLD = 15.0;
+
+    private static boolean isRunning = false;
 
     private LocationFileManager fm = null;
     private Recognizer moRecog = null;
@@ -41,6 +49,10 @@ public class CurrentLocationManager extends Service implements LocationDataManag
     private long tLocaReq = -1;
     private long dLocaReq = MIN_LOCA_UPDATE;
 
+    public static boolean isRunning(){
+        return CurrentLocationManager.isRunning;
+    }
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -49,6 +61,7 @@ public class CurrentLocationManager extends Service implements LocationDataManag
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        CurrentLocationManager.isRunning = true;
         this.isEnabled = true;
 
         if(this.fm == null) {
@@ -69,7 +82,7 @@ public class CurrentLocationManager extends Service implements LocationDataManag
             this.thd.start();
         }
 
-//        Log.d(CurrentLocationManager.class.getName(), "Service started");
+        Log.d(CurrentLocationManager.class.getName(), "Service started");
 ////        Toast.makeText(this, "Service started", Toast.LENGTH_SHORT);
 //        NotificationManager nm = (NotificationManager)this.getSystemService(Context.NOTIFICATION_SERVICE);
 //        NotificationChannel nc = nm.getNotificationChannel(NotificationUIService.NOTIFICATION_CHANNEL_ID);
@@ -87,7 +100,7 @@ public class CurrentLocationManager extends Service implements LocationDataManag
 //                .setOnlyAlertOnce(true)
 //                .setContentIntent(ntPIntent)
 //                .build();
-//        this.startForeground((int)System.currentTimeMillis(),n);
+        this.startForeground((int)System.currentTimeMillis(), new Notification());
         return Service.START_NOT_STICKY;
     }
 
@@ -112,7 +125,7 @@ public class CurrentLocationManager extends Service implements LocationDataManag
 
         if(this.fm != null){
             if( this.priviousLocation == null ||
-                loca.distanceTo(this.priviousLocation) > 15) {
+                loca.distanceTo(this.priviousLocation) > CurrentLocationManager.DISTANCE_THRESHOLD){
                 this.fm.setCurrentLocation(loca);
             }
         }
@@ -188,6 +201,9 @@ public class CurrentLocationManager extends Service implements LocationDataManag
         @Override
         public void run() {
             CurrentLocationManager that = CurrentLocationManager.this;
+            if(this.hd != null){
+                this.hd.sendEmptyMessage(0);
+            }
             while(that.isEnabled){
                 long now = System.currentTimeMillis();
                 if(that.tLocaReq > 0) {
@@ -246,6 +262,8 @@ public class CurrentLocationManager extends Service implements LocationDataManag
         if(this.thd != null && this.thd.isAlive()){
             this.thd.interrupt();
         }
+
+        CurrentLocationManager.isRunning = false;
 
         super.onDestroy();
     }
