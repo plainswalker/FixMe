@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
@@ -40,7 +41,7 @@ import static android.support.constraint.Constraints.TAG;
  * Use the {@link FootprintFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class FootprintFragment extends Fragment{
+public class FootprintFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -92,7 +93,7 @@ public class FootprintFragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_footprint,null);
+        View view = inflater.inflate(R.layout.fragment_footprint, null);
         mContext = this.getContext();
 
         LinearLayout linearLayout = (LinearLayout) view.findViewById(R.id.FootprintFragment);
@@ -100,7 +101,6 @@ public class FootprintFragment extends Fragment{
 
         linearLayout.addView(tmapview);
         tmapview.setSKTMapApiKey(mApiKey);
-
 
         /* 현재 보는 방향 */
         tmapview.setCompassMode(true);
@@ -125,8 +125,8 @@ public class FootprintFragment extends Fragment{
         TMapPolyLine tMapPolyLine = new TMapPolyLine();
         tMapPolyLine.setLineColor(Color.BLUE);
         tMapPolyLine.setLineWidth(2);
-        for( int i=0; i<m_pathPoint.size(); i++ ) {
-            tMapPolyLine.addLinePoint( m_pathPoint.get(i) );
+        for (int i = 0; i < m_pathPoint.size(); i++) {
+            tMapPolyLine.addLinePoint(m_pathPoint.get(i));
         }
         /*임의 지점에 점을 추가해보기 위한 코드*/
 //        tmapview.setOnLongClickListenerCallback(new TMapView.OnLongClickListenerCallback(){
@@ -158,19 +158,14 @@ public class FootprintFragment extends Fragment{
 //
 //            }
 //        });
-        new Handler().post(new Runnable() {
-            public void run() {
-                tmapview.getDisplayTMapInfo(m_pathPoint);
-            }
-        });
         /*zoom level 과 center point 최적화*/
-        setBounds(tmapview,m_pathPoint);
         tmapview.addTMapPolyLine("Line1", tMapPolyLine);
+        setBoundary();
         return view;
     }
 
-    public void addPathPoint(Double latitude, Double longitude){
-        m_pathPoint.add(new TMapPoint(latitude,longitude));
+    public void addPathPoint(Double latitude, Double longitude) {
+        m_pathPoint.add(new TMapPoint(latitude, longitude));
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -191,17 +186,24 @@ public class FootprintFragment extends Fragment{
         }
     }
 
+    public void setBoundary() {
+
+        TMapData tmapdata = new TMapData();
+
+        tmapdata.findAllPOI("asdf", new TMapData.FindAllPOIListenerCallback() {
+            @Override
+            public void onFindAllPOI(ArrayList<TMapPOIItem> poiItem) {
+                TMapInfo tmapInfo = tmapview.getDisplayTMapInfo(m_pathPoint);
+                tmapview.setCenterPoint(tmapInfo.getTMapPoint().getLongitude(), tmapInfo.getTMapPoint().getLatitude());
+                tmapview.setZoomLevel(tmapInfo.getTMapZoomLevel()-1);
+            }
+        });
+    }
+
     @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
-    }
-    private void setBounds( TMapView tMapView, ArrayList<TMapPoint> alTMapPoint ) {
-        TMapInfo tMapInfo = tMapView.getDisplayTMapInfo(alTMapPoint);
-        tMapView.setCenterPoint( tMapInfo.getTMapPoint().getLongitude(), tMapInfo.getTMapPoint().getLatitude() );
-        tMapView.setZoomLevel(13);
-        for(int i = 0; i<alTMapPoint.size();i++)
-        Log.d(TAG,"들어있는 좌표 : \n" + alTMapPoint.get(i));
     }
 
     /**

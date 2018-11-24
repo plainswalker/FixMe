@@ -355,6 +355,11 @@ public class MapFragment extends Fragment
                                     "Point: " + item.getPOIPoint().toString());
                             addPoint(item.getPOIName(),item.getPOIPoint().getLatitude(),item.getPOIPoint().getLongitude(),item.getPOIAddress());
                         }
+
+                        /*map data 고정값 테스트*/
+//                        addPoint("ㅁㄴㅇㄹ",37.570841, 126.985302,"ㅁㄴㅇㄹ"); // SKT타워
+//                        addPoint("ㅁㄴㅇㄹ",37.551135, 126.988205,"ㅁㄴㅇㄹ"); // N서울타워
+//                        addPoint("ㅁㄴㅇㄹ",37.579567, 126.976998,"ㅁㄴㅇㄹ"); // 경복궁
                         TMapInfo tmapInfo = tmapview.getDisplayTMapInfo(m_tmapPoint);
                         tmapview.setCenterPoint(tmapInfo.getTMapPoint().getLongitude(),tmapInfo.getTMapPoint().getLatitude());
                         tmapview.setZoomLevel(tmapInfo.getTMapZoomLevel());
