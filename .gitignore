@@ -240,3 +240,21 @@ fabric.properties
 
 
 # End of https://www.gitignore.io/api/intellij
+<<<<<<< HEAD
+=======
+*.iml
+.gradle
+/local.properties
+=======
+*.iml
+.gradle
+/local.properties
+/.idea/caches/build_file_checksums.ser
+>>>>>>> kjw0412c/workspace
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+.DS_Store
+/build
+/captures
+.externalNativeBuild

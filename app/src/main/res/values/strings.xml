@@ -1,0 +1,65 @@
+<resources>
+    <string name="app_name">FixMe</string>
+    <string name="notification_channel_name">FixMe_notification</string>
+    <string name="notification_channel_description"></string>
+    <string name="notification_msg_enable">Notification enabled...</string>
+    <string name="notification_msg_disable">Notification disabled...</string>
+    <string name="notification_msg_elapsed_time_prefix">Elapsed time : </string>
+    <string name="notification_msg_elapsed_time_second_postfix">seconds</string>
+    <string name="notification_msg_elapsed_time_minute_postfix">minutes</string>
+    <string name="notification_msg_elapsed_time_hour_postfix">hours</string>
+    <string name="notification_msg_elapsed_time_day_postfix">days</string>
+    <string name="notification_msg_elapsed_time_under_minute">less then 1 minute</string>
+    <string name="notification_action_enable">enable</string>
+    <string name="notification_action_disable">disable</string>
+    <string name="notification_action_settings">settings</string>
+    <string name="notification_action_quit">quit</string>
+    <string name="advice_msg_posture">SIT UP STRAIGHT</string>
+    <string name="advise_msg_light">TOO DARK HERE</string>
+    <!--<string-array name="advice_msg_posture_list">-->
+        <!--<item>back</item>-->
+        <!--<item>neck</item>-->
+        <!--<item>head</item>-->
+        <!--<item>hand</item>-->
+        <!--<item>arm</item>-->
+    <!--</string-array>-->
+    <!--<string-array name="advice_msg_light_list">-->
+        <!--<item>default</item>-->
+        <!--<item>shortterm</item>-->
+        <!--<item>longterm</item>-->
+    <!--</string-array>-->
+    <string name="title_activity_navigation">NavigationActivity</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="setting_item_alert_transperancy">알림창 투명도</string>
+    <string name="setting_item_alert_light_sensivity">밝기 민감도</string>
+    <string name="setting_item_alert_period">알림 주기</string>
+    <string name="setting_item_alert_vibration">진동</string>
+    <string name="setting_item_alert_activate">알림 활성화</string>
+    <string name="setting_item_footprint_data_duration">데이터 유지 기간</string>
+    <string name="setting_item_footprint_location_bookmark">즐겨찾기 목록</string>
+
+    <!--
+    final String[] item = {"선택하세요", "5분마다", "10분마다", "30분마다", "1시간마다", "3시간마다"};
+    -->
+
+    <string name="hello_world">Hello world!</string>
+    <string name="event_icon">Event icon</string>
+    <string name="add_thing">일정추가</string>
+    <string name="daily">일간</string>
+    <string name="weekly">주간</string>
+    <string name="monthly">월간</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="month">월</string>
+
+    <string name="title_activity_alarm">AlarmActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+
+    <string name="title_activity_full_alarm">FullAlarmActivity</string>
+</resources>
