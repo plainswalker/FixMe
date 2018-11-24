@@ -1,15 +1,16 @@
 package com.aplusstory.fixme;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.example.nayunpark.fixme_ui.R;
 
 import java.util.ArrayList;
 
@@ -51,7 +52,6 @@ public class ChartRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.View
         colorRecyclerViewHolder.timeText.setText(chartInfoArrayList.get(i).timeData);
 
         GradientDrawable textViewBackGround = (GradientDrawable)colorRecyclerViewHolder.percentText.getBackground();
-
 
         switch(i % 11) {
             case 0:

@@ -2,16 +2,27 @@ package com.aplusstory.fixme;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CompoundButton;
+import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.SimpleAdapter;
+import android.widget.Switch;
+import android.widget.Toast;
 import android.support.v7.widget.Toolbar;
 
-import com.example.nayunpark.fixme_ui.R;
-
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -29,81 +40,69 @@ public class SettingsActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_full_menu);
 
-        final String[] setlist1 = {"알림창 투명도", "밝기 민감도", "알림 주기"};
+        final String[] setlist1 = {
+                 this.getString(R.string.setting_item_alert_transperancy)
+                ,this.getString(R.string.setting_item_alert_light_sensivity)
+                ,this.getString(R.string.setting_item_alert_period)
+        };
+
         ListView list1 = (ListView) findViewById(R.id.settingList1);
-
-        final ArrayList<String> setlistV = new ArrayList<String>();
-        setlistV.add("진동");
-        setlistV.add("알림 활성화");
-        ListView listV = (ListView) findViewById(R.id.settingListV);
-
-        final String[] setlist2 = {"데이터 유지 기간", "즐겨찾기 목록"};
-        ListView list2 = (ListView) findViewById(R.id.settingList2);
-
-
-
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, setlist1);
         list1.setAdapter(arrayAdapter);
+        list1.setOnItemClickListener(
+                new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        switch(position) {
+                            case 0:
+                                Intent intent = new Intent(getApplicationContext(), AlarmOpacityActivity.class);
 
-        list1.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                switch(position) {
-                    case 0:
-                        Intent intent = new Intent(getApplicationContext(), AlarmOpacityActivity.class);
-                        startActivity(intent);
-                        break;
-                    case 1:
-                        Intent intent2 = new Intent(getApplicationContext(), LightSensActivity.class);
-                        startActivity(intent2);
-                        break;
-                    case 2:
-                        Intent intent3 = new Intent(getApplicationContext(), AlarmPeriodActivity.class);
-                        startActivity(intent3);
-                        break;
+                                startActivity(intent);
+                                break;
+                            case 1:
+                                Intent intent2 = new Intent(getApplicationContext(), LightSensActivity.class);
+                                startActivity(intent2);
+                                break;
+                            case 2:
+                                Intent intent3 = new Intent(getApplicationContext(), AlarmPeriodActivity.class);
+                                startActivity(intent3);
+                                break;
+                        }
+                    }
                 }
-            }
-        });
+        );
 
-//        ArrayAdapter<String> arrayAdapterV = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, setlistV);
-//        listV.setAdapter(arrayAdapterV);
-//
-//        listV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                Toast.makeText(getApplicationContext(), setlistV[position],Toast.LENGTH_SHORT).show();
-//            }
-//        });
-
-        SwitchListviewAdapter listviewAdapter = new SwitchListviewAdapter(this, android.R.layout.simple_list_item_1, setlistV);
+        final ArrayList<String> setlistV = new ArrayList<String>();
+        setlistV.add(this.getString(R.string.setting_item_alert_vibration));
+        setlistV.add(this.getString(R.string.setting_item_alert_activate));
+        ListView listV = (ListView) findViewById(R.id.settingListV);
+        SwitchListviewAdapter listviewAdapter = new SwitchListviewAdapter(this, R.layout.switch_list, setlistV);
         listV.setAdapter(listviewAdapter);
 
-
-
-
-
-
+        final String[] setlist2 = {
+                 this.getString(R.string.setting_item_footprint_data_duration)
+                ,this.getString(R.string.setting_item_footprint_location_bookmark)
+        };
+        ListView list2 = (ListView) findViewById(R.id.settingList2);
         ArrayAdapter<String> arrayAdapter2 = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, setlist2);
         list2.setAdapter(arrayAdapter2);
 
         list2.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                switch(position) {
+                Intent intent = null;
+                switch (position) {
                     case 0:
-                        Intent intent = new Intent(getApplicationContext(), FootDataSettingsActivity.class);
-                        startActivity(intent);
+                        intent = new Intent(getApplicationContext(), FootDataSettingsActivity.class);
                         break;
                     case 1:
-                        Intent intent2 = new Intent(getApplicationContext(), FootprintRoutineActivity.class);
-                        startActivity(intent2);
+                        intent = new Intent(getApplicationContext(), FootprintRoutineActivity.class);
                         break;
+                }
+                if(intent != null) {
+                    startActivity(intent);
                 }
             }
         });
-
-
     }
-
-
 }

@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.nayunpark.fixme_ui.R;
 import com.github.ik024.calendar_lib.custom.YearView;
 
 import io.github.memfis19.cadar.view.MonthCalendar;

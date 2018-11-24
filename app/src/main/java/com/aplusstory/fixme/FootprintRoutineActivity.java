@@ -8,8 +8,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.example.nayunpark.fixme_ui.R;
-
 public class FootprintRoutineActivity extends AppCompatActivity {
 
     Toolbar toolbar;

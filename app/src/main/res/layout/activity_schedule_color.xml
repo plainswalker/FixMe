@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.aplusstory.fixme.ScheduleColorActivity">
+    tools:context=".ScheduleColorActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -44,3 +44,4 @@
         android:layout_height="match_parent" />
 
 </LinearLayout>
+

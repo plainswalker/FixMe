@@ -4,6 +4,10 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="colorTest">#0936b7</color>
+    <color name="transparent">#00000000</color>
+    <color name="blue_50">#780000FF</color>
+    <color name="white_20">#32FFFFFF</color>
+    <color name="black_10">#16000000</color>
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorBlue">#2196F3</color>
     <drawable name="bg_select">#2196F3</drawable>

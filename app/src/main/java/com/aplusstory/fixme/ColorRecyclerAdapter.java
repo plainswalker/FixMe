@@ -11,8 +11,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.nayunpark.fixme_ui.R;
-
 import java.util.ArrayList;
 
 public class ColorRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {

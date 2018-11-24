@@ -10,8 +10,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.nayunpark.fixme_ui.R;
-
 public class FavoriteActivity extends AppCompatActivity {
 
     Toolbar toolbar;
@@ -55,7 +53,6 @@ public class FavoriteActivity extends AppCompatActivity {
                 }
             }
         });
-
         EditText favoriteNick = (EditText) findViewById(R.id.favoriteNickname);
         nickname = String.valueOf(favoriteNick.getText());
     }

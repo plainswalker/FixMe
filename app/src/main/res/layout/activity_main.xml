@@ -5,7 +5,7 @@
     android:id="@+id/MainPage"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.aplusstory.fixme.MainActivity">
+    tools:context=".MainActivity">
 
     <Button
         android:id="@+id/ScheduleButton"
@@ -57,5 +57,4 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/bottm2main" />
-
 </android.support.constraint.ConstraintLayout>

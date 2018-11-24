@@ -4,12 +4,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-
-import com.example.nayunpark.fixme_ui.R;
+import android.view.View;
 
 import java.util.ArrayList;
 
-public class ScheduleColorActivity extends AppCompatActivity {
+public class ScheduleColorActivity extends AppCompatActivity{
+    public static final String EXTRA_NAME_ARGUMENT = "color_argument";
 
     RecyclerView recyclerView;
     RecyclerView.LayoutManager layoutManager;
@@ -26,17 +26,17 @@ public class ScheduleColorActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(layoutManager);
 
         ArrayList<SettingsColorInfo> colorInfoArrayList = new ArrayList<>();
-        colorInfoArrayList.add(new SettingsColorInfo(R.drawable.ic_red_circle_padding, "빨간색"));
-        colorInfoArrayList.add(new SettingsColorInfo(R.drawable.ic_pink_circle, "분홍색"));
-        colorInfoArrayList.add(new SettingsColorInfo(R.drawable.ic_yellow_circle, "노란색"));
-        colorInfoArrayList.add(new SettingsColorInfo(R.drawable.ic_yellowgreen_circle, "연두색"));
-        colorInfoArrayList.add(new SettingsColorInfo(R.drawable.ic_green_circle, "초록색"));
-        colorInfoArrayList.add(new SettingsColorInfo(R.drawable.ic_mint_circle, "민트색"));
-        colorInfoArrayList.add(new SettingsColorInfo(R.drawable.ic_skyblue_circle, "하늘색"));
-        colorInfoArrayList.add(new SettingsColorInfo(R.drawable.ic_blue_circle, "파란색"));
-        colorInfoArrayList.add(new SettingsColorInfo(R.drawable.ic_purple_circle, "보라색"));
+        colorInfoArrayList.add(new SettingsColorInfo(R.drawable.ic_red_circle_padding, ScheduleDataManager.TableColor.RED));
+        colorInfoArrayList.add(new SettingsColorInfo(R.drawable.ic_pink_circle, ScheduleDataManager.TableColor.PINK));
+        colorInfoArrayList.add(new SettingsColorInfo(R.drawable.ic_yellow_circle, ScheduleDataManager.TableColor.YELLOW));
+        colorInfoArrayList.add(new SettingsColorInfo(R.drawable.ic_yellowgreen_circle, ScheduleDataManager.TableColor.LIGHTGREEN));
+        colorInfoArrayList.add(new SettingsColorInfo(R.drawable.ic_green_circle, ScheduleDataManager.TableColor.GREEN));
+        colorInfoArrayList.add(new SettingsColorInfo(R.drawable.ic_mint_circle, ScheduleDataManager.TableColor.CYAN));
+        colorInfoArrayList.add(new SettingsColorInfo(R.drawable.ic_skyblue_circle, ScheduleDataManager.TableColor.SKYBLUE));
+        colorInfoArrayList.add(new SettingsColorInfo(R.drawable.ic_blue_circle, ScheduleDataManager.TableColor.BLUE));
+        colorInfoArrayList.add(new SettingsColorInfo(R.drawable.ic_purple_circle, ScheduleDataManager.TableColor.PURPLE));
 
-        ColorRecyclerAdapter colorRecyclerAdapter = new ColorRecyclerAdapter(colorInfoArrayList);
+        ScheduleColorRecyclerAdapter colorRecyclerAdapter = new ScheduleColorRecyclerAdapter(colorInfoArrayList);
         recyclerView.setAdapter(colorRecyclerAdapter);
     }
 }
