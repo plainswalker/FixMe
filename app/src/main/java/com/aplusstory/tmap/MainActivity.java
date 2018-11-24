@@ -11,7 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity implements MapFragment.OnFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity implements PathFragment.OnFragmentInteractionListener,MapFragment.OnFragmentInteractionListener {
     FrameLayout fragmentFrame;
 
 
@@ -31,13 +31,11 @@ public class MainActivity extends AppCompatActivity implements MapFragment.OnFra
 
 
 
-        MapFragment mapFragment = (MapFragment) getSupportFragmentManager().findFragmentById(R.id.mainfragment);
-        PathFragment pathFragment = (PathFragment) getSupportFragmentManager().findFragmentById(R.id.mainfragment);
+        //MapFragment mapFragment = (MapFragment) getSupportFragmentManager().findFragmentById(R.id.mainfragment);
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.mainfragment, mapFragment);
-
+        fragmentTransaction.add(R.id.mainView,new PathFragment());
         fragmentTransaction.commit();
 
 

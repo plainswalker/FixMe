@@ -1,7 +1,10 @@
 package com.aplusstory.tmap;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
+import android.graphics.PointF;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -13,6 +16,8 @@ import android.widget.LinearLayout;
 
 import com.skt.Tmap.TMapData;
 import com.skt.Tmap.TMapGpsManager;
+import com.skt.Tmap.TMapMarkerItem;
+import com.skt.Tmap.TMapPOIItem;
 import com.skt.Tmap.TMapPoint;
 import com.skt.Tmap.TMapPolyLine;
 import com.skt.Tmap.TMapView;
@@ -28,7 +33,7 @@ import java.util.ArrayList;
  * Use the {@link PathFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class PathFragment extends Fragment {
+public class PathFragment extends Fragment{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -83,7 +88,7 @@ public class PathFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_path,null);
         mContext = this.getContext();
 
-        LinearLayout linearLayout = (LinearLayout) view.findViewById(R.id.pathview);
+        LinearLayout linearLayout = (LinearLayout) view.findViewById(R.id.FragmentPath);
         tmapview = new TMapView(getActivity());
 
         linearLayout.addView(tmapview);
@@ -107,18 +112,52 @@ public class PathFragment extends Fragment {
         tmapview.setLanguage(TMapView.LANGUAGE_KOREAN);
 
         tmapview.setSightVisible(true);
-        m_pathPoint.add( new TMapPoint(37.570841, 126.985302) ); // SKT타워
-        m_pathPoint.add( new TMapPoint(37.551135, 126.988205) ); // N서울타워
-        m_pathPoint.add( new TMapPoint(37.579600, 126.976998) ); // 경복궁
+        addPathPoint(37.570841, 126.985302); // SKT타워
+        addPathPoint(37.551135, 126.988205); // N서울타워
+        addPathPoint(37.579600, 126.976998); // 경복궁
 
-        TMapPolyLine tMapPolyLine = new TMapPolyLine();
+        final TMapPolyLine tMapPolyLine = new TMapPolyLine();
         tMapPolyLine.setLineColor(Color.BLUE);
         tMapPolyLine.setLineWidth(2);
         for( int i=0; i<m_pathPoint.size(); i++ ) {
             tMapPolyLine.addLinePoint( m_pathPoint.get(i) );
         }
+        /*임의 지점에 점을 추가해보기 위한 코드*/
+//        tmapview.setOnLongClickListenerCallback(new TMapView.OnLongClickListenerCallback(){
+//
+//            @Override
+//            public void onLongPressEvent(ArrayList<TMapMarkerItem> arrayList, ArrayList<TMapPOIItem> arrayList1, TMapPoint tMapPoint) {
+//                final double lat = tMapPoint.getLatitude();
+//                final double lon = tMapPoint.getLongitude();
+//                tmapview.addTMapPolyLine("Line2",tMapPolyLine);
+//                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+//                builder.setTitle("이곳으로 지정하시겠습니까?");
+//
+//                builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        addPathPoint(lat,lon);
+//                        //이곳에 데이터 인텐트에 담아서 넘겨주고, 확정 짓는 코드 필요
+//                    }
+//                });
+//                builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        dialog.cancel();
+//                    }
+//                });
+//
+//                builder.show();
+//                //1. 위도, 경도로 주소 검색하기
+//
+//            }
+//        });
         tmapview.addTMapPolyLine("Line1", tMapPolyLine);
         return view;
+    }
+
+    public void addPathPoint(Double latitude, Double longitude){
+        m_pathPoint.add(new TMapPoint(latitude,longitude));
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -145,6 +184,7 @@ public class PathFragment extends Fragment {
         mListener = null;
     }
 
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -157,6 +197,6 @@ public class PathFragment extends Fragment {
      */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onFragmentInteraction(Uri urik);
+        void onFragmentInteraction(Uri uri);
     }
 }

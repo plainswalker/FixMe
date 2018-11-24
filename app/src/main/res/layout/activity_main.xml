@@ -4,11 +4,17 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
-    <fragment
-        android:id="@+id/mainfragment"
-        android:name="com.aplusstory.tmap.MapFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+    <!--<fragment-->
+        <!--android:id="@+id/mainfragment"-->
+        <!--android:name="com.aplusstory.tmap.MapFragment"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent" />-->
+
+    <!--<fragment-->
+        <!--android:id="@+id/fragmentPath"-->
+        <!--android:name="com.aplusstory.tmap.PathFragment"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent" />-->
 
 
 </LinearLayout>
