@@ -5,7 +5,6 @@
     android:layout_height="match_parent"
     android:id="@+id/fragment_yearly_calendar"
 tools:context=".YearlyCalendarFragment">
-
     <!-- TODO: Update blank fragment layout -->
 
     <io.github.memfis19.cadar.view.MonthCalendar

@@ -38,7 +38,7 @@
             <!--</intent-filter>-->
         </activity>
         <activity
-            android:name="com.aplusstory.fixme.SplashActivity"
+            android:name=".SplashActivity"
             android:screenOrientation="portrait"
             android:theme="@style/SplashTheme">
             <intent-filter>

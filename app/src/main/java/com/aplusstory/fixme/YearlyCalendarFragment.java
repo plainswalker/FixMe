@@ -12,7 +12,6 @@ import com.github.ik024.calendar_lib.custom.YearView;
 
 import io.github.memfis19.cadar.view.MonthCalendar;
 
-
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
@@ -29,7 +28,6 @@ public class YearlyCalendarFragment extends Fragment {
 
     YearView yearView;
     MonthCalendar monthCalendar;
-
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
@@ -73,12 +71,8 @@ public class YearlyCalendarFragment extends Fragment {
         // Inflate the layout for this fragment
         View returnView = inflater.inflate(R.layout.fragment_yearly_calendar, container, false);
 
-
-
         return returnView;
     }
-
-
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
@@ -103,13 +97,6 @@ public class YearlyCalendarFragment extends Fragment {
         mListener = null;
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        monthCalendar.releaseCalendar();
-    }
-
-
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -124,6 +111,4 @@ public class YearlyCalendarFragment extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
-
-
 }

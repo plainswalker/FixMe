@@ -53,6 +53,7 @@ public class FavoriteActivity extends AppCompatActivity {
                 }
             }
         });
+
         EditText favoriteNick = (EditText) findViewById(R.id.favoriteNickname);
         nickname = String.valueOf(favoriteNick.getText());
     }
