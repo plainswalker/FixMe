@@ -189,13 +189,32 @@ public interface ScheduleDataManager extends UserDataManager{
         }
 
         public boolean isValid(){
-            return true;
-//            return this.isValidNow(System.currentTimeMillis());
+            boolean rt = false;
+
+            if(this.scheduleBegin > this.scheduleEnd){
+                rt = false;
+            } else if(this.repeatType < RepeatDuration.REPEAT_DAYLY || this.repeatType > RepeatDuration.REPEAT_YEARLY ){
+                rt = false;
+            } else if(this.name == null || this.name.length() == 0){
+                rt = false;
+            } else{
+                rt = true;
+            }
+
+            return rt;
+        }
+
+        public boolean isValidNow(){
+            return this.isValidNow(System.currentTimeMillis());
         }
 
         public boolean isValidNow(long now){
-            boolean rt = false;
-            if(this.isRepeated){
+            boolean rt = this.isValid();
+
+            if(rt && this.isRepeated){
+                if(now > this.scheduleEnd){
+                    rt = false;
+                }
                 if(now > this.repeatEnd){
                     rt = false;
                 } else {
@@ -260,9 +279,10 @@ public interface ScheduleDataManager extends UserDataManager{
                             //something wrong
                     }
                 }
-            } else {
+            } else if(rt) {
                 rt = this.scheduleBegin <= now && this.scheduleEnd >= now;
             }
+
 
             return rt;
         }
