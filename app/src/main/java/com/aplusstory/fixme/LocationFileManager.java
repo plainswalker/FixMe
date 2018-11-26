@@ -122,7 +122,9 @@ public class LocationFileManager implements FileManager {
 //                    sb.append(buf);
 //                }
                 while (sc.hasNext()){
-                    sb.append(sc.next());
+                    String s = sc.nextLine();
+                    Log.d(this.getClass().getName(), "string to read : " + s);
+                    sb.append(s);
                 }
 //            } catch(IOException e){
 //                Log.d(LocationFileManager.class.getName(), e.toString());
