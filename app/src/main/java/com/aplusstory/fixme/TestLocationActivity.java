@@ -11,6 +11,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
@@ -64,7 +67,14 @@ public class TestLocationActivity extends Activity implements View.OnClickListen
                 try {
                     LocationFileManager fm = new LocationFileManager(this, LocationFileManager.READ_ONLY);
                     TextView locaDataText = findViewById(R.id.textLocaData);
-                    StringBuilder sb = new StringBuilder(fm.getData(fm.getFilenameForToday()));
+                    StringBuilder sb = new StringBuilder();
+                    LocationDataManager.PathData path = fm.getLocationListForToday();
+                    JSONArray jsonArr = path.JSONify().getJSONArray(LocationDataManager.PathData.KEY_LOCATION_ARRAY);
+                    for(int i = 0; i < jsonArr.length(); i++){
+                        JSONObject json = jsonArr.getJSONObject(i);
+                        sb.append(json.toString() + "\n");
+                    }
+
                     locaDataText.setText(sb.toString());
                 } catch (Exception e){
                     Log.d(TestLocationActivity.class.getName(), e.toString());

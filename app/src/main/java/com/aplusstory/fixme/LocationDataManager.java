@@ -155,7 +155,7 @@ public interface LocationDataManager {
                 json.put(KEY_DATETIME_BEGIN, df.format(dtBegin));
                 json.put(KEY_DATETIME_END, df.format(dtEnd));
                 for(LocationDataManager.LocatonData loca : this.locaArr){
-                    jsonPath.put(loca);
+                    jsonPath.put(loca.JSONify());
                 }
                 json.put(KEY_LOCATION_ARRAY, jsonPath);
             } catch(JSONException e){
