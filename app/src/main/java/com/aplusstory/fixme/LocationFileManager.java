@@ -10,6 +10,7 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.json.JSONStringer;
 
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -19,6 +20,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Scanner;
 
 public class LocationFileManager implements FileManager {
     public static final String FILENAME_CURRENT_LOCATION = "current_location";
@@ -90,29 +92,41 @@ public class LocationFileManager implements FileManager {
     @Override
     public String getData(String fileName) {
         StringBuilder sb = new StringBuilder();
-        FileReader fr;
-        if(this.frToday != null && fileName.equals(this.getFilenameForToday())){
-            fr = this.frToday;
-        } else {
-            try{
-                fr = new FileReader(fileName);
-            } catch (IOException e){
+        Scanner sc = null;
+//        FileReader fr;
+//        if(this.frToday != null && fileName.equals(this.getFilenameForToday())){
+//            fr = this.frToday;
+//        } else {
+//            try{
+//                fr = new FileReader(fileName);
+//            } catch (IOException e){
+//                Log.d(LocationFileManager.class.getName(), e.toString());
+//                fr = null;
+//            }
+//        }
+        try{
+            sc = new Scanner(new File(fileName));
+        }catch (IOException e){
                 Log.d(LocationFileManager.class.getName(), e.toString());
-                fr = null;
-            }
+                sc = null;
         }
 
-        if(fr != null){
-            try{
-                CharBuffer buf = CharBuffer.allocate(255);
-                int i;
-                while (fr.ready()){
-                    i = fr.read(buf);
-                    sb.append(buf);
+//        if(fr != null){
+        if(sc != null){
+//            try{
+//                CharBuffer buf = CharBuffer.allocate(255);
+                 sb = new StringBuilder();
+//                int i;
+//                while (fr.ready()){
+//                    i = fr.read(buf);
+//                    sb.append(buf);
+//                }
+                while (sc.hasNext()){
+                    sb.append(sc.next());
                 }
-            } catch(IOException e){
-                Log.d(LocationFileManager.class.getName(), e.toString());
-            }
+//            } catch(IOException e){
+//                Log.d(LocationFileManager.class.getName(), e.toString());
+//            }
         }
 
         return sb.toString();
