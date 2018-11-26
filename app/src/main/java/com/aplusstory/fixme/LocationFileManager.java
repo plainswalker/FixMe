@@ -2,6 +2,7 @@ package com.aplusstory.fixme;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.service.autofill.FieldClassification;
 import android.util.Log;
 
 import org.jetbrains.annotations.Nullable;
@@ -22,6 +23,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Scanner;
+import java.util.regex.MatchResult;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class LocationFileManager implements FileManager {
@@ -44,15 +47,31 @@ public class LocationFileManager implements FileManager {
 
     Context context;
 
-    public static String getFilenameForToday(Context context) {
+    public static String getFilename(Context context, Date date){
         return context.getFilesDir()
-         + "/" + FILENAME_LOCATION_PREFIX
-        + new SimpleDateFormat(DATE_FORMAT_GMT_DATE, Locale.US)
-                .format(new Date(System.currentTimeMillis()));
+                + "/" + FILENAME_LOCATION_PREFIX
+                + new SimpleDateFormat(DATE_FORMAT_GMT_DATE, Locale.US)
+                .format(date);
+    }
+
+    public static String getFilenameForToday(Context context) {
+        return LocationFileManager.getFilename(context, new Date(System.currentTimeMillis()));
+    }
+
+
+
+    public String getFilename(Date date){
+        return this.context.getFilesDir() + "/" + FILENAME_LOCATION_PREFIX + dfDate.format(date);
+    }
+    public String getFilename(long dateTimeInMillisec){
+        return this.getFilename(new Date(dateTimeInMillisec));
+    }
+    public String getFilename(Calendar today){
+        return this.getFilename(today.getTime());
     }
 
     public String getFilenameForToday(){
-        return this.context.getFilesDir() + "/" + FILENAME_LOCATION_PREFIX + dfDate.format(this.cal.getTime());
+        return this.getFilename(this.cal);
     }
 
     public LocationFileManager(Context context){
@@ -151,16 +170,20 @@ public class LocationFileManager implements FileManager {
 
     @Nullable
     public LocationDataManager.PathData getLocationList(Date date){
-        String data = this.getData(this.dfDate.format(date));
+        String data = this.getData(this.getFilename(date));
         LocationDataManager.PathData path = null;
         ArrayList<LocationDataManager.LocatonData> bufLoca = new ArrayList<>(10);
         if(data != null) {
-            String strPattern = "^\\{.*\\}$";
+            Log.d(this.getClass().getName(), "data : \n" + data);
+            String strPattern = "\\{(.*?)\\}";
             Pattern pattern = Pattern.compile(strPattern);
-            Scanner sc = new Scanner(data);
+            Matcher matcher = pattern.matcher(data);
+//            Scanner sc = new Scanner(data);
 
-            while (sc.hasNext(pattern)){
-                String s = sc.next(pattern);
+//            while (sc.hasNext(pattern)){
+//                String s = sc.next(pattern);
+            while(matcher.find()){
+                String s = matcher.group();
                 Log.d(this.getClass().getName(), "pattern matched : " + s);
                 LocationDataManager.LocatonData loca = null;
                 try {
@@ -174,7 +197,9 @@ public class LocationFileManager implements FileManager {
             }
 
             if(bufLoca.size() > 0){
-                path = new LocationDataManager.PathData((LocationDataManager.LocatonData[]) bufLoca.toArray());
+                LocationDataManager.LocatonData[] arr = new LocationDataManager.LocatonData[bufLoca.size()];
+                bufLoca.toArray(arr);
+                path = new LocationDataManager.PathData(arr);
             }
 
         }
