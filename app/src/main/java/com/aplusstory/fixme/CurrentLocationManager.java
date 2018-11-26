@@ -1,12 +1,7 @@
 package com.aplusstory.fixme;
 
 import android.Manifest;
-import android.app.Activity;
-import android.app.ActivityManager;
 import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -20,16 +15,12 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.support.annotation.Nullable;
-import android.util.ArrayMap;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 
 public class CurrentLocationManager extends Service implements LocationDataManager, LocationListener {
     public static final long MIN_LOCA_UPDATE = 2 * 60 * 1000;
@@ -45,7 +36,7 @@ public class CurrentLocationManager extends Service implements LocationDataManag
     private Thread thd = null;
     private boolean isEnabled = false;
     private Handler hd = null;
-    private LocationDataManager.LocatonData priviousLocation = null;
+    private LocationData priviousLocation = null;
     private long tLocaReq = -1;
     private long dLocaReq = MIN_LOCA_UPDATE;
 
@@ -108,7 +99,7 @@ public class CurrentLocationManager extends Service implements LocationDataManag
     public void onLocationChanged(Location location) {
         long now = System.currentTimeMillis();
         Date date = new Date(now);
-        DateFormat df = new SimpleDateFormat(LocatonData.DATE_FORMAT_GMT, Locale.US);
+        DateFormat df = new SimpleDateFormat(LocationData.DATE_FORMAT_GMT, Locale.US);
         String dStr = df.format(date);
         double latitude =  location.getLatitude();
         double longtitude = location.getLongitude();
@@ -121,7 +112,7 @@ public class CurrentLocationManager extends Service implements LocationDataManag
                 + dStr
         );
 
-        LocatonData loca = new LocatonData(now, latitude, longtitude);
+        LocationData loca = new LocationData(now, latitude, longtitude);
 
         if(this.fm != null){
             if( this.priviousLocation == null ||

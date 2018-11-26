@@ -18,7 +18,7 @@ import org.json.JSONArray;
 public interface LocationDataManager {
     void setFileManager(FileManager fm);
 
-    public class LocatonData implements Serializable{
+    public class LocationData implements Serializable{
         public static final String KEY_DATETIME = "datetime";
         public static final String KEY_LATITUDE = "latitude";
         public static final String KEY_LONGITUDE = "longitude";
@@ -30,7 +30,7 @@ public interface LocationDataManager {
         double longitude;
 
         @Nullable
-        public static LocatonData parseJSON(JSONObject json){
+        public static LocationData parseJSON(JSONObject json){
             DateFormat df = new SimpleDateFormat(DATE_FORMAT_GMT, Locale.US);
             Date date = null;
             long datetime = -1;
@@ -49,10 +49,10 @@ public interface LocationDataManager {
             } catch (ParseException e){
                 return null;
             }
-            return new LocatonData(datetime, latitude, longtitude);
+            return new LocationData(datetime, latitude, longtitude);
         }
 
-        public LocatonData(String datetime, double latitude, double longitude){
+        public LocationData(String datetime, double latitude, double longitude){
             DateFormat df = new SimpleDateFormat(DATE_FORMAT_GMT, Locale.US);
             Date date = null;
             try {
@@ -67,7 +67,7 @@ public interface LocationDataManager {
             this.longitude = longitude;
         }
 
-        public LocatonData(long datetime, double latitude, double longitude){
+        public LocationData(long datetime, double latitude, double longitude){
             this.datetime = datetime;
             this.latitude = latitude;
             this.longitude = longitude;
@@ -95,7 +95,7 @@ public interface LocationDataManager {
             return this.JSONify().toString();
         }
 
-        public static double distance(LocatonData src, LocatonData dst){
+        public static double distance(LocationData src, LocationData dst){
             double degToRad = Math.PI/180.0;
             double dlat = (src.latitude - dst.latitude) * degToRad;
             double dlong = (src.longitude - dst.longitude) * degToRad;
@@ -105,13 +105,13 @@ public interface LocationDataManager {
                         * Math.cos(dst.latitude * degToRad)
                         * Math.pow(Math.sin(dlong/2.0),2.0));
 
-            return 2.0 * LocatonData.T_RAD * Math.atan2(
+            return 2.0 * LocationData.T_RAD * Math.atan2(
                     Math.sqrt(a), Math.sqrt(1.0 - a)
             );
         }
 
-        public double distanceTo(LocationDataManager.LocatonData dst){
-            return LocationDataManager.LocatonData.distance(this, dst);
+        public double distanceTo(LocationData dst){
+            return LocationData.distance(this, dst);
         }
     }
     class PathData{
@@ -122,9 +122,9 @@ public interface LocationDataManager {
 
         long dtBegin;
         long dtEnd;
-        LocatonData[] locaArr;
+        LocationData[] locaArr;
 
-        public PathData(String dtBegin, String dtEnd, @NotNull LocatonData[] locaArr) {
+        public PathData(String dtBegin, String dtEnd, @NotNull LocationData[] locaArr) {
             DateFormat df = new SimpleDateFormat(DATE_FORMAT_GMT, Locale.US);
             Date dBegin = null, dEnd = null;
             try{
@@ -139,7 +139,7 @@ public interface LocationDataManager {
             this.locaArr = locaArr.clone();
         }
 
-        public PathData(@NotNull LocatonData[] locaArr){
+        public PathData(@NotNull LocationData[] locaArr){
             this.dtBegin = locaArr[0].datetime;
             this.dtEnd = locaArr[locaArr.length - 1].datetime;
             this.locaArr = locaArr.clone();
@@ -154,7 +154,7 @@ public interface LocationDataManager {
                 DateFormat df = new SimpleDateFormat(DATE_FORMAT_GMT, Locale.US);
                 json.put(KEY_DATETIME_BEGIN, df.format(dtBegin));
                 json.put(KEY_DATETIME_END, df.format(dtEnd));
-                for(LocationDataManager.LocatonData loca : this.locaArr){
+                for(LocationData loca : this.locaArr){
                     jsonPath.put(loca.JSONify());
                 }
                 json.put(KEY_LOCATION_ARRAY, jsonPath);

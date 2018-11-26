@@ -112,8 +112,8 @@ public interface ScheduleDataManager extends UserDataManager{
                     sch.scheduleEnd = df.parse(json.getString(KEY_DATE_SCHEDULE_END)).getTime();
                     if(json.has(KEY_LOCATION)){
                         sch.hasLocation = true;
-                        LocationDataManager.LocatonData loca =
-                        LocationDataManager.LocatonData.parseJSON(json.getJSONObject(KEY_LOCATION));
+                        LocationDataManager.LocationData loca =
+                        LocationDataManager.LocationData.parseJSON(json.getJSONObject(KEY_LOCATION));
                         if(loca != null) {
                             sch.latitude = loca.latitude;
                             sch.longitude = loca.longitude;
@@ -163,8 +163,8 @@ public interface ScheduleDataManager extends UserDataManager{
                 json.put(KEY_DATE_SCHEDULE_BEGIN, df.format(new Date(this.scheduleBegin)));
                 json.put(KEY_DATE_SCHEDULE_END, df.format(new Date(this.scheduleEnd)));
                 if(this.hasLocation){
-                    LocationDataManager.LocatonData loca;
-                    loca = new LocationDataManager.LocatonData(
+                    LocationDataManager.LocationData loca;
+                    loca = new LocationDataManager.LocationData(
                             this.scheduleBegin, this.latitude, this.longitude);
                     json.put(KEY_LOCATION, loca.JSONify());
                     json.put(KEY_LOCATION_TAG, this.locationAddress);

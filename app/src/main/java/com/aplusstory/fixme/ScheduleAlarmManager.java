@@ -35,7 +35,7 @@ public class ScheduleAlarmManager extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         ScheduleDataManager.ScheduleData sch = null;
-        LocationDataManager.LocatonData loca = null;
+        LocationDataManager.LocationData loca = null;
         if(intent.hasExtra(KEY_SCHEDULE)) {
             sch = (ScheduleDataManager.ScheduleData) intent.getBundleExtra(KEY_SCHEDULE).getSerializable(KEY_SCHEDULE);
         } else {
@@ -43,16 +43,16 @@ public class ScheduleAlarmManager extends Service {
         }
 
         if(sch != null){
-            loca = new LocationDataManager.LocatonData(sch.scheduleBegin, sch.latitude, sch.longitude);
+            loca = new LocationDataManager.LocationData(sch.scheduleBegin, sch.latitude, sch.longitude);
         } else if(intent.hasExtra(KEY_LOCATON)){
-            loca = (LocationDataManager.LocatonData)intent.getBundleExtra(KEY_LOCATON).getSerializable(KEY_LOCATON);
+            loca = (LocationDataManager.LocationData)intent.getBundleExtra(KEY_LOCATON).getSerializable(KEY_LOCATON);
         }
 
         SharedPreferences spCrnLoca = this.getSharedPreferences(LocationFileManager.FILENAME_CURRENT_LOCATION,0);
         long now = System.currentTimeMillis();
-        double lat = Double.parseDouble(spCrnLoca.getString(LocationDataManager.LocatonData.KEY_LATITUDE, "0.0"));
-        double longt = Double.parseDouble(spCrnLoca.getString(LocationDataManager.LocatonData.KEY_LONGITUDE, "0.0"));
-        LocationDataManager.LocatonData currentLoca = new LocationDataManager.LocatonData(now, lat, longt);
+        double lat = Double.parseDouble(spCrnLoca.getString(LocationDataManager.LocationData.KEY_LATITUDE, "0.0"));
+        double longt = Double.parseDouble(spCrnLoca.getString(LocationDataManager.LocationData.KEY_LONGITUDE, "0.0"));
+        LocationDataManager.LocationData currentLoca = new LocationDataManager.LocationData(now, lat, longt);
 
         if(sch != null && sch.isRepeated && now < sch.repeatEnd){
             Log.d(this.getClass().getName(), "on alarm, schedule : \n" + sch.toString());
@@ -104,7 +104,7 @@ public class ScheduleAlarmManager extends Service {
     public static int setAlarm(Context context,
                                AlarmManager alm,
                                long time,
-                               LocationDataManager.LocatonData loca,
+                               LocationDataManager.LocationData loca,
                                int requestCode){
         int rt = -1;
         if(alm != null){

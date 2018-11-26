@@ -113,7 +113,7 @@ public class ScheduleManager implements ScheduleDataManager {
 //                int rt = ScheduleAlarmManager.setAlarm(this.context
 //                        , alm
 //                        , sch.scheduleBegin - ScheduleDataManager.AlarmInterval.getTime(sch.alarmInterval)
-//                        , new LocationDataManager.LocatonData(System.currentTimeMillis(), 3,3)
+//                        , new LocationDataManager.LocationData(System.currentTimeMillis(), 3,3)
 //                        , (int)System.currentTimeMillis());
                 if(rt >= 0){
                     Log.d(this.getClass().getName(), "alarm request code : " + rt);
