@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.Locale;
 
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -123,7 +124,7 @@ public interface LocationDataManager {
         long dtEnd;
         LocatonData[] locaArr;
 
-        public PathData(String dtBegin, String dtEnd, LocatonData[] locaArr) {
+        public PathData(String dtBegin, String dtEnd, @NotNull LocatonData[] locaArr) {
             DateFormat df = new SimpleDateFormat(DATE_FORMAT_GMT, Locale.US);
             Date dBegin = null, dEnd = null;
             try{
@@ -135,6 +136,12 @@ public interface LocationDataManager {
 
             this.dtBegin = (dBegin != null) ? dBegin.getTime() : -1;
             this.dtEnd = (dEnd != null) ? dEnd.getTime() : -1;
+            this.locaArr = locaArr.clone();
+        }
+
+        public PathData(@NotNull LocatonData[] locaArr){
+            this.dtBegin = locaArr[0].datetime;
+            this.dtEnd = locaArr[locaArr.length - 1].datetime;
             this.locaArr = locaArr.clone();
         }
 
