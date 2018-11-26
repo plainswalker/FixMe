@@ -17,10 +17,12 @@ import java.io.IOException;
 import java.nio.CharBuffer;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 public class LocationFileManager implements FileManager {
     public static final String FILENAME_CURRENT_LOCATION = "current_location";
@@ -123,7 +125,7 @@ public class LocationFileManager implements FileManager {
 //                }
                 while (sc.hasNext()){
                     String s = sc.nextLine();
-                    Log.d(this.getClass().getName(), "string to read : " + s);
+//                    Log.d(this.getClass().getName(), "string to read : " + s);
                     sb.append(s);
                 }
 //            } catch(IOException e){
@@ -145,6 +147,44 @@ public class LocationFileManager implements FileManager {
         }
 
         return rt;
+    }
+
+    @Nullable
+    public LocationDataManager.PathData getLocationList(Date date){
+        String data = this.getData(this.dfDate.format(date));
+        LocationDataManager.PathData path = null;
+        ArrayList<LocationDataManager.LocatonData> bufLoca = new ArrayList<>(10);
+        if(data != null) {
+            String strPattern = "^\\{.*\\}$";
+            Pattern pattern = Pattern.compile(strPattern);
+            Scanner sc = new Scanner(data);
+
+            while (sc.hasNext(pattern)){
+                String s = sc.next(pattern);
+                Log.d(this.getClass().getName(), "pattern matched : " + s);
+                LocationDataManager.LocatonData loca = null;
+                try {
+                     loca = LocationDataManager.LocatonData.parseJSON(new JSONObject(s));
+                } catch (Exception e){
+                    Log.d(this.getClass().getName(), e.toString());
+                }
+                if(loca != null){
+                    bufLoca.add(loca);
+                }
+            }
+
+            if(bufLoca.size() > 0){
+                path = new LocationDataManager.PathData((LocationDataManager.LocatonData[]) bufLoca.toArray());
+            }
+
+        }
+
+        return path;
+    }
+
+    @Nullable
+    public LocationDataManager.PathData getLocationListForToday(){
+        return this.getLocationList(this.cal.getTime());
     }
 
     public boolean setCurrentLocation(LocationDataManager.LocatonData loca){
