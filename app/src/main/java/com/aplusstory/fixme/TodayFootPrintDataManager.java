@@ -11,6 +11,11 @@ import java.util.Date;
 import java.util.stream.Stream;
 
 public class TodayFootPrintDataManager implements FootprintDataManager {
+    public interface  LocationNamer{
+        String getName(LocationDataManager.LocationData location);
+        String getName(LocationDataManager.PathData path);
+    }
+
     public static final double DISTANCE_THRESHOLD = CurrentLocationManager.DISTANCE_THRESHOLD;
     public static final long INTERVAL_THRESHOLD = 5 * 60 * 1000;
 
@@ -18,6 +23,7 @@ public class TodayFootPrintDataManager implements FootprintDataManager {
     private Context context;
     private Calendar today;
     private ArrayList<FootPrintData> dataArr = null;
+    private LocationNamer namer = null;
 
     TodayFootPrintDataManager(Context context){
         this(context, new Date(System.currentTimeMillis()));
@@ -49,15 +55,23 @@ public class TodayFootPrintDataManager implements FootprintDataManager {
                 lastLoca = loca;
                 tBegin = loca.datetime;
                 tEnd = loca.datetime;
+                Log.d(this.getClass().getName(), "location : " + lastLoca.toString());
             } else if(bufPath == null){
                 if(loca.distanceTo(lastLoca) > DISTANCE_THRESHOLD){
                     tEnd = loca.datetime;
                     data = new FootPrintData(tBegin, tEnd, lastLoca);
+                    if(this.namer != null){
+                        data.name = this.namer.getName(lastLoca);
+                    }
                     this.dataArr.add(data);
                     bufPath = new ArrayList<>();
                     tBegin = tEnd;
                     bufPath.add(loca);
                     lastLoca = loca;
+                    Log.d(this.getClass().getName(), "path begin on : " + loca.toString());
+                } else {
+                    tEnd = loca.datetime;
+                    Log.d(this.getClass().getName(), "location : " + lastLoca.toString());
                 }
             } else {
                 if(loca.datetime - lastLoca.datetime < INTERVAL_THRESHOLD
@@ -65,18 +79,28 @@ public class TodayFootPrintDataManager implements FootprintDataManager {
                     tEnd = loca.datetime;
                     bufPath.add(loca);
                     lastLoca = loca;
+                    Log.d(this.getClass().getName(), "location : " + lastLoca.toString());
                 } else{
                     LocationDataManager.PathData path = new LocationDataManager.PathData(bufPath);
                     data = new FootPrintData(path);
+                    if(this.namer != null){
+                        data.name = this.namer.getName(path);
+                    }
                     this.dataArr.add(data);
                     bufPath = null;
                     lastLoca = loca;
                     tBegin = loca.datetime;
                     tEnd = loca.datetime;
+                    Log.d(this.getClass().getName(), "path ends on : " + loca.toString());
                 }
             }
         }
+        if(this.dataArr.size() == 0 && lastLoca != null){
+            data = new FootPrintData(tBegin, lastLoca.datetime, lastLoca);
+            this.dataArr.add(data);
+        }
     }
+
     private LocationDataManager.LocationData getLastLocation(){
         if(this.dataArr != null) {
             Serializable lastData = this.dataArr.get(this.dataArr.size() - 1).locaData;
@@ -106,6 +130,11 @@ public class TodayFootPrintDataManager implements FootprintDataManager {
                 Log.d(this.getClass().getName(), e.toString());
             }
         }
+
+        if(this.dataArr == null){
+            Log.d(this.getClass().getName(), "null?!");
+        }
+
         return new ArrayList<FootPrintData>(this.dataArr);
     }
 
@@ -115,6 +144,10 @@ public class TodayFootPrintDataManager implements FootprintDataManager {
         if(f instanceof LocationFileManager){
             this.fm = (LocationFileManager)f;
         }
+    }
+
+    public void setNamer(LocationNamer namer){
+        this.namer = namer;
     }
 
 
