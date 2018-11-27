@@ -16,6 +16,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Calendar;
 import java.util.Scanner;
 
 public class TestLocationActivity extends Activity implements View.OnClickListener{
@@ -59,20 +60,19 @@ public class TestLocationActivity extends Activity implements View.OnClickListen
                 TextView latiText = findViewById(R.id.latiText);
                 TextView longiText = findViewById(R.id.longtiText);
                 SharedPreferences sp = getSharedPreferences(LocationFileManager.FILENAME_CURRENT_LOCATION, 0);
-                dateText.setText(sp.getString(LocationDataManager.LocatonData.KEY_DATETIME,""));
-                latiText.setText(sp.getString(LocationDataManager.LocatonData.KEY_LATITUDE,""));
-                longiText.setText(sp.getString(LocationDataManager.LocatonData.KEY_LONGITUDE,""));
+                dateText.setText(sp.getString(LocationDataManager.LocationData.KEY_DATETIME,""));
+                latiText.setText(sp.getString(LocationDataManager.LocationData.KEY_LATITUDE,""));
+                longiText.setText(sp.getString(LocationDataManager.LocationData.KEY_LONGITUDE,""));
                 break;
             case R.id.importLocaData:
                 try {
-                    LocationFileManager fm = new LocationFileManager(this, LocationFileManager.READ_ONLY);
+                    Calendar c = Calendar.getInstance();
+                    TodayFootPrintDataManager dm = new TodayFootPrintDataManager(this, c.getTime());
                     TextView locaDataText = findViewById(R.id.textLocaData);
                     StringBuilder sb = new StringBuilder();
-                    LocationDataManager.PathData path = fm.getLocationListForToday();
-                    JSONArray jsonArr = path.JSONify().getJSONArray(LocationDataManager.PathData.KEY_LOCATION_ARRAY);
-                    for(int i = 0; i < jsonArr.length(); i++){
-                        JSONObject json = jsonArr.getJSONObject(i);
-                        sb.append(json.toString() + "\n");
+
+                    for(FootprintDataManager.FootPrintData data : dm.getData()){
+                        sb.append(data.toString() + "\n");
                     }
 
                     locaDataText.setText(sb.toString());

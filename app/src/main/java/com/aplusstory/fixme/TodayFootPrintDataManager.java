@@ -49,6 +49,7 @@ public class TodayFootPrintDataManager implements FootprintDataManager {
                 lastLoca = loca;
                 tBegin = loca.datetime;
                 tEnd = loca.datetime;
+                Log.d(this.getClass().getName(), "location : " + lastLoca.toString());
             } else if(bufPath == null){
                 if(loca.distanceTo(lastLoca) > DISTANCE_THRESHOLD){
                     tEnd = loca.datetime;
@@ -58,6 +59,10 @@ public class TodayFootPrintDataManager implements FootprintDataManager {
                     tBegin = tEnd;
                     bufPath.add(loca);
                     lastLoca = loca;
+                    Log.d(this.getClass().getName(), "path begin on : " + loca.toString());
+                } else {
+                    tEnd = loca.datetime;
+                    Log.d(this.getClass().getName(), "location : " + lastLoca.toString());
                 }
             } else {
                 if(loca.datetime - lastLoca.datetime < INTERVAL_THRESHOLD
@@ -65,6 +70,7 @@ public class TodayFootPrintDataManager implements FootprintDataManager {
                     tEnd = loca.datetime;
                     bufPath.add(loca);
                     lastLoca = loca;
+                    Log.d(this.getClass().getName(), "location : " + lastLoca.toString());
                 } else{
                     LocationDataManager.PathData path = new LocationDataManager.PathData(bufPath);
                     data = new FootPrintData(path);
@@ -73,6 +79,7 @@ public class TodayFootPrintDataManager implements FootprintDataManager {
                     lastLoca = loca;
                     tBegin = loca.datetime;
                     tEnd = loca.datetime;
+                    Log.d(this.getClass().getName(), "path ends on : " + loca.toString());
                 }
             }
         }
@@ -106,6 +113,11 @@ public class TodayFootPrintDataManager implements FootprintDataManager {
                 Log.d(this.getClass().getName(), e.toString());
             }
         }
+
+        if(this.dataArr == null){
+            Log.d(this.getClass().getName(), "null?!");
+        }
+
         return new ArrayList<FootPrintData>(this.dataArr);
     }
 
