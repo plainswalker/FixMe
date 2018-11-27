@@ -4,7 +4,9 @@ import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 
@@ -114,7 +116,8 @@ public interface LocationDataManager {
             return LocationData.distance(this, dst);
         }
     }
-    class PathData{
+
+    class PathData implements Serializable{
         public static final String KEY_DATETIME_BEGIN = "dtBegin";
         public static final String KEY_DATETIME_END = "dtEnd";
         public static final String KEY_LOCATION_ARRAY = "locaArr";
@@ -143,6 +146,12 @@ public interface LocationDataManager {
             this.dtBegin = locaArr[0].datetime;
             this.dtEnd = locaArr[locaArr.length - 1].datetime;
             this.locaArr = locaArr.clone();
+        }
+
+        public PathData(@NotNull ArrayList<LocationData> locaList){
+            this.locaArr = locaList.toArray(this.locaArr);
+            this.dtBegin = this.locaArr[0].datetime;
+            this.dtEnd = this.locaArr[this.locaArr.length -1].datetime;
         }
 
         public JSONObject JSONify(){
