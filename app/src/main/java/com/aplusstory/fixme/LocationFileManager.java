@@ -2,6 +2,7 @@ package com.aplusstory.fixme;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.service.autofill.FieldClassification;
 import android.util.Log;
 
 import org.jetbrains.annotations.Nullable;
