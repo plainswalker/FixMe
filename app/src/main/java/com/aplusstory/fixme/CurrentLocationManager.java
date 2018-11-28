@@ -36,7 +36,7 @@ public class CurrentLocationManager extends Service implements LocationDataManag
     private Thread thd = null;
     private boolean isEnabled = false;
     private Handler hd = null;
-    private LocationData priviousLocation = null;
+    private Location priviousLocation = null;
     private long tLocaReq = -1;
     private long dLocaReq = MIN_LOCA_UPDATE;
 
@@ -112,16 +112,17 @@ public class CurrentLocationManager extends Service implements LocationDataManag
                 + dStr
         );
 
-        LocationData loca = new LocationData(now, latitude, longtitude);
-
         if(this.fm != null){
-            if( this.priviousLocation == null ||
-                loca.distanceTo(this.priviousLocation) > CurrentLocationManager.DISTANCE_THRESHOLD){
+            if( this.priviousLocation == null
+            ||( (location.hasAccuracy() && priviousLocation.hasAccuracy() &&
+                location.getAccuracy() >= priviousLocation.getAccuracy()) &&
+                location.distanceTo(this.priviousLocation) > CurrentLocationManager.DISTANCE_THRESHOLD)){
+                LocationData loca = new LocationData(now, latitude, longtitude);
                 this.fm.setCurrentLocation(loca);
             }
         }
         this.lm.removeUpdates(this);
-        this.priviousLocation = loca;
+        this.priviousLocation = location;
     }
 
     @Override
