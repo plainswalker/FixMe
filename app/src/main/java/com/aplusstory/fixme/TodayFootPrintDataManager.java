@@ -46,6 +46,7 @@ public class TodayFootPrintDataManager implements FootprintDataManager {
         LocationDataManager.LocationData[] arr = this.fm.getLocationList(this.today.getTime()).locaArr;
         LocationDataManager.LocationData lastLoca = null;
         ArrayList<LocationDataManager.LocationData> bufPath = null;
+        LocationDataManager.PathData path = null;
         FootPrintData data = null;
 
         long tBegin = 0, tEnd = 0;
@@ -71,7 +72,7 @@ public class TodayFootPrintDataManager implements FootprintDataManager {
                     Log.d(this.getClass().getName(), "path begin on : " + loca.toString());
                 } else {
                     tEnd = loca.datetime;
-                    Log.d(this.getClass().getName(), "location : " + lastLoca.toString());
+                    Log.d(this.getClass().getName(), "nearby location : " + lastLoca.toString());
                 }
             } else {
                 if(loca.datetime - lastLoca.datetime < INTERVAL_THRESHOLD
@@ -79,9 +80,9 @@ public class TodayFootPrintDataManager implements FootprintDataManager {
                     tEnd = loca.datetime;
                     bufPath.add(loca);
                     lastLoca = loca;
-                    Log.d(this.getClass().getName(), "location : " + lastLoca.toString());
+                    Log.d(this.getClass().getName(), "path location : " + lastLoca.toString());
                 } else{
-                    LocationDataManager.PathData path = new LocationDataManager.PathData(bufPath);
+                    path = new LocationDataManager.PathData(bufPath);
                     data = new FootPrintData(path);
                     if(this.namer != null){
                         data.name = this.namer.getName(path);
@@ -95,8 +96,21 @@ public class TodayFootPrintDataManager implements FootprintDataManager {
                 }
             }
         }
-        if(this.dataArr.size() == 0 && lastLoca != null){
+
+        if(bufPath != null){
+            path = new LocationDataManager.PathData(bufPath);
+            data = new FootPrintData(path);
+            if(this.namer != null){
+                data.name = this.namer.getName(path);
+            }
+            this.dataArr.add(data);
+        }
+
+        if(lastLoca != null){
             data = new FootPrintData(tBegin, lastLoca.datetime, lastLoca);
+            if(this.namer != null){
+                data.name = this.namer.getName(lastLoca);
+            }
             this.dataArr.add(data);
         }
     }
@@ -107,7 +121,7 @@ public class TodayFootPrintDataManager implements FootprintDataManager {
             if(lastData instanceof LocationDataManager.LocationData){
                 return (LocationDataManager.LocationData)lastData;
             } else if(lastData instanceof LocationDataManager.PathData){
-                LocationDataManager.LocationData[] arr = ((LocationDataManager.PathData)lastData).locaArr;
+                LocationDataManager.LocationData[] arr = ((LocationDataManager.PathData)lastData).locaArr.clone();
                 if(arr != null) {
                     return arr[arr.length - 1];
                 }
@@ -128,6 +142,9 @@ public class TodayFootPrintDataManager implements FootprintDataManager {
                 this.getDataForToday();
             }catch(Exception e){
                 Log.d(this.getClass().getName(), e.toString());
+                for(StackTraceElement ste : e.getStackTrace()){
+                    Log.d(this.getClass().getName(), ste.toString());
+                }
             }
         }
 

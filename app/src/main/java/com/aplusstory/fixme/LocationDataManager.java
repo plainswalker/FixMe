@@ -149,6 +149,7 @@ public interface LocationDataManager {
         }
 
         public PathData(@NotNull ArrayList<LocationData> locaList){
+            this.locaArr = new LocationData[locaList.size()];
             this.locaArr = locaList.toArray(this.locaArr);
             this.dtBegin = this.locaArr[0].datetime;
             this.dtEnd = this.locaArr[this.locaArr.length -1].datetime;
