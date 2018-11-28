@@ -87,12 +87,16 @@ public class PieChartFragment extends Fragment {
                     if(obj instanceof FootprintDataManager.FootPrintData){
                         FootprintDataManager.FootPrintData ftd = (FootprintDataManager.FootPrintData)obj;
                         Log.d(this.getClass().getName(), "footprint data : " + ftd.toString());
-                        yValues.add(new PieEntry(ftd.getInterval(), "location " + cnt++));
+                        String s = ftd.name;
+                        if(s == null){
+                            s = "location " + cnt++;
+                        }
+                        yValues.add(new PieEntry(ftd.getInterval(), s));
                     }
                 }
             }
         } else {
-            //add chart data
+            //test data
             yValues.add(new PieEntry(31, "집"));
             yValues.add(new PieEntry(10, "이동"));
             yValues.add(new PieEntry(25, "학교"));
@@ -152,6 +156,7 @@ public class PieChartFragment extends Fragment {
                 dataSet.setColors(colorArr);
             }
         } else {
+            //test data color
             dataSet.setColors(new int[]{getResources().getColor(R.color.chartColor1), getResources().getColor(R.color.chartColor2)
                     , getResources().getColor(R.color.chartColor3), getResources().getColor(R.color.chartColor4)
                     , getResources().getColor(R.color.chartColor5), getResources().getColor(R.color.chartColor6)
@@ -187,6 +192,7 @@ public class PieChartFragment extends Fragment {
                 );
             }
         } else {
+            //test data
             chartInfoArrayList.add(new ChartInfo(String.valueOf(dataSet.getEntryForIndex(0).getValue()), dataSet.getEntryForIndex(0).getLabel(), "00:00~08:00"));
             chartInfoArrayList.add(new ChartInfo(String.valueOf(dataSet.getEntryForIndex(1).getValue()), dataSet.getEntryForIndex(1).getLabel(), "08:00~10:30"));
             chartInfoArrayList.add(new ChartInfo(String.valueOf(dataSet.getEntryForIndex(2).getValue()), dataSet.getEntryForIndex(2).getLabel(), "10:30~16:30"));

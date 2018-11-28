@@ -14,7 +14,7 @@ import android.widget.Toast;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public class FootprintActivity extends AppCompatActivity {
+public class FootprintActivity extends AppCompatActivity implements TodayFootPrintDataManager.LocationNamer{
     Toolbar toolbar;
     Fragment fragment;
     private FragmentManager fragmentManager = null;
@@ -39,6 +39,7 @@ public class FootprintActivity extends AppCompatActivity {
 
         if(this.dm == null){
             this.dm = new TodayFootPrintDataManager(this);
+            this.dm.setNamer(this);
         }
 
         fragment = new PieChartFragment();
@@ -86,5 +87,17 @@ public class FootprintActivity extends AppCompatActivity {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.chart_menu, menu);
         return true;
+    }
+
+    @Override
+    public String getName(LocationDataManager.LocationData location) {
+        //TODO : if there's favorite with the location, get its name; otherwise, get address of it.
+        return null;
+    }
+
+    @Override
+    public String getName(LocationDataManager.PathData path) {
+        //TODO : if there's favorite with the location, get its name; otherwise, default value.
+        return this.getString(R.string.footprint_path_default);
     }
 }

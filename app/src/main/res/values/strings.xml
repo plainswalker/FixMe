@@ -62,4 +62,6 @@
     <string name="dummy_content">DUMMY\nCONTENT</string>
 
     <string name="title_activity_full_alarm">FullAlarmActivity</string>
+
+    <string name="footprint_path_default">이동</string>
 </resources>

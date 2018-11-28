@@ -126,7 +126,7 @@ public class TodayFootPrintDataManager implements FootprintDataManager {
         }
 
         if(lastLoca != null){
-            data = new FootPrintData(tBegin, lastLoca.datetime, lastLoca);
+            data = new FootPrintData(lastLoca.datetime, lastLoca.datetime, lastLoca);
             if(this.namer != null){
                 data.name = this.namer.getName(lastLoca);
             }
