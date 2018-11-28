@@ -94,10 +94,10 @@ public class TodayFootPrintDataManager implements FootprintDataManager {
                     Log.d(this.getClass().getName(), "nearby location : " + lastLoca.toString());
                 }
             } else {
+                bufPath.add(loca);
                 if(loca.datetime - lastLoca.datetime < INTERVAL_THRESHOLD
                 || loca.distanceTo(lastLoca) >= DISTANCE_THRESHOLD){
                     tEnd = loca.datetime;
-                    bufPath.add(loca);
                     lastLoca = loca;
                     Log.d(this.getClass().getName(), "path location : " + lastLoca.toString());
                 } else{
