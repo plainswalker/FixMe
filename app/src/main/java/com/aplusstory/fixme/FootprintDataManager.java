@@ -1,15 +1,22 @@
 package com.aplusstory.fixme;
 
+import android.content.Context;
+
+import java.io.File;
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public interface FootprintDataManager extends UserDataManager{
+    public static final String KEY_DATA = "footprint_data";
+
     @Override
     void setFileManager(FileManager f);
 
-    public class FootPrintData{
+
+
+    public class FootPrintData implements Serializable{
         public static final String DATE_FORMAT_GMT = "yyyy-MM-dd HH:mm:ss";
 
         long dtBigin = -1;

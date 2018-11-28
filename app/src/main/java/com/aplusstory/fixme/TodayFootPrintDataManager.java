@@ -3,6 +3,7 @@ package com.aplusstory.fixme;
 import android.content.Context;
 import android.util.Log;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -25,6 +26,20 @@ public class TodayFootPrintDataManager implements FootprintDataManager {
     private ArrayList<FootPrintData> dataArr = null;
     private LocationNamer namer = null;
 
+    public static boolean isAvailableOnDate(Context context, Date date){
+        boolean rt = false;
+        File f = new File(LocationFileManager.getFilename(context, date));
+        if(f.exists() && f.isFile()){
+            rt = true;
+        }
+
+        return rt;
+    }
+
+    public static boolean isAvailableToday(Context context){
+        return TodayFootPrintDataManager.isAvailableOnDate(context, new Date(System.currentTimeMillis()));
+    }
+
     TodayFootPrintDataManager(Context context){
         this(context, new Date(System.currentTimeMillis()));
     }
@@ -34,6 +49,10 @@ public class TodayFootPrintDataManager implements FootprintDataManager {
         this.fm = new LocationFileManager(context, LocationFileManager.READ_ONLY);
         this.today = Calendar.getInstance();
         this.today.setTime(today);
+    }
+
+    public boolean isAvailableToday(){
+        return TodayFootPrintDataManager.isAvailableOnDate(this.context, this.today.getTime());
     }
 
     private void getDataForToday() throws NullPointerException{

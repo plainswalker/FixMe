@@ -11,10 +11,15 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+
 public class FootprintActivity extends AppCompatActivity {
     Toolbar toolbar;
     Fragment fragment;
     private FragmentManager fragmentManager = null;
+    private TodayFootPrintDataManager dm = null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +37,15 @@ public class FootprintActivity extends AppCompatActivity {
             this.fragmentManager = this.getSupportFragmentManager();
         }
 
+        if(this.dm == null){
+            this.dm = new TodayFootPrintDataManager(this);
+        }
+
         fragment = new PieChartFragment();
+        Bundle bd = new Bundle();
+        ArrayList<FootprintDataManager.FootPrintData> dataArr = this.dm.getData();
+        bd.putSerializable(FootprintDataManager.KEY_DATA, dataArr);
+        fragment.setArguments(bd);
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.add(R.id.footprint_frame, fragment);
         fragmentTransaction.commit();
